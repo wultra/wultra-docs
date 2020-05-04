@@ -1,3 +1,3 @@
 # Authentication in Mobile Banking Apps (SCA)
 
-<!-- AUTHOR joshis_tweets 05/04/2020 -->
+<!-- AUTHOR joshis_tweets 2020-05-04T00:00:00Z -->
