@@ -4,9 +4,9 @@
 
 In this tutorial, we will show you how to implement authentication into your mobile banking or fintech app on iOS. This tutorial has four parts:
 
-- [Mobile Authentication Overview](./Readme.md)
-- [Tutorial for Server Side Developers](./Server-Side-Tutorial.md)
+- [Mobile Authentication Overview](./Readme)
+- [Tutorial for Server Side Developers](./Server-Side-Tutorial)
 - **Tutorial for iOS Developers**
-- [Tutorial for Android Developers](./Android-Tutorial.md)
+- [Tutorial for Android Developers](./Android-Tutorial)
 
 Lorem ipsum

@@ -5,9 +5,9 @@
 In this tutorial, we will show you how to implement authentication into your mobile banking or fintech apps. This tutorial has four parts:
 
 - **Mobile Authentication Overview**
-- [Tutorial for Server Side Developers](./Server-Side-Tutorial.md)
-- [Tutorial for iOS Developers](./iOS-Tutorial.md)
-- [Tutorial for Android Developers](./Android-Tutorial.md)
+- [Tutorial for Server Side Developers](./Server-Side-Tutorial)
+- [Tutorial for iOS Developers](./iOS-Tutorial)
+- [Tutorial for Android Developers](./Android-Tutorial)
 
 ## Mobile Authentication Overview
 
@@ -19,7 +19,7 @@ In the terms of the compliance, these mechanisms are required for example to com
 
 Last but not least, correctly designed cryptographic protocol for authentication usually improves the user experience, since the users can login or approve a payment with a simple PIN code instead of a long password, or with a biometric authentication.
 
-[Mobile Security Suite](https://www.wultra.com/mobile-security-suite) is a plugin (SDK) for iOS and Android apps that - together with its server counterparts - covers the authentication and transaction signing functionality, allowing the end-users to login or approve payments using PIN code or biometry. It also covers all related use-cases, such as authentication element lifecycle (active, blocked, removed), PIN code change, biometry settings, etc. It uses [an open-source cryptographic PowerAuth protocol](../powerauth-crypto/index) that is trusted by leading banks and financial institutions to back the authentication-related processes with strong cryptography.
+[Mobile Security Suite](https://www.wultra.com/mobile-security-suite) is a plugin (SDK) for iOS and Android apps that - together with its server counterparts - covers the authentication and transaction signing functionality, allowing the end-users to login or approve payments using PIN code or biometry. It also covers all related use-cases, such as authentication element lifecycle (active, blocked, removed), PIN code change, biometry settings, etc. It uses [an open-source cryptographic PowerAuth protocol](../../powerauth-crypto/index) that is trusted by leading banks and financial institutions to back the authentication-related processes with strong cryptography.
 
 
 ## Activation
@@ -93,7 +93,7 @@ Please refer to the detailed documentation for more information about those.
 
 Of course, you can always find more details in our reference documentation:
 
-- [Cryptography Specification](../powerauth-crypto/index)
-- [PowerAuth Server Documentation](../powerauth-server/index)
-- [Server-Side Integration Libraries Documentation](../powerauth-restful-integration/index)
-- [Mobile SDK for iOS and Android Documentation](../powerauth-mobile-sdk/index)
+- [Cryptography Specification](https://github.com/wultra/powerauth-crypto/blob/develop/docs/Readme.md)
+- [PowerAuth Server Documentation](https://github.com/wultra/powerauth-server/blob/develop/docs/Readme.md)
+- [Server-Side Integration Libraries Documentation](https://github.com/wultra/powerauth-restful-integration/blob/develop/docs/Readme.md)
+- [Mobile SDK for iOS and Android Documentation](https://github.com/wultra/powerauth-mobile-sdk/blob/develop/docs/Readme.md)
