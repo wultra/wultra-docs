@@ -60,6 +60,8 @@ In case of the login, the signature is computed just based on that. In the case 
 
 _Note: The PSD2 legislation uses the term "dynamic linking" for this dependency of the signature on the operation data. It mandates using at least the other party account number and a payment amount as data that enters the signature (in PSD2 terminology, the "Authentication Code")._
 
+The number of authentication attempts is limited. In the case the signature verification fails, the number of remaining accounts is decremented and in the case there are no more attempts left, the activation is blocked.
+
 ### Login
 
 The overview diagram of the transaction signing for login is fairly simple:
@@ -72,12 +74,12 @@ The overview diagram of the transaction signing for payment approval is not much
 
 ![ Login ](./02b.png)
 
-The main difference is that after the successful signature verification, the payment is sent to the further processing after being approved by a given user.
+The main difference is that after the successful signature verification (in this case, the signature depends on the signature data), the payment is sent for the further processing after being approved by a given user.
 
 
 ## Other Use-Cases
 
-Of course, the system already implements some typical use-cases that are usually requested by the customers. In this overview, we will just briefly mention the list of such use-cases:
+Of course, every authentication and transaction signing system also implements some typical auxiliary use-cases, such as:
 
 - Activation status check.
 - Activation blocking and removal.
@@ -91,7 +93,7 @@ Please refer to the detailed documentation for more information about those.
 
 Of course, you can always find more details in our reference documentation:
 
-- [Description of Cryptographic Processes](./TBD)
-- [PowerAuth Server Documentation](./TBD)
-- [Server Integration Libraries Documentation](./TBD)
-- [Mobile SDK Documentation](./TBD)
+- [Cryptography Specification](../powerauth-crypto/index)
+- [PowerAuth Server Documentation](../powerauth-server/index)
+- [Server-Side Integration Libraries Documentation](../powerauth-restful-integration/index)
+- [Mobile SDK for iOS and Android Documentation](../powerauth-mobile-sdk/index)
