@@ -14,7 +14,7 @@ In this tutorial, we will show you how to implement authentication into your mob
 This tutorial assumes, that you have:
 
 - Read and understood the [Mobile Authentication Overview](./)
-- [Required back-end infrastructure up and running](./Server-Side-Tutorial.
+- [Required back-end infrastructure up and running](./Server-Side-Tutorial.md).
 - Xcode 11.4+ with the Developer Tools installed
 
 ## Introduction

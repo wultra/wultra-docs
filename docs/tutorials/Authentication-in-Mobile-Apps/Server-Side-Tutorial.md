@@ -6,8 +6,8 @@ In this tutorial, we will show you how to deploy and implement back-end componen
 
 - [Mobile Authentication Overview](./)
 - **Tutorial for Server Side Developers**
-- [Tutorial for iOS Developers](./iOS-Tutorial)
-- [Tutorial for Android Developers](./Android-Tutorial)
+- [Tutorial for iOS Developers](./iOS-Tutorial.md)
+- [Tutorial for Android Developers](./Android-Tutorial.md)
 
 Lorem ipsum
 
@@ -16,5 +16,5 @@ Lorem ipsum
 Proceed with one of the following chapters:
 
 - [Mobile Authentication Overview](./)
-- [Tutorial for iOS Developers](./iOS-Tutorial)
-- [Tutorial for Android Developers](./Android-Tutorial)
+- [Tutorial for iOS Developers](./iOS-Tutorial.md)
+- [Tutorial for Android Developers](./Android-Tutorial.md)
