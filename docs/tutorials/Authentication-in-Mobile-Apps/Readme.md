@@ -5,9 +5,9 @@
 In this tutorial, we will show you how to implement authentication into your mobile banking or fintech apps. This tutorial has four parts:
 
 - **Mobile Authentication Overview**
-- [Tutorial for Server Side Developers](./Server-Side-Tutorial.md)
-- [Tutorial for iOS Developers](./iOS-Tutorial.md)
-- [Tutorial for Android Developers](./Android-Tutorial.md)
+- [Tutorial for Server Side Developers](Server-Side-Tutorial.md)
+- [Tutorial for iOS Developers](iOS-Tutorial.md)
+- [Tutorial for Android Developers](Android-Tutorial.md)
 
 ## Mobile Authentication Overview
 
@@ -102,6 +102,6 @@ Of course, you can always find more details in our reference documentation:
 
 Proceed with one of the following chapters:
 
-- [Tutorial for Server Side Developers](./Server-Side-Tutorial.md)
-- [Tutorial for iOS Developers](./iOS-Tutorial.md)
-- [Tutorial for Android Developers](./Android-Tutorial.md)
+- [Tutorial for Server Side Developers](Server-Side-Tutorial.md)
+- [Tutorial for iOS Developers](iOS-Tutorial.md)
+- [Tutorial for Android Developers](Android-Tutorial.md)
