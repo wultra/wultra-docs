@@ -259,9 +259,12 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
                 if status.status.failCount > 0 {
                     self.remainingLabel.isHidden = false
                     self.remainingLabel.text = "Remaining attempts: " + status.remainingAttempts
+
                     // ... see determining the biometry status
                 } else {
                     self.remainingLabel.isHidden = true
+
+                    // ... wait for the user to enter the PIN code
                 }
             } else {
                 // Show the UI relevant to the activaton status.
@@ -269,6 +272,7 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
             }
         } else {
             // Network error occurred, report it to the user.
+            self.presentNetworkError()
         }
     }
 } else {
@@ -280,7 +284,7 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
 
 ### Determining the Biometry Status
 
-In case the biometry is present and allowed by the user, you should trigger transaction signging using the biometry right away. To check the status of the biometry, you can use the following logic:
+In case the biometry is present and allowed by the user, you should trigger transaction signing using the biometry right away. To check the status of the biometry, you can use the following logic:
 
 ```swift
 if PA2Keychain.canUseBiometricAuthentication && status.remainingAttempts > 2 && self.autoTriggerBiometry {
@@ -300,21 +304,24 @@ Note that we not only decided to check for the mere usability of the biometry, b
 To sign the request data, you first need to prepare the `PowerAuthAuthentication` instance that specifies the authentication factors that you want to use. After that, you can compute the HTTP header with the signature and send the request to the server.
 
 ```swift
+// Transaction signing with a biometry
 func signWithBiometry() -> URLSessionDataTask? {
     let auth = PowerAuthAuthentication()
     auth.usePossession = true
     auth.useBiometry   = true
-    return signWithAuthentication(with: auth)
+    return signWith(authentication: auth)
 }
 
-func signWithPinCode(with pin: String) -> URLSessionDataTask? {
+// Transaction signing with a password or a PIN code
+func signWith(password: String) -> URLSessionDataTask? {
     let auth = PowerAuthAuthentication()
     auth.usePossession = true
-    auth.usePassword   = pin
-    return signWithAuthentication(with: auth)
+    auth.usePassword   = password
+    return signWith(authentication: auth)
 }
 
-func signWithAuthentication(with authentication: PowerAuthAuthentication) -> URLSessionDataTask? {
+// Transaction signing with an authentication object
+func signWith(authentication: PowerAuthAuthentication) -> URLSessionDataTask? {
     do {
         // Get the request attributes
         let uri    = self.uri    // "https://my.server.example.com/payment"
@@ -322,15 +329,14 @@ func signWithAuthentication(with authentication: PowerAuthAuthentication) -> URL
         let method = self.method // "POST"
         let body   = self.body   // the serialized bytes of HTTP request body
 
+        // Compute the signature header
         let signature = try PowerAuthSDK.sharedInstance().requestSignature(with: auth, method: method, uriId: uriId, body: body)
-        let signatureHeader = [ signature.key: signature.value ]
-
-        let headers = self.headers + signatureHeader;
+        let header = [ signature.key: signature.value ]
 
         // Send HTTP request with the HTTP header computed above
         // Note that we are sending the POST call to the actual URI, with
-        // a computed HTTP header and the request body bytes
-        return self.httpClient.post(uri, headers, body)
+        // a computed HTTP header with signature and the request body bytes
+        return self.httpClient.post(uri, header, body)
     } catch _ {
         // In case of invalid configuration, invalid activation
         // state or corrupted state data
@@ -339,7 +345,7 @@ func signWithAuthentication(with authentication: PowerAuthAuthentication) -> URL
 }
 ```
 
-You can hook the `signWithBiometry` method to the button for the biometric authentication and the `signWithPinCode` method to the PIN keyboard (for example, to be triggered when sufficiently long PIN is entered by the user).
+You can hook the `signWithBiometry` method to the button for the biometric authentication and the `signWithPinCode` method to the PIN keyboard (for example, to be triggered when sufficiently long PIN code is entered by the user).
 
 Note that the method returns an `URLSessionDataTask` instance, or a `nil` value in case there is an invalid state. In case the `URLSessionDataTask` is launched, you should wait for it to complete and check the HTTP status.
 
