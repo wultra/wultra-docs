@@ -107,11 +107,6 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 }
 ```
 {% endcodetab %}
-{% codetab Objective-C %}
-```objc
-@import PowerAuth2;
-```
-{% endcodetab %}
 {% endcodetabs %}
 
 ## Checking the Activation Status
