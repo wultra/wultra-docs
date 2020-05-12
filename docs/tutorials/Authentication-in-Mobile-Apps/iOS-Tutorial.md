@@ -25,6 +25,8 @@ This tutorial assumes, that you have:
 
 The easiest way to install the PowerAuth SDK into your project is using [Cocoapods](https://cocoapods.org/), by editing your Podfile:
 
+{% codetabs %}
+{% codetab Podfile %}
 ```rb
 platform :ios, '8.0'
 target '<Your Target App>' do
@@ -43,20 +45,35 @@ post_install do |installer|
   end
 end
 ```
+{% endcodetab %}
+{% endcodetabs %}
 
 _Note: You need to disable bitcode for PowerAuth SDK to work._
 
 After you change the Podfile, run the install command:
 
+{% codetabs %}
+{% codetab Shell %}
 ```sh
 $ pod install
 ```
+{% endcodetab %}
+{% endcodetabs %}
 
 Finally, you can import PowerAuth SDK in any file where you need it:
 
+{% codetabs %}
+{% codetab Swift %}
 ```swift
 import PowerAuth2
 ```
+{% endcodetab %}
+{% codetab Objective-C %}
+```objc
+@import PowerAuth2;
+```
+{% endcodetab %}
+{% endcodetabs %}
 
 ## Configuration
 
@@ -70,6 +87,8 @@ Finally, you need to know the location of your [PowerAuth Standard RESTful API](
 
 This is how the example `PowerAuthSDK` configuration looks like:
 
+{% codetabs %}
+{% codetab Swift %}
 ```swift
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
@@ -87,6 +106,8 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
     return true
 }
 ```
+{% endcodetab %}
+{% endcodetabs %}
 
 ## Checking the Activation Status
 
@@ -94,6 +115,8 @@ After a user launches an application, you need to determine which user interface
 
 Luckily, we have a simple method calls to obtain a detailed activation status:
 
+{% codetabs %}
+{% codetab Swift %}
 ```swift
 // Check if there is some activation data on the device
 if PowerAuthSDK.sharedInstance().hasValidActivation() {
@@ -112,6 +135,8 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
     // Show the UI for a new activation.
 }
 ```
+{% endcodetab %}
+{% endcodetabs %}
 
 ##### Mockups
 
@@ -134,6 +159,8 @@ The first step of a new activation process is exchanging the identity proof for 
 
 The easiest way to create the activation is using the PowerAuth activation code:
 
+{% codetabs %}
+{% codetab Swift %}
 ```swift
 // Create the activation with an activation code
 let deviceName = UIDevice.current.name
@@ -153,6 +180,8 @@ PowerAuthSDK.sharedInstance().createActivation(activation) { (result, error) in
     }
 }
 ```
+{% endcodetab %}
+{% endcodetabs %}
 
 _Note: You can let the user scan the activation code from a QR code._
 
@@ -166,6 +195,8 @@ Here is an example mockup of the screens that need to be implemented:
 
 In case you would like to use some other credentials your server supports, you can do so easily:
 
+{% codetabs %}
+{% codetab Swift %}
 ```swift
 // Create a new activation with given device name and custom login credentials
 let deviceName = UIDevice.current.name
@@ -189,6 +220,8 @@ PowerAuthSDK.sharedInstance().createActivation(activation) { (result, error) in
     }
 }
 ```
+{% endcodetab %}
+{% endcodetabs %}
 
 In the example, we used a combination of the username, password and an OTP generated elsewhere (for example, via a HW token, or delivered via SMS). But any credentials that you determined are suitable for activation will work.
 
@@ -202,6 +235,8 @@ Here is an example mockup of the screens that need to be implemented:
 
 After you successfully perform the steps for creating the activation, you can prompt the user to enter the new PIN code / password, allow an opt-in for the biometric authentication. After that, you can easily commit the newly created activation using the requested authentication factors:
 
+{% codetabs %}
+{% codetab Swift %}
 ```swift
 do {
     let auth = PowerAuthAuthentication()
@@ -215,6 +250,8 @@ do {
     // when activation is not in the correct state to be committed
 }
 ```
+{% endcodetab %}
+{% endcodetabs %}
 
 In most cases, the `usePossession` is set to `true` and `usePassword` to the value of the PIN or password user selected. The `useBiometry` value should be set to `true` in the case user decided to opt-in for biometric authentication, to `false` otherwise.
 
@@ -281,22 +318,14 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
 }
 ```
 {% endcodetab %}
-{% codetab Objective-C %}
-```objc
-// Check if there is some activation data on the device
-if ([[PowerAuthSDK sharedInstance] hasValidActivation]) {
-    // If there is an activation on the device, check the status with server
-    [[PowerAuthSDK sharedInstance] fetchActivationStatus:^ (status, customObject, error) {
-    }
-}
-```
-{% endcodetab %}
 {% endcodetabs %}
 
 ### Determining the Biometry Status
 
 In case the biometry is present and allowed by the user, you should trigger transaction signing using the biometry right away. To check the status of the biometry, you can use the following logic:
 
+{% codetabs %}
+{% codetab Swift %}
 ```swift
 if PA2Keychain.canUseBiometricAuthentication && status.remainingAttempts > 2 && self.autoTriggerBiometry {
     self.biometryButton.enabled = true
@@ -307,6 +336,8 @@ if PA2Keychain.canUseBiometricAuthentication && status.remainingAttempts > 2 && 
 }
 self.autoTriggerBiometry = false
 ```
+{% endcodetab %}
+{% endcodetabs %}
 
 Note that we not only decided to check for the mere usability of the biometry, but we also made sure that the user is not blocked by biometry in the case of the wet fingers. Also, you can notice the property `autoTriggerBiometry` that we use to automatically launch the biometry the first time unified PIN keyboard is opened.
 
@@ -314,6 +345,8 @@ Note that we not only decided to check for the mere usability of the biometry, b
 
 To sign the request data, you first need to prepare the `PowerAuthAuthentication` instance that specifies the authentication factors that you want to use. After that, you can compute the HTTP header with the signature and send the request to the server.
 
+{% codetabs %}
+{% codetab Swift %}
 ```swift
 // Transaction signing with a biometry
 func signWithBiometry() -> URLSessionDataTask? {
@@ -355,6 +388,8 @@ func signWith(authentication: PowerAuthAuthentication) -> URLSessionDataTask? {
     }
 }
 ```
+{% endcodetab %}
+{% endcodetabs %}
 
 You can hook the `signWithBiometry` method to the button for the biometric authentication and the `signWithPinCode` method to the PIN keyboard (for example, to be triggered when sufficiently long PIN code is entered by the user).
 
