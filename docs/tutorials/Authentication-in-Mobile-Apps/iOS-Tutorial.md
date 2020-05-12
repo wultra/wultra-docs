@@ -281,6 +281,16 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
 }
 ```
 {% endcodetab %}
+{% codetab Objective-C %}
+```objc
+// Check if there is some activation data on the device
+if ([[PowerAuthSDK sharedInstance] hasValidActivation]) {
+    // If there is an activation on the device, check the status with server
+    [[PowerAuthSDK sharedInstance] fetchActivationStatus:^ (status, customObject, error) {
+    }
+}
+```
+{% endcodetab %}
 {% endcodetabs %}
 
 ### Determining the Biometry Status
