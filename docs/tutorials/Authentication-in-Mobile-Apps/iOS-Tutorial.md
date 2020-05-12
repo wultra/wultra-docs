@@ -119,6 +119,10 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
 }
 ```
 
+Here is an example mockup of which screens need to be implemented:
+
+![ Activation Status Check on iOS ](./03.png)
+
 ## New Activation
 
 In the case no activation is present on the iOS device, you can guide the user through the steps to create it. Each activation has two major flows on the mobile device:
