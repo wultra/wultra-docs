@@ -97,22 +97,16 @@ Luckily, we have a simple method calls to obtain a detailed activation status:
 ```swift
 // Check if there is some activation data on the device
 if PowerAuthSDK.sharedInstance().hasValidActivation() {
-
     // If there is an activation on the device, check the status with server
     PowerAuthSDK.sharedInstance().fetchActivationStatus() { (status, customObject, error) in
-
         // If no error occurred, process the status
         if error == nil {
-
             // Show the UI relevant to the activaton status.
             self.presentUi(with: status)
-
         } else {
             // Network error occurred, report it to the user.
         }
-
     }
-
 } else {
     // No activation is present on device.
     // Show the UI for a new activation.
@@ -257,20 +251,15 @@ For the `.active` status, you should check if the number of failed attemtps is g
 ```swift
 // Check if there is some activation data on the device
 if PowerAuthSDK.sharedInstance().hasValidActivation() {
-
     // If there is an activation on the device, check the status with server
     PowerAuthSDK.sharedInstance().fetchActivationStatus() { (status, customObject, error) in
-
         // If no error occurred, process the status
         if error == nil {
-
             if status.state == .active {
                 if status.status.failCount > 0 {
                     self.remainingLabel.isHidden = false
                     self.remainingLabel.text = "Remaining attempts: " + status.remainingAttempts
-
                     // ... see determining the biometry status
-
                 } else {
                     self.remainingLabel.isHidden = true
                 }
@@ -278,13 +267,10 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
                 // Show the UI relevant to the activaton status.
                 self.presentUi(with: status)
             }
-
         } else {
             // Network error occurred, report it to the user.
         }
-
     }
-
 } else {
     // No activation is present on device.
     // Show the UI for a new activation.
