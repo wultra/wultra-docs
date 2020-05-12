@@ -198,6 +198,12 @@ PowerAuthSDK.sharedInstance().createActivation(activation) { (result, error) in
 
 In the example, we used a combination of the username, password and an OTP generated elsewhere (for example, via a HW token, or delivered via SMS). But any credentials that you determined are suitable for activation will work.
 
+##### Mockups
+
+Here is an example mockup of the screens that need to be implemented:
+
+![ Activation Status Check on iOS ](./05.png)
+
 ### Committing the Activation
 
 After you successfully perform the steps for creating the activation, you can prompt the user to enter the new PIN code / password, allow an opt-in for the biometric authentication. After that, you can easily commit the newly created activation using the requested authentication factors:
