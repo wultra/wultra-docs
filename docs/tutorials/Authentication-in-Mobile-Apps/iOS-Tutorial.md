@@ -259,13 +259,10 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
                 if status.status.failCount > 0 {
                     self.remainingLabel.isHidden = false
                     self.remainingLabel.text = "Remaining attempts: " + status.remainingAttempts
-
-                    // ... see determining the biometry status
                 } else {
                     self.remainingLabel.isHidden = true
-
-                    // ... wait for the user to enter the PIN code
                 }
+                // ... see determining the biometry status
             } else {
                 // Show the UI relevant to the activaton status.
                 self.presentUi(with: status)
