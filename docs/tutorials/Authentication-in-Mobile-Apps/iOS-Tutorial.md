@@ -119,7 +119,9 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
 }
 ```
 
-Here is an example mockup of which screens need to be implemented:
+##### Mockups
+
+Here is an example mockup of the screens that need to be implemented:
 
 ![ Activation Status Check on iOS ](./03.png)
 
@@ -131,6 +133,10 @@ In the case no activation is present on the iOS device, you can guide the user t
 - **Committing the Activation** - Storing the cryptographic activation data on the device using the user's local credentials.
 
 ### Creating the Activation
+
+The first step of a new activation process is exchanging the identity proof for the cryptographic activation data.
+
+#### Using Activation Code
 
 The easiest way to create the activation is using the PowerAuth activation code:
 
@@ -155,6 +161,14 @@ PowerAuthSDK.sharedInstance().createActivation(activation) { (result, error) in
 ```
 
 _Note: You can let the user scan the activation code from a QR code._
+
+##### Mockups
+
+Here is an example mockup of the screens that need to be implemented:
+
+![ Activation Status Check on iOS ](./04.png)
+
+#### Using Custom Credentials
 
 In case you would like to use some other credentials your server supports, you can do so easily:
 
