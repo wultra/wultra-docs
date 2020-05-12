@@ -4,10 +4,10 @@
 
 In this tutorial, we will show you how to deploy and implement back-end components for authentication in mobile banking or fintech app on Android. This tutorial has four parts:
 
-- [Mobile Authentication Overview](./)
+- [Mobile Authentication Overview](Readme.md)
 - **Tutorial for Server Side Developers**
-- [Tutorial for iOS Developers](./iOS-Tutorial.md)
-- [Tutorial for Android Developers](./Android-Tutorial.md)
+- [Tutorial for iOS Developers](iOS-Tutorial.md)
+- [Tutorial for Android Developers](Android-Tutorial.md)
 
 Lorem ipsum
 
@@ -15,6 +15,6 @@ Lorem ipsum
 
 Proceed with one of the following chapters:
 
-- [Mobile Authentication Overview](./)
-- [Tutorial for iOS Developers](./iOS-Tutorial.md)
-- [Tutorial for Android Developers](./Android-Tutorial.md)
+- [Mobile Authentication Overview](Readme.md)
+- [Tutorial for iOS Developers](iOS-Tutorial.md)
+- [Tutorial for Android Developers](Android-Tutorial.md)

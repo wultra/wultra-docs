@@ -4,17 +4,17 @@
 
 In this tutorial, we will show you how to implement authentication into your mobile banking or fintech app on iOS. This tutorial has four parts:
 
-- [Mobile Authentication Overview](./)
-- [Tutorial for Server Side Developers](./Server-Side-Tutorial.md)
+- [Mobile Authentication Overview](Readme.md)
+- [Tutorial for Server Side Developers](Server-Side-Tutorial.md)
 - **Tutorial for iOS Developers**
-- [Tutorial for Android Developers](./Android-Tutorial.md)
+- [Tutorial for Android Developers](Android-Tutorial.md)
 
 ## Prerequisites
 
 This tutorial assumes, that you have:
 
-- Read and understood the [Mobile Authentication Overview](./)
-- [Required back-end infrastructure up and running](./Server-Side-Tutorial.md).
+- Read and understood the [Mobile Authentication Overview](Readme.md)
+- [Required back-end infrastructure up and running](Server-Side-Tutorial.md).
 - Xcode 11.4+ with the Developer Tools installed
 
 ## Introduction
@@ -347,6 +347,6 @@ You can find more details about the iOS SDK in our reference documentation:
 
 Proceed with one of the following chapters:
 
-- [Mobile Authentication Overview](./)
-- [Tutorial for Server Side Developers](./Server-Side-Tutorial.md)
-- [Tutorial for Android Developers](./Android-Tutorial.md)
+- [Mobile Authentication Overview](Readme.md)
+- [Tutorial for Server Side Developers](Server-Side-Tutorial.md)
+- [Tutorial for Android Developers](Android-Tutorial.md)
