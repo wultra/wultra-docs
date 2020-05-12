@@ -246,8 +246,10 @@ We have covered this use-case earlier to frame the new activation flow. However,
 
 In case you check the activation status and the result is anything else than `.active`, you should cancel the transaction signing flow and redirect the user to the appropriate alternate flow, such as new activation wizard, unblocking tutorial, etc.
 
-For the `.active` status, you should check if the number of failed attemtps is greater than zero and show the UI for the number of remainin attempts in such case. The outline of the logic is the following:
+For the `.active` status, you should check if the number of failed attempts is greater than zero and show the UI for the number of remaining attempts in such case. The outline of the logic is the following:
 
+{% codetabs %}
+{% codetab Swift %}
 ```swift
 // Check if there is some activation data on the device
 if PowerAuthSDK.sharedInstance().hasValidActivation() {
@@ -278,6 +280,8 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
     self.presentNewActivationUi()
 }
 ```
+{% endcodetab %}
+{% endcodetabs %}
 
 ### Determining the Biometry Status
 
