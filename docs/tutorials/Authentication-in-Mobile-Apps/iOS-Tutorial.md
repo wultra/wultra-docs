@@ -415,6 +415,10 @@ In case the HTTP status is `401` or `403`, it means that the transaction signing
 
 In case the HTTP status is `200`, it means that the transaction signing was successful. You can retrieve any data that you need from the response and close the PIN keyboard (ideally, with some nice victory animation:)).
 
+The complete flow overview is captured in the following image:
+
+![ Authentication flow ](./07.png)
+
 ## Resources
 
 You can find more details about the iOS SDK in our reference documentation:
