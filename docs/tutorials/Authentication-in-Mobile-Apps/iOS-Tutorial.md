@@ -285,7 +285,7 @@ The following picture shows an anatomy of a well-designed PIN keyboard:
 
 ![ Anatomy of a PIN keyboard ](./06.png)
 
-Another thing to consider is the user flow - the overview is captured in the following image:
+Another thing to consider is the high-level user flow. The overview of the flow stages is captured in the following image:
 
 ![ Authentication flow ](./07.png)
 
