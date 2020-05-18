@@ -2,7 +2,9 @@
 
 <!-- AUTHOR joshis_tweets 2020-05-04T00:00:00Z -->
 
-In this tutorial, we will show you how to implement authentication into your mobile banking or fintech app on iOS. This tutorial has four parts:
+In this tutorial, we will show you how to implement authentication into your mobile banking or fintech app on iOS.
+
+This tutorial has four parts:
 
 - [Mobile Authentication Overview](Readme.md)
 - [Tutorial for Server Side Developers](Server-Side-Tutorial.md)
@@ -19,7 +21,11 @@ This tutorial assumes, that you have:
 
 ## Introduction
 
-**/// TBD:**
+When implementing the authentication flow on mobile, your task consists of building two major use-cases outlined in the [introductory overview documentation](Readme.md): device activation and transaction signing. Of course, you will need to also implement several auxiliary use-cases but these will become simple once you have device activation and transaction signing use-cases in place.
+
+Our Mobile Security Suite SDK will help you with the above-mentioned use-cases. Since the underlying authentication protocol is called PowerAuth, the Mobile Security Suite SDK technical components inherit this naming: the SDK is called the **PowerAuth SDK**.
+
+During the device activation flow, the SDK communicates with the public enrollment services. During the transaction signing, the SDK communicates with the server that publishes protected resources. The mobile app never communicates with the PowerAuth Server interface since this component is hidden deep in the secure infrastructure. See the component description in the [introductory overview documentation](Readme.md).
 
 ## Getting the SDK
 
@@ -66,11 +72,6 @@ Finally, you can import PowerAuth SDK in any file where you need it:
 {% codetab Swift %}
 ```swift
 import PowerAuth2
-```
-{% endcodetab %}
-{% codetab Objective-C %}
-```objc
-@import PowerAuth2;
 ```
 {% endcodetab %}
 {% endcodetabs %}
