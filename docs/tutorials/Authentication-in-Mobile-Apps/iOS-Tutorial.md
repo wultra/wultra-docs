@@ -241,7 +241,7 @@ Here is an example mockup of the screens that need to be implemented:
 
 ### Committing the Activation
 
-After you successfully perform the steps for creating the activation, you can prompt the user to enter the new PIN code / password and allow an opt-in for the biometric authentication (of course, [only in the case the device supports biometry](https://github.com/wultra/powerauth-mobile-sdk/blob/develop/docs/PowerAuth-SDK-for-iOS#biometry-setup)).
+After you successfully perform the steps for creating the activation, you can prompt the user to enter the new PIN code / password and allow an opt-in for the biometric authentication (of course, [only in the case the device supports biometry](https://github.com/wultra/powerauth-mobile-sdk/blob/develop/docs/PowerAuth-SDK-for-iOS.md#biometry-setup)).
 
 You can now easily commit the newly created activation using the requested authentication factors:
 
