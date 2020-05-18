@@ -285,6 +285,14 @@ The following picture shows an anatomy of a well-designed PIN keyboard:
 
 ![ Anatomy of a PIN keyboard ](./06.png)
 
+Another thing to consider is the user flow - the overview is captured in the following image:
+
+![ Authentication flow ](./07.png)
+
+You can read more information about the authentication flow in the chapters below.
+
+### Configuring the Unified PIN Keyboard
+
 To cover the typical PIN code use-cases efficiently, the PIN keyboard should be configurable with at least the following attributes:
 
 - **The URI** - Basically the URI address that will be used for sending the signed request to using a HTTP client of your choice.
@@ -295,7 +303,7 @@ To cover the typical PIN code use-cases efficiently, the PIN keyboard should be 
 
 ### Checking the Activation Status
 
-We have covered this use-case earlier to frame the new activation flow. However, you should also check for the activation status before every attempt to use the transaction signing, since the activation might have been blocked or removed on the server side.
+We covered a similar use-case earlier in the context of the new activation flow. However, you should also check for the activation status before every attempt to use the transaction signing, since the activation might have been blocked or removed on the server side.
 
 In case you check the activation status and the result is anything else than `.active`, you should cancel the transaction signing flow and redirect the user to the appropriate alternate flow, such as new activation wizard, unblocking tutorial, etc.
 
@@ -415,9 +423,6 @@ In case the HTTP status is `401` or `403`, it means that the transaction signing
 
 In case the HTTP status is `200`, it means that the transaction signing was successful. You can retrieve any data that you need from the response and close the PIN keyboard (ideally, with some nice victory animation:)).
 
-The complete flow overview is captured in the following image:
-
-![ Authentication flow ](./07.png)
 
 ## Resources
 
