@@ -132,11 +132,13 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
             self.presentUi(with: status)
         } else {
             // Network error occurred, report it to the user.
+            self.presentNetworkError()
         }
     }
 } else {
     // No activation is present on device.
     // Show the UI for a new activation.
+    self.presentNewActivationUi()
 }
 ```
 {% endcodetab %}
