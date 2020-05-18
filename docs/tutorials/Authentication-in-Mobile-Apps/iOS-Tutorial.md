@@ -409,7 +409,7 @@ func signWith(authentication: PowerAuthAuthentication) -> URLSessionDataTask? {
 
 You can hook the `signWithBiometry` method to the button for the biometric authentication and the `signWithPinCode` method to the PIN keyboard (for example, to be triggered when sufficiently long PIN code is entered by the user).
 
-Note that the method returns an `URLSessionDataTask` instance, or a `nil` value in case there is an invalid state. In case the `URLSessionDataTask` is launched, you should wait for it to complete and check the HTTP status.
+Note that the method in our example returns an `URLSessionDataTask` instance (of course, this could be any networking abstraction you use in your project), or a `nil` value in case there is an invalid state. In case the `URLSessionDataTask` is launched, you should wait for it to complete and check the HTTP status.
 
 In case the HTTP status is `401` or `403`, it means that the transaction signing failed and in such case, you can simply restart the loop of checking the activation status, displaying the failure count, etc.
 
