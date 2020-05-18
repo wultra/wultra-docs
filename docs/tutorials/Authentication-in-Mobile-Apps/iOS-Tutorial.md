@@ -56,7 +56,7 @@ end
 
 _Note: You need to disable bitcode for PowerAuth SDK to work._
 
-After you change the Podfile, run the install command:
+After you made the necessary changes in the Podfile, you can run the install command:
 
 {% codetabs %}
 {% codetab Shell %}
@@ -83,10 +83,11 @@ To configure your `PowerAuthSDK` instance, you need the following values from th
 - `APP_KEY` - Application key that binds an activation with a specific application.
 - `APP_SECRET` - Application secret that binds an activation with a specific application.
 - `KEY_MASTER_SERVER_PUBLIC` - Master Server Public Key used for non-personalized encryption and server signature verification.
+- `BASE_ENDPOINT_URL` - The location of your [PowerAuth Standard RESTful API](https://github.com/wultra/powerauth-crypto/blob/develop/docs/Standard-RESTful-API.md) endpoints. The path should contain everything that goes before the `/pa/**` prefix of the API endpoints.
 
-Finally, you need to know the location of your [PowerAuth Standard RESTful API](https://github.com/wultra/powerauth-crypto/blob/develop/docs/Standard-RESTful-API.md) endpoints. That path should contain everything that goes before the `/pa/**` prefix of the API endpoints.
+All these values should be provided to you by your [server-side team](Server-Side-Tutorial.md) who configured the back-end infrastructure.
 
-This is how the example `PowerAuthSDK` configuration looks like:
+Use the provided values to configure the `PowerAuthSDK` instance:
 
 {% codetabs %}
 {% codetab Swift %}
@@ -109,6 +110,8 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 ```
 {% endcodetab %}
 {% endcodetabs %}
+
+_Note: In case you use a development infrastructure with self-signed certificates, make sure to set `PA2ClientSslNoValidationStrategy` to the shared SDK instance and check the transport security configuration in your `Info.plist` file._
 
 ## Checking the Activation Status
 
@@ -150,15 +153,15 @@ Here is an example mockup of the screens that need to be implemented:
 In the case no activation is present on the iOS device, you can guide the user through the steps to create it. Each activation has two major flows on the mobile device:
 
 - **Creating the Activation** - Exchanging the user's identity proof with the server for the cryptographic activation data.
-- **Committing the Activation** - Storing the cryptographic activation data on the device using the user's local credentials.
+- **Committing the Activation** - Storing the cryptographic activation data on the device using the user's local credentials. Note that thanks to this step, the user credentials, such as PIN code or biometric information, never leave the mobile device and are only used locally, to obtain cryptographic data required for the transaction signing.
 
 ### Creating the Activation
 
-The first step of a new activation process is exchanging the identity proof for the cryptographic activation data.
+In the first step of a new activation process, you need to exchange the user's proof of identity for the cryptographic activation data. There are several ways to accomplish this.
 
 #### Using Activation Code
 
-The easiest way to create the activation is using the PowerAuth activation code:
+The easiest way to create an activation is using the PowerAuth activation code:
 
 {% codetabs %}
 {% codetab Swift %}
@@ -184,7 +187,7 @@ PowerAuthSDK.sharedInstance().createActivation(activation) { (result, error) in
 {% endcodetab %}
 {% endcodetabs %}
 
-_Note: You can let the user scan the activation code from a QR code._
+_Note: You can let the user scan the activation code from a QR code, to make the process faster and improve the user convenience._
 
 ##### Mockups
 
@@ -194,7 +197,9 @@ Here is an example mockup of the screens that need to be implemented:
 
 #### Using Custom Credentials
 
-In case you would like to use some other credentials your server supports, you can do so easily:
+Alternatively, you can use some other credentials your server supports to create a new activation. You always need to spend some thought about which credentials you should use. You do not want to use credentials that are too weak. **The authentication proof resulting from transaction signing is only as strong as the credentials that were used during the activation flow.**
+
+However, once you have the credentials that are sufficiently strong, you can create an activation easily:
 
 {% codetabs %}
 {% codetab Swift %}
@@ -234,7 +239,9 @@ Here is an example mockup of the screens that need to be implemented:
 
 ### Committing the Activation
 
-After you successfully perform the steps for creating the activation, you can prompt the user to enter the new PIN code / password, allow an opt-in for the biometric authentication. After that, you can easily commit the newly created activation using the requested authentication factors:
+After you successfully perform the steps for creating the activation, you can prompt the user to enter the new PIN code / password and allow an opt-in for the biometric authentication (of course, [only in the case the device supports biometry](https://github.com/wultra/powerauth-mobile-sdk/blob/develop/docs/PowerAuth-SDK-for-iOS#biometry-setup)).
+
+You can now easily commit the newly created activation using the requested authentication factors:
 
 {% codetabs %}
 {% codetab Swift %}
@@ -242,7 +249,7 @@ After you successfully perform the steps for creating the activation, you can pr
 do {
     let auth = PowerAuthAuthentication()
     auth.usePossession = true
-    auth.usePassword   = "1234" // user PIN code
+    auth.usePassword   = "1234" // user's PIN code
     auth.useBiometry   = true
 
     try PowerAuthSDK.sharedInstance().commitActivation(with: auth)
@@ -254,33 +261,39 @@ do {
 {% endcodetab %}
 {% endcodetabs %}
 
-In most cases, the `usePossession` is set to `true` and `usePassword` to the value of the PIN or password user selected. The `useBiometry` value should be set to `true` in the case user decided to opt-in for biometric authentication, to `false` otherwise.
+In most cases, the `usePossession` is set to `true` and `usePassword` to the value of the PIN or password user selected. The `useBiometry` value should be set to `true` in the case user decided to opt-in for biometric authentication, and to `false` otherwise.
 
 ## Transaction Signing
 
-In case you have successfully activated the device, you can use the new activation for future request signing.
+In case you successfully activated the device, you can use the new activation for transaction signing. This is achieved by signing the full request data.
+
+Transaction signing requires an absolute precision. Every single bit makes a huge difference just one step further in the transaction signing. Be patient and do not worry in case transaction signing does not work for you for the first time. In case you are having any issues, do not hesitate to ask our engineers for help.
 
 ### User Experience Perspective
 
-To make the user experience consistent, we recommend making a solid UI abstraction on top of the transaction signing logic. This usually means implementing the transaction signing logic inside a unified PIN keyboard. Such keybord would than handle the typical use-cases people expect to see when working with PIN keyboards, such as:
+To make the user experience consistent, we recommend making a solid UI abstraction on top of the transaction signing logic. This usually means implementing the transaction signing logic inside a unified PIN keyboard. Such keyboard would then handle the typical use-cases people expect to see when working with PIN keyboards, such as:
 
 - Entering a PIN code for the purpose of transaction signing.
-- Alowing to use biometry as a faster alternative to PIN code.
-- Checking the number of remaining attempts.
+- Allowing to use biometry as a faster alternative to the PIN code.
+- Checking the number of remaining authentication attempts.
 - Showing the transaction signing progress.
-- Error reporting, activation status handling, etc.
+- Error reporting, invalid activation status handling, etc.
 
-To cover these use-cases efficiently, the PIN keyboard should be configurable with at least the following attributes:
+The following picture shows an anatomy of a well-designed PIN keyboard:
 
-- **The URI** - Basically the address that will be used for sending the signed request to.
-- **The URI ID** - ***Be very careful here!*** In the examples below, we use a value of `uriId` for this value. While it is is remarkably similar to the end of an actual URI (we use `uri` in the example), this value is in fact an arbitrarily chosen constant that the client and server must agree on beforehand for a particular server-side operation represented. You need to ask your server developer for the value.
-- **The HTTP request body** - This is basically the data that will be signed.
-- **The HTTP medhod** - (Optional) The HTTP method to be used for the call. For the most cases, the calls should be made via the `POST` value and hence the "POST" value should be the default.
-- **The HTTP headers** - (Optional) Value of all other HTTP headers you need to use when calling your service.
+![ Anatomy of a PIN keyboard ](./06.png)
+
+To cover the typical PIN code use-cases efficiently, the PIN keyboard should be configurable with at least the following attributes:
+
+- **The URI** - Basically the URI address that will be used for sending the signed request to using a HTTP client of your choice.
+- **The URI ID** - *Be very careful here!* In the examples below, we use a value of `uriId` for this value. While it is remarkably similar to the end of an actual URI (we use `uri` variable in the example), this value is in fact an arbitrarily chosen constant that the client and server must agree on beforehand for a particular server-side operation represented. You need to ask your server developer for the exact value.
+- **The HTTP request data** - This is basically the data that will be signed. For the `POST` requests (that are the most common in the case of transaction signing), this value represents simply the HTTP request body bytes.
+- **The HTTP method** - (Optional) The HTTP method to be used for the call. For the most cases, the calls should be made via the `POST` value and hence the `POST` value should be the default.
+- **The HTTP headers** - (Optional) Value of any other HTTP headers you need to use when calling your service.
 
 ### Checking the Activation Status
 
-We have covered this use-case earlier to frame the new activation flow. However, you should also check for the activation status before every attempt to use the trasnaction signing, since the activation might have been blocked or removed on the server side.
+We have covered this use-case earlier to frame the new activation flow. However, you should also check for the activation status before every attempt to use the transaction signing, since the activation might have been blocked or removed on the server side.
 
 In case you check the activation status and the result is anything else than `.active`, you should cancel the transaction signing flow and redirect the user to the appropriate alternate flow, such as new activation wizard, unblocking tutorial, etc.
 
