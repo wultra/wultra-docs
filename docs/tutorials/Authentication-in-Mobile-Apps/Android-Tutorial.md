@@ -145,7 +145,7 @@ The easiest way to create an activation is using the PowerAuth activation code t
 
 {% codetabs %}
 {% codetab Java %}
-```Java
+```java
 String deviceName = "Petr's Leagoo T5C";
 String activationCode = "VVVVV-VVVVV-VVVVV-VTFVA";
 
@@ -234,7 +234,11 @@ Here is an example mockup of the screens that need to be implemented:
 
 After you successfully perform the steps for creating the activation, you can prompt the user to enter the new local PIN code / password and allow an opt-in for the biometric authentication (of course, [only in the case the device supports biometry](https://github.com/wultra/powerauth-mobile-sdk/blob/develop/docs/PowerAuth-SDK-for-Android.md#biometric-authentication-setup)).
 
-You can now commit the newly created activation with the requested authentication factors. In the case user decided to opt-in for the biometry, use the following code:
+You can now commit the newly created activation with the requested authentication factors.
+
+#### Committing With Biometry
+
+In the case user decided to opt-in for the biometry, use the following code:
 
 {% codetabs %}
 {% codetab Java %}
@@ -261,6 +265,8 @@ powerAuthSDK.commitActivation(context, fragmentManager, "Enable Biometric Authen
 {% endcodetabs %}
 
 Note that we automatically handle the selection of the appropriate biometric approach. We use [Unified biometric authentication dialog](https://developer.android.com/about/versions/pie/android-9.0#biometric-auth) if available and we fall-back to the fingerprint authentication on older devices or devices that are known to have issues with the newer biometry approaches.
+
+#### Committing Without Biometry
 
 In the case user decided to decline biometry or in the case biometry is not available on the device, you can use this simpler call:
 
@@ -316,9 +322,9 @@ To cover the typical use-cases efficiently, the unified PIN keyboard should be c
 
 We covered a similar use-case earlier in the context of the new activation flow. However, you should also check for the activation status before every attempt to use the transaction signing since the activation might have been blocked or removed on the server side.
 
-In case you check the activation status and the result is anything else than `.active`, you should cancel the transaction signing flow and redirect the user to the appropriate alternate flow, such as a new activation wizard, unblocking tutorial, etc.
+In case you check the activation status and the result is anything else than `State_Active`, you should cancel the transaction signing flow and redirect the user to the appropriate alternate flow, such as a new activation wizard, unblocking tutorial, etc.
 
-For the `.active` status, you should check if the number of failed attempts is greater than zero and show the UI for the number of remaining attempts in such case. The outline of the logic is the following:
+For the `State_Active` status, you should check if the number of failed attempts is greater than zero and show the UI for the number of remaining attempts in such case. The outline of the logic is the following:
 
 {% codetabs %}
 {% codetab Java %}
@@ -449,6 +455,8 @@ public void signWithAuthentication(PowerAuthAuthentication auth, IMyAuthListener
                 listener.authenticationSuccess(headers, responseBody);
             } else if (statusCode == 401 || statusCode == 403) {
                 listener.authenticationFailed(Reason.UNAUTHORIZED);
+            } else {
+                listener.authenticationFailed(Reason.OTHER);
             }
         }
 
