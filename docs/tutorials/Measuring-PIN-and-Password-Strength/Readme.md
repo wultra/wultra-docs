@@ -102,7 +102,7 @@ You can evaluate any password. The result of such operation is a strength of the
 - **Good**
 - **Strong**
 
-### Testing the PIN strength
+### Testing the PIN Strength
 
 The PIN code testing is slightly different from the password testing. The result of a PIN code strength test is a list of findings, that you can use to evaluate the PIN code strength, rather than a strength itself.
 
