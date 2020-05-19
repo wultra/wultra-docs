@@ -44,9 +44,10 @@ Password strength checking should be done "on-the-go" after each modification of
 {% codetabs %}
 {% codetab Android %}
 
+
 To get Wultra Passphrase Meter for Android up and running in your app, add following dependency in your `gradle.build` file:
 
-```rb
+```ruby
 repositories {
     jcenter() // if not defined elsewhere...
 }
@@ -59,7 +60,8 @@ dependencies {
 {% endcodetab %}
 {% codetab iOS %}
 
-iOS integration is done via Cocoapods. Simply add the following lines to your podfile `Podfile`:
+
+iOS integration is done via Cocoapods. Simply add the following lines to your `Podfile`:
 
 ```rb
 pod 'WultraPassphraseMeter'
