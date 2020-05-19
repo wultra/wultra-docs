@@ -53,7 +53,7 @@ repositories {
 
 dependencies {
     implementation "com.wultra.android.passphrasemeter:passphrasemeter-core:1.0.0"
-    implementation "com.wultra.android.passphrasemeter:passphrasemeter-dictionary-en:1.0.0" # For english speaking people
+    implementation "com.wultra.android.passphrasemeter:passphrasemeter-dictionary-en:1.0.0" // For english speaking people
 }
 ```
 {% endcodetab %}
