@@ -1,41 +1,28 @@
-# Measuring PIN and password strength
+# Measuring PIN and Password Strength
 
 <!-- AUTHOR realKober 2020-05-18T00:00:00Z -->
 
-_*on Android and iOS_
+Selecting a weak PIN code or an easy-to-guess password is one of the most common issues of modern mobile authentication. According to the [research by DataGenetics](https://www.datagenetics.com/blog/september32012/), over 10% of users simply chose "1234" as a PIN code in the case the system allows it.  
 
-Password strength testers did become a common part of the modern application as defenders against attacks via social engineering and brute-force password cracking.
+To tackle this issue, the password strength testers became a common part of the modern application. This tutorial will show you how to easily add a password and PIN strength meter feature to your Android or iOS app.
 
-This tutorial will show you how to easily add a password and PIN strength meter feature to your Android or iOS app.
+Wultra Passphrase Meter is available as an [open-source project](https://github.com/wultra/passphrase-meter#docucheck-keep-link). Part of the repository is an [iOS](https://github.com/wultra/passphrase-meter/blob/develop/docs/Platform-iOS.md#example-project#docucheck-keep-link) and [Android](https://github.com/wultra/passphrase-meter/blob/develop/docs/Platform-Android.md#example-project#docucheck-keep-link) demo app that you can try.
 
-> Wultra Passphrase Meter is available as [Open Source project](https://github.com/wultra/passphrase-meter#docucheck-keep-link). Part of the repository is an [iOS](https://github.com/wultra/passphrase-meter/blob/develop/docs/Platform-iOS.md#example-project#docucheck-keep-link) and [Android](https://github.com/wultra/passphrase-meter/blob/develop/docs/Platform-Android.md#example-project#docucheck-keep-link) test application that you can try.
+## UX Perspective
 
-## UX of a passphrase strength check
+Imagine that in your otherwise a very nice and polished application, you will force the users to type a complex password: at least 12 characters long, must contain at least one uppercase character, one digit, and two special symbols for each authentication or authorization attempt. This way, you can be sure that your users will use strong passwords. However, you can also expect bad ratings at the official stores or people not using your application at all.
 
-Imagine, that in your, otherwise very nice and polished application, you'll force users to type the password, which is at least 12 characters long, must contain at least one uppercase character, one digit, and two special symbols for each authentication or authorization attempt. If yes, then cool, you can be pretty sure that your users use strong passwords, but everybody hates that. So, you can expect bad ratings at the official stores or people do not use your application at all.
+Striking the right balance between security and the password type (PIN vs. password) and password complexity (4 vs. 6 digit long PIN, password length) is important. You should always spend some time thinking about this issue.
 
-Before you use this library, you should consider our recommendations and tips:
+## User Interface of the PIN Strength Check
 
-1. Your application's security should not depend on this library only. For example, if you're storing passwords in plaintext on the device, then a proper password strength validation doesn't solve your security flaws.
-
-2. You should always consider what kind of attacks are feasible against your application. For example:
-
-  - If passphrase protects user's data stored locally on the device, then you should enforce a strong password, as possible. The reason for that is that if an attacker has the mobile device in the possession, then he can perform an offline brute force attack against the data.
-  - On the opposite to that, if a password or PIN is used to authenticate against an online service, with a limited number of failed attempts, then you can lower your requirements for a password.
-
-3. Your application should allow the user to set a weak password if he insists on it. It's a good UX practice unless you protect locally stored data.
-
-4. Let the user decide the password complexity he wants to use.
-
-## UI of the PIN strength check
-
-The checking of the PIN strength should happen after the user chose the whole PIN. In case that the PIN is weak, a user should be notified by "disruptive" UI with a choice if he wants to continue with such PIN or chose a different one.
+You should check the PIN code strength after a user choses the whole PIN code value. In case that the selected PIN code is weak, a user should be notified by a "disruptive" UI and offered a choice to either continue with a weak PIN code, or to select a different one.
 
 ![ PIN check ](./01.gif)
 
-## UI of the password strength check
+## User Interface of the Password Strength Check
 
-Password strength checking should be done "on-the-go" after each modification of the password and the result should be served to the user in textual or other graphical formats.
+Password strength checking should be done "on-the-go", after each modification of the password and the evaluation result should be presented to the user in a textual or other graphical format.
 
 ![ PIN check ](./02.gif)
 
@@ -66,17 +53,16 @@ pod 'WultraPassphraseMeter'
 pod 'WultraPassphraseMeter/Dictionary_en' # for english dictionary
 ```
 
-_For more detailed instructions on how to install the library follow [the installation guide inside the project documentation](https://github.com/wultra/passphrase-meter/blob/develop/docs/Platform-iOS.md#installation)._
+_Note: For more detailed instructions on how to install the library, follow [the installation guide in the project documentation](https://github.com/wultra/passphrase-meter/blob/develop/docs/Platform-iOS.md#installation)._
 {% endcodetab %}
 {% endcodetabs %}
 
-### Testing the password strength
+### Testing the Password Strength
 
-In order to test the password strength, use following code:
+In order to test the password strength, use the following code:
 
 {% codetabs %}
 {% codetab Kotlin %}
-
 ```kotlin
 import com.wultra.android.passphrasemeter.*
 import com.wultra.android.passphrasemeter.exceptions.*
@@ -95,7 +81,6 @@ try {
 ```
 {% endcodetab %}
 {% codetab Swift %}
-
 ```swift
 import WultraPassphraseMeter
 
@@ -119,11 +104,12 @@ You can evaluate any password. The result of such operation is a strength of the
 
 ### Testing the PIN strength
 
-The PIN testing is slightly different to password testing because the result of such test is a list of findings. Look for this example:
+The PIN code testing is slightly different from the password testing. The result of a PIN code strength test is a list of findings, that you can use to evaluate the PIN code strength, rather than a strength itself.
+
+Here is an example code of such evaluation:
 
 {% codetabs %}
 {% codetab Kotlin %}
-
 ```kotlin
 import com.wultra.android.passphrasemeter.*
 import com.wultra.android.passphrasemeter.exceptions.*
@@ -132,21 +118,22 @@ try {
     val passcode = "1456"
     val result = PasswordTester.getInstance().testPin(passcode)
     var warnUser = false
+
     if (result.isNotEmpty()) {
-        if (pin.length <= 4) {
+        if (passcode.length <= 4) {
             warnUser = result.contains(PinTestResult.FREQUENTLY_USED) || result.contains(PinTestResult.NOT_UNIQUE)
-        } else if (pin.length <= 6) {
+        } else if (passcode.length <= 6) {
             warnUser = result.contains(PinTestResult.FREQUENTLY_USED) || result.contains(PinTestResult.NOT_UNIQUE) || result.contains(PinTestResult.REPEATING_CHARACTERS)
         } else {
             warnUser = result.contains(PinTestResult.FREQUENTLY_USED) || result.contains(PinTestResult.NOT_UNIQUE) || result.contains(PinTestResult.REPEATING_CHARACTERS) || result.contains(PinTestResult.HAS_PATTERN)
-        } 
-        
-        if (warnUser) {
-            Log.d("Strength", "This PIN is WEAK. Use different one")
         }
-		
+
+        if (warnUser) {
+            Log.d("Strength", "This PIN is WEAK. Use a different one.")
+        }
+
     } else {
-        Log.d("Strength", "PIN ok")
+        Log.d("Strength", "This PIN is OK.")
     }
 } catch (e: WrongPinException) {
     // PIN format error
@@ -154,15 +141,11 @@ try {
 ```
 {% endcodetab %}
 {% codetab Swift %}
-
 ```swift
 import WultraPassphraseMeter
 
 let passcode = "1456"
 let result = PasswordTester.shared.testPin(passcode)
-            
-// We want different classification for different pin length
-// to not eliminate too many pins (to keep good pins around 95%)
 
 if passcode.count <= 4 {
     if result.contains(.frequentlyUsed) || result.contains(.notUnique) {
@@ -171,7 +154,7 @@ if passcode.count <= 4 {
 } else if passcode.count <= 6 {
     if result.contains(.frequentlyUsed) || result.contains(.notUnique) || result.contains(.repeatingCharacters) {
         print("This PIN is WEAK. Use different one.")
-    } 
+    }
 } else {
     if result.contains(.frequentlyUsed) || result.contains(.notUnique) || result.contains(.repeatingCharacters) || result.contains(.patternFound) {
         print("This PIN is WEAK. Use different one.")
@@ -183,33 +166,29 @@ if passcode.count <= 4 {
 
 You can evaluate any PIN. The result of the testing is a collection of issues that were found in PIN. This issues can be:
 
-- **Not Unique** - the passcode doesn't have enough unique digits.
-- **Repeating Digits** - there is a significant amount of repeating digits in the passcode.
-- **Has Pattern** - repeating pattern was found in the passcode - 1357 for example.
-- **Possibly Date** - this passcode can be a date and possibly the birthday of the user.
-- **Frequently Used** - the passcode is in the list of most used passcodes.
-- **Wrong Input** - wrong input - the passcode must contain digits only.
+- **Not Unique** - The passcode doesn't have enough unique digits.
+- **Repeating Digits** - There is a significant amount of repeating digits in the passcode.
+- **Has Pattern** - Well-known pattern was found in the passcode - 1357 for example.
+- **Possibly Date** - This passcode can be a date, such as the birthday of the user.
+- **Frequently Used** - The passcode is in the list of the most frequently used passcodes.
+- **Wrong Input** - Wrong input - the passcode must contain digits only.
 
-#### Asynchonous usage
+#### Asynchronous Usage
 
-Password and PIN strength checking might be heavy on the CPU in some cases. To avoid any UI shuttering, it is recommended to avoid calling `testPassword` and `testPin` on the main thread.
+Password and PIN strength checking might be heavy on the CPU in some cases. To avoid any UI shuttering, we recommend to avoid calling `testPassword` and `testPin` on the main thread.
 
 {% codetabs %}
 {% codetab Kotlin %}
-
 ```kotlin
 import android.support.annotation.WorkerThread
 
 @WorkerThread
-private fun processPasssword(password: String) {
-	.
-	.
-	.
+private fun processPassword(password: String) {
+	// ...
 }
 ```
 {% endcodetab %}
 {% codetab Swift %}
-
 ```swift
 import WultraPassphraseMeter
 
@@ -219,11 +198,11 @@ private var queue: OperationQueue =  {
     q.maxConcurrentOperationCount = 1
     return q
 }()
-.
-.
-.
+
+// ...
+
 func processPassword(_ password	: String) {
-    // if user types too fast, cancel waiting operations and add new one
+    // if the user types too fast, cancel waiting operations and add new one
     queue.cancelAllOperations()
     queue.addOperation {
         let result = PasswordTester.shared.testPassword(password)
@@ -236,4 +215,4 @@ func processPassword(_ password	: String) {
 
 ## Summary
 
-Adding a password or PIN strength feature to your mobile application with Wultra Passphrase Meter is fast, easy, and free. You can improve your user security and UX with no more than a few lines of code.
+Adding a password or a PIN code strength check to your mobile app is fast, easy, and *free!* with the Wultra Passphrase Meter. You can improve your app security and UX with no more than a few lines of code, and we encourage you to give our library a try.
