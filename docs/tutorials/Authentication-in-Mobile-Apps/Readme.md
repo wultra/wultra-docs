@@ -54,17 +54,17 @@ To understand this out-of-band process better, you can look at the activation co
 
 After the user activates the mobile app, it is ready for its main use case: **Transaction signing**.
 
-The transaction signing is technically used for all types of operations - login, payments, configuration changes, etc. In all cases, the user needs to enter a PIN code set during the activation, or use biometry on the mobile device to compute a data signature that is later verified on the server-side.
+The transaction signing is technically used for all types of operations - login, payments, configuration changes, etc. In all cases, the user needs to enter a PIN code set during the activation, or use biometry on the mobile device to compute a data signature. The signature is later verified on the server-side.
 
-In case of the login, the signature is computed just based on that. In the case of the payment (or other similar operation that generally has some data assigned to it), the operation data is also reflected into the resulting signature.
+In the case of the login, the signature is computed only from the authentication factors. In the case of the payment (or other similar operation that generally has some data assigned to it), the both authentication factors and operation data is reflected in the resulting signature.
 
-_Note: The PSD2 legislation uses the term "dynamic linking" for this dependency of the signature on the operation data. It mandates using at least the other party account number and a payment amount as data that enters the signature (in PSD2 terminology, the "Authentication Code")._
+_Note: The PSD2 legislation uses the term "dynamic linking" for this dependency of the signature on the operation data. PSD2 mandates using at least the other party account number and a payment amount as data that enters the signature (in PSD2 terminology, the "Authentication Code"), and the use of at least two authentication factors._
 
-The number of authentication attempts is limited. In the case the signature verification fails, the number of remaining accounts is decremented and in the case there are no more attempts left, the activation is blocked.
+The number of authentication attempts is limited. If the signature verification fails, the number of remaining accounts is decremented. If there are no more attempts left, the activation is blocked.
 
 ### Login
 
-The overview diagram of the transaction signing for login is fairly simple:
+The overview diagram of the transaction signing for login is captured below:
 
 ![ Login ](./02a.png)
 
@@ -72,9 +72,9 @@ The overview diagram of the transaction signing for login is fairly simple:
 
 The overview diagram of the transaction signing for payment approval is not much different from the login diagram:
 
-![ Login ](./02b.png)
+![ Payment approval ](./02b.png)
 
-The main difference is that after the successful signature verification (in this case, the signature depends on the signature data), the payment is sent for the further processing after being approved by a given user.
+The main difference is that after a successful signature verification, the payment is sent for the further processing after being approved by a given user. The invisible difference is that the signature is computed using the payment data.
 
 
 ## Other Use-Cases
@@ -89,7 +89,7 @@ Of course, every authentication and transaction signing system also implements s
 
 Please refer to the detailed documentation for more information about those.
 
-## Resources
+## Other Resources
 
 Of course, you can always find more details in our reference documentation:
 

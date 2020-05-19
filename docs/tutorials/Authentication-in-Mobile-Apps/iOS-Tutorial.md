@@ -21,11 +21,16 @@ This tutorial assumes, that you have:
 
 ## Introduction
 
-When implementing the authentication flow on mobile, your task consists of building two major use-cases outlined in the [introductory overview documentation](Readme.md): device activation and transaction signing. Of course, you will need to also implement several auxiliary use-cases but these will become simple once you have device activation and transaction signing use-cases in place.
+When implementing the authentication flow on mobile, your task consists of building two major use-cases outlined in the [introductory overview documentation](Readme.md):
 
-Our Mobile Security Suite SDK will help you with the above-mentioned use-cases. Since the underlying authentication protocol is called PowerAuth, the Mobile Security Suite SDK technical components inherit this naming: the SDK is called the **PowerAuth SDK**.
+- Device activation
+- Transaction signing
 
-During the device activation flow, the SDK communicates with the public enrollment services. During the transaction signing, the SDK communicates with the server that publishes protected resources. The mobile app never communicates with the PowerAuth Server interface since this component is hidden deep in the secure infrastructure. See the component description in the [introductory overview documentation](Readme.md).
+Of course, you will need to also implement several auxiliary use-cases but these will become simple once you have device activation and transaction signing use-cases in place.
+
+Our [Mobile Security Suite SDK](https://wultra.com/mobile-security-suite) will help you with the above-mentioned use-cases. Since the underlying authentication protocol is called PowerAuth, the Mobile Security Suite SDK technical components inherit this naming. The "Mobile Security Suite SDK" is called the **PowerAuth SDK** on the technical level.
+
+During the device activation flow, the SDK communicates with the public enrollment services. During the transaction signing, the SDK communicates with your server that publishes some protected resources (login, payment approval). The mobile app never communicates with the PowerAuth Server interface since this component is hidden deep in the secure infrastructure. See the component description in the [introductory overview documentation](Readme.md).
 
 ## Getting the SDK
 
@@ -39,7 +44,7 @@ target '<Your Target App>' do
   pod 'PowerAuth2'
 end
 
-# Disable bitcode for iOS targets (also see chapter Disabling bitcode)
+# Disable bitcode for iOS targets
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     if target.platform_name == :ios
@@ -152,10 +157,10 @@ Here is an example mockup of the screens that need to be implemented:
 
 ## New Activation
 
-In the case no activation is present on the iOS device, you can guide the user through the steps to create it. Each activation has two major flows on the mobile device:
+In the case no usable activation is available on the iOS device, you can guide the user through the steps to create it. Each activation has two major flows on the mobile device:
 
 - **Creating the Activation** - Exchanging the user's identity proof with the server for the cryptographic activation data.
-- **Committing the Activation** - Storing the cryptographic activation data on the device using the user's local credentials. Note that thanks to this step, the user credentials, such as PIN code or biometric information, never leave the mobile device and are only used locally, to obtain cryptographic data required for the transaction signing.
+- **Committing the Activation** - Storing the cryptographic activation data on the device using the user's local credentials. _Note: Thanks to this step, the user credentials, such as PIN code or biometric information, never leave the mobile device and are only used locally, to obtain cryptographic data required during the transaction signing._
 
 ### Creating the Activation
 
@@ -163,7 +168,7 @@ In the first step of a new activation process, you need to exchange the user's p
 
 #### Using Activation Code
 
-The easiest way to create an activation is using the PowerAuth activation code:
+The easiest way to create an activation is using the PowerAuth activation code that you will obtain from the back-end part (for example, via a QR code shown in the Internet banking):
 
 {% codetabs %}
 {% codetab Swift %}
@@ -189,7 +194,7 @@ PowerAuthSDK.sharedInstance().createActivation(activation) { (result, error) in
 {% endcodetab %}
 {% endcodetabs %}
 
-_Note: You can let the user scan the activation code from a QR code, to make the process faster and improve the user convenience._
+_Note: You can let the user scan the activation code from a QR code, to make the process faster and improve the user convenience, but you should also allow the manual entry as a backup._
 
 ##### Mockups
 
@@ -241,9 +246,9 @@ Here is an example mockup of the screens that need to be implemented:
 
 ### Committing the Activation
 
-After you successfully perform the steps for creating the activation, you can prompt the user to enter the new PIN code / password and allow an opt-in for the biometric authentication (of course, [only in the case the device supports biometry](https://github.com/wultra/powerauth-mobile-sdk/blob/develop/docs/PowerAuth-SDK-for-iOS.md#biometry-setup)).
+After you successfully perform the steps for creating the activation, you can prompt the user to enter the new local PIN code / password and allow an opt-in for the biometric authentication (of course, [only in the case the device supports biometry](https://github.com/wultra/powerauth-mobile-sdk/blob/develop/docs/PowerAuth-SDK-for-iOS.md#biometry-setup)).
 
-You can now easily commit the newly created activation using the requested authentication factors:
+You can now commit the newly created activation with the requested authentication factors:
 
 {% codetabs %}
 {% codetab Swift %}
@@ -267,13 +272,13 @@ In most cases, the `usePossession` is set to `true` and `usePassword` to the val
 
 ## Transaction Signing
 
-In case you successfully activated the device, you can use the new activation for transaction signing. This is achieved by signing the full request data.
+In case you successfully activated the device, you can use the new activation for transaction signing. This is achieved by signing the full request data. In case of the HTTP request with a body (`POST`, `PUT`, `DELETE`), the HTTP request body is used. In case of the `GET` request, the SDK builds canonical data from the URL query parameters.
 
-Transaction signing requires an absolute precision. Every single bit makes a huge difference just one step further in the transaction signing. Be patient and do not worry in case transaction signing does not work for you for the first time. In case you are having any issues, do not hesitate to ask our engineers for help.
+The transaction signing requires an absolute precision. Every single bit makes a huge difference just one step further in the process. Be patient and do not worry if transaction signing doesn't work the first time you try. In case you are having issues, do not hesitate to ask our engineers for help.
 
 ### User Experience Perspective
 
-To make the user experience consistent, we recommend making a solid UI abstraction on top of the transaction signing logic. This usually means implementing the transaction signing logic inside a unified PIN keyboard. Such keyboard would then handle the typical use-cases people expect to see when working with PIN keyboards, such as:
+To make the user experience consistent, we recommend making a solid UI abstraction on top of the transaction signing logic. This usually means implementing the transaction signing logic inside a **unified PIN keyboard**. Such keyboard would then handle the typical use-cases people expect to see when working with PIN keyboards, such as:
 
 - Entering a PIN code for the purpose of transaction signing.
 - Allowing to use biometry as a faster alternative to the PIN code.
@@ -285,7 +290,7 @@ The following picture shows an anatomy of a well-designed PIN keyboard:
 
 ![ Anatomy of a PIN keyboard ](./06.png)
 
-Another thing to consider is the high-level user flow. The overview of the flow stages is captured in the following image:
+Another thing to consider is the high-level user flow. The overview of the flow stages is captured in the following diagram:
 
 ![ Authentication flow ](./07.png)
 
@@ -293,19 +298,19 @@ You can read more information about the authentication flow in the chapters belo
 
 ### Configuring the Unified PIN Keyboard
 
-To cover the typical PIN code use-cases efficiently, the PIN keyboard should be configurable with at least the following attributes:
+To cover the typical use-cases efficiently, the unified PIN keyboard should be configurable with at least the following attributes:
 
-- **The URI** - Basically the URI address that will be used for sending the signed request to using a HTTP client of your choice.
-- **The URI ID** - *Be very careful here!* In the examples below, we use a value of `uriId` for this value. While it is remarkably similar to the end of an actual URI (we use `uri` variable in the example), this value is in fact an arbitrarily chosen constant that the client and server must agree on beforehand for a particular server-side operation represented. You need to ask your server developer for the exact value.
+- **The URI Address** - Basically the service location that will be called while sending the signed request using an HTTP client of your choice. We use `uri` variable in the example.
+- **The URI ID** - Identifier of the URI / service. **Be very careful here!** In the examples below, we use a value of `uriId` for this value. While it is remarkably similar to the end of an actual URI (`uri`), this value is in fact an arbitrarily chosen constant that the client and server must agree on beforehand for a particular server-side operation represented. You need to ask your server developer for the exact value.
 - **The HTTP request data** - This is basically the data that will be signed. For the `POST` requests (that are the most common in the case of transaction signing), this value represents simply the HTTP request body bytes.
 - **The HTTP method** - (Optional) The HTTP method to be used for the call. For the most cases, the calls should be made via the `POST` value and hence the `POST` value should be the default.
 - **The HTTP headers** - (Optional) Value of any other HTTP headers you need to use when calling your service.
 
 ### Checking the Activation Status
 
-We covered a similar use-case earlier in the context of the new activation flow. However, you should also check for the activation status before every attempt to use the transaction signing, since the activation might have been blocked or removed on the server side.
+We covered a similar use-case earlier in the context of the new activation flow. However, you should also check for the activation status before every attempt to use the transaction signing since the activation might have been blocked or removed on the server side.
 
-In case you check the activation status and the result is anything else than `.active`, you should cancel the transaction signing flow and redirect the user to the appropriate alternate flow, such as new activation wizard, unblocking tutorial, etc.
+In case you check the activation status and the result is anything else than `.active`, you should cancel the transaction signing flow and redirect the user to the appropriate alternate flow, such as a new activation wizard, unblocking tutorial, etc.
 
 For the `.active` status, you should check if the number of failed attempts is greater than zero and show the UI for the number of remaining attempts in such case. The outline of the logic is the following:
 
@@ -327,7 +332,7 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
                 }
                 // ... see determining the biometry status
             } else {
-                // Show the UI relevant to the activaton status.
+                // Show the UI relevant to the activation status.
                 self.presentUi(with: status)
             }
         } else {
@@ -346,7 +351,9 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
 
 ### Determining the Biometry Status
 
-In case the biometry is present and allowed by the user, you should trigger transaction signing using the biometry right away. To check the status of the biometry, you can use the following logic:
+In case the biometry is present and allowed by the user, you should trigger transaction signing using the biometry right away when the unified PIN keyboard is first shown.
+
+To check the status of the biometry, you can use the following logic:
 
 {% codetabs %}
 {% codetab Swift %}
@@ -363,11 +370,11 @@ self.autoTriggerBiometry = false
 {% endcodetab %}
 {% endcodetabs %}
 
-Note that we not only decided to check for the mere usability of the biometry, but we also made sure that the user is not blocked by biometry in the case of the wet fingers. Also, you can notice the property `autoTriggerBiometry` that we use to automatically launch the biometry the first time unified PIN keyboard is opened.
+Note that decided to not only check for the mere availability of the biometry, but we also check for the remaining attempt count to make sure the user is not blocked in case of "wet fingers". Also, you can notice the property `autoTriggerBiometry` that we use to automatically launch the biometry only the first time a unified PIN keyboard is opened. For 2nd and further authentication attempts, we want the user to trigger the biometric authentication manually.
 
 ### Request Signing
 
-To sign the request data, you first need to prepare the `PowerAuthAuthentication` instance that specifies the authentication factors that you want to use. After that, you can compute the HTTP header with the signature and send the request to the server.
+To sign the request data, you first need to prepare a `PowerAuthAuthentication` instance that specifies the authentication factors that you want to use. After that, you can compute the HTTP header with the signature and send the request to the server.
 
 {% codetabs %}
 {% codetab Swift %}
@@ -401,9 +408,9 @@ func signWith(authentication: PowerAuthAuthentication) -> URLSessionDataTask? {
         let signature = try PowerAuthSDK.sharedInstance().requestSignature(with: auth, method: method, uriId: uriId, body: body)
         let header = [ signature.key: signature.value ]
 
-        // Send HTTP request with the HTTP header computed above
-        // Note that we are sending the POST call to the actual URI, with
-        // a computed HTTP header with signature and the request body bytes
+        // Send an HTTP request with the HTTP header computed above.
+        // Note that we are sending the POST call to the service URI, with
+        // a computed signature HTTP header and the request body bytes
         return self.httpClient.post(uri, header, body)
     } catch _ {
         // In case of invalid configuration, invalid activation
@@ -415,13 +422,12 @@ func signWith(authentication: PowerAuthAuthentication) -> URLSessionDataTask? {
 {% endcodetab %}
 {% endcodetabs %}
 
-You can hook the `signWithBiometry` method to the button for the biometric authentication and the `signWithPinCode` method to the PIN keyboard (for example, to be triggered when sufficiently long PIN code is entered by the user).
+You can hook the `signWithBiometry` method to the button for the biometric authentication and the `signWithPinCode` method to the PIN keyboard (for example, to be triggered when a sufficiently long PIN code is entered by the user).
 
-Note that the method in our example returns an `URLSessionDataTask` instance (of course, this could be any networking abstraction you use in your project), or a `nil` value in case there is an invalid state. In case the `URLSessionDataTask` is launched, you should wait for it to complete and check the HTTP status.
+Note that the method in our example returns an `URLSessionDataTask` instance (of course, this could be any networking abstraction you use in your project), or a `nil` value in case there is an invalid state. In case the `URLSessionDataTask` is launched, you should wait for it to complete (showing the progress indicator to the user) and check the response HTTP status:
 
-In case the HTTP status is `401` or `403`, it means that the transaction signing failed and in such case, you can simply restart the loop of checking the activation status, displaying the failure count, etc.
-
-In case the HTTP status is `200`, it means that the transaction signing was successful. You can retrieve any data that you need from the response and close the PIN keyboard (ideally, with some nice victory animation:)).
+- In case the HTTP status is `401` or `403`, it means that the transaction signing failed and in such case, you can simply restart the loop of checking the activation status, displaying the failure count, etc.
+- In case the HTTP status is `200`, it means that the transaction signing was successful. You can retrieve any data that you need from the response and close the PIN keyboard (ideally, with some nice "victory animation").
 
 
 ## Resources
