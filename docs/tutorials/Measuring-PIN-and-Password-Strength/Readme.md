@@ -14,19 +14,21 @@ Imagine that in your otherwise a very nice and polished application, you will fo
 
 Striking the right balance between security and the password type (PIN vs. password) and password complexity (4 vs. 6 digit long PIN, password length) is important. You should always spend some time thinking about this issue.
 
-## User Interface of the PIN Strength Check
+## User Interface
+
+### PIN Strength Check
 
 You should check the PIN code strength after a user choses the whole PIN code value. In case that the selected PIN code is weak, a user should be notified by a "disruptive" UI and offered a choice to either continue with a weak PIN code, or to select a different one.
 
 ![ PIN check ](./01.gif)
 
-## User Interface of the Password Strength Check
+### Password Strength Check
 
 Password strength checking should be done "on-the-go", after each modification of the password and the evaluation result should be presented to the user in a textual or other graphical format.
 
 ![ PIN check ](./02.gif)
 
-## Integration
+## Getting the SDK
 
 {% codetabs %}
 {% codetab Android %}
@@ -57,7 +59,7 @@ _Note: For more detailed instructions on how to install the library, follow [the
 {% endcodetab %}
 {% endcodetabs %}
 
-### Testing the Password Strength
+## Testing Passwords
 
 In order to test the password strength, use the following code:
 
@@ -102,7 +104,7 @@ You can evaluate any password. The result of such operation is a strength of the
 - **Good**
 - **Strong**
 
-### Testing the PIN Strength
+## Testing PIN Codes
 
 The PIN code testing is slightly different from the password testing. The result of a PIN code strength test is a list of findings, that you can use to evaluate the PIN code strength, rather than a strength itself.
 
@@ -173,7 +175,7 @@ You can evaluate any PIN. The result of the testing is a collection of issues th
 - **Frequently Used** - The passcode is in the list of the most frequently used passcodes.
 - **Wrong Input** - Wrong input - the passcode must contain digits only.
 
-#### Asynchronous Usage
+## Asynchronous Usage
 
 Password and PIN strength checking might be heavy on the CPU in some cases. To avoid any UI shuttering, we recommend to avoid calling `testPassword` and `testPin` on the main thread.
 
