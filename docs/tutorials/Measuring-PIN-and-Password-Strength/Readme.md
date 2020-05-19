@@ -46,9 +46,9 @@ Password strength checking should be done "on-the-go" after each modification of
 
 To get Wultra Passphrase Meter for Android up and running in your app, add following dependency in your `gradle.build` file:
 
-```ruby
+```groovy
 repositories {
-    jcenter() /* if not defined elsewhere... */
+    jcenter() // if not defined elsewhere...
 }
 
 dependencies {
