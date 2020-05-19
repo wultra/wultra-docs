@@ -133,7 +133,7 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
     PowerAuthSDK.sharedInstance().fetchActivationStatus() { (status, customObject, error) in
         // If no error occurred, process the status
         if error == nil {
-            // Show the UI relevant to the activaton status.
+            // Show the UI relevant to the activation status.
             self.presentUi(with: status)
         } else {
             // Network error occurred, report it to the user.
@@ -324,7 +324,7 @@ if PowerAuthSDK.sharedInstance().hasValidActivation() {
         // If no error occurred, process the status
         if error == nil {
             if status.state == .active {
-                if status.status.failCount > 0 {
+                if status.failCount > 0 {
                     self.remainingLabel.isHidden = false
                     self.remainingLabel.text = "Remaining attempts: " + status.remainingAttempts
                 } else {
@@ -422,7 +422,7 @@ func signWith(authentication: PowerAuthAuthentication) -> URLSessionDataTask? {
 {% endcodetab %}
 {% endcodetabs %}
 
-You can hook the `signWithBiometry` method to the button for the biometric authentication and the `signWithPinCode` method to the PIN keyboard (for example, to be triggered when a sufficiently long PIN code is entered by the user).
+You can hook the `signWithBiometry` method to the button for the biometric authentication and the `signWith(password:)` method to the PIN keyboard (for example, to be triggered when a sufficiently long PIN code is entered by the user).
 
 Note that the method in our example returns an `URLSessionDataTask` instance (of course, this could be any networking abstraction you use in your project), or a `nil` value in case there is an invalid state. In case the `URLSessionDataTask` is launched, you should wait for it to complete (showing the progress indicator to the user) and check the response HTTP status:
 
