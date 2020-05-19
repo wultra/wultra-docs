@@ -432,10 +432,10 @@ public void signWithPassword(String password, IMyAuthListener listener) {
 // Transaction signing with an authentication object
 public void signWithAuthentication(PowerAuthAuthentication auth, IMyAuthListener listener) {
     // Get the request attributes
-    String uri    = self.uri    // "https://my.server.example.com/payment"
-    String uriId  = self.uriId  // "/payment"
-    String method = self.method // "POST"
-    String body   = self.body   // the serialized bytes of HTTP request body
+    String uri    = this.uri    // "https://my.server.example.com/payment"
+    String uriId  = this.uriId  // "/payment"
+    String method = this.method // "POST"
+    String body   = this.body   // the serialized bytes of HTTP request body
 
     // Compute the signature header
     PowerAuthAuthorizationHttpHeader header = powerAuthSDK.requestSignatureWithAuthentication(context, auth, method, uriId, body);
@@ -448,7 +448,7 @@ public void signWithAuthentication(PowerAuthAuthentication auth, IMyAuthListener
     // Send an HTTP request with the HTTP header computed above.
     // Note that we are sending the POST call to the service URI, with
     // a computed signature HTTP header and the request body bytes
-    self.httpClient.post(uri, header, body, new IMyHttpClientListener() {
+    this.httpClient.post(uri, header, body, new IMyHttpClientListener() {
         @Override
         public void networkSuccess(int statusCode, HttpHeader[] headers, byte[] responseBody) {
             if (statusCode == 200) {
