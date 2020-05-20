@@ -27,11 +27,11 @@ _Note: PowerAuth Server supports various application servers and JPA 2.x compati
 
 When implementing a server-side support for the Mobile Security Suite, you need to perform several tasks:
 
-- Prepare the server infrastructure.
-- Prepare the database schema.
+- Prepare the server infrastructure and database schema.
 - Deploy the server-side components.
 - Prepare the mobile app credentials.
-- Customize the enrollment server.
+- Implement mobile app management in the Internet banking.
+- Customize the enrollment server to allow custom activations.
 - Prepare an API resource server with protected resources.
 
 ## Preparing the Infrastructure
@@ -42,39 +42,36 @@ Besides the Apache Tomcat 9.0 and PostgreSQL database installation and configura
 - Add Bouncy Castle JCE Provider library (JAR) to the server's classpath.
 - Starting Tomcat, if not running.
 
-### Adding JDBC Connector Library
+### Adding Required Libraries
 
-Copy the [PostgreSQL JDBC Driver JAR file](https://jdbc.postgresql.org/download.html) to `$CATALINA_HOME/lib` folder.
+To add the PostgreSQL JDBC library, copy the [PostgreSQL JDBC Driver JAR file](https://jdbc.postgresql.org/download.html) to `$CATALINA_HOME/lib` folder.
 
-_Note: `$CATALINA_HOME` represents the home folder of Apache Tomcat 9.0 installation._
+You can add the Bouncy Castle JCE provider the same way. Copy the [Bouncy Castle Provider JAR](https://www.bouncycastle.org/latest_releases.html) (`bcprov-jdk15on-${VERSION}.jar`) to `$CATALINA_HOME/lib` folder.
 
-### Adding Bouncy Castle JCE Provider
-
-Copy the [Bouncy Castle Provider JAR](https://www.bouncycastle.org/latest_releases.html) (`bcprov-jdk15on-${VERSION}.jar`) to `$CATALINA_HOME/lib` folder.
-
-### Starting Apache Tomcat
-
-In the case the Apache Tomcat instance is not running yet, start it using:
+Restart the Apache Tomcat instance for these changes to take effect:
 
 {% codetabs %}
 {% codetab macOS %}
 ```sh
+$CATALINA_HOME/bin/catalina stop
 $CATALINA_HOME/bin/catalina start
 ```
 {% endcodetab %}
 {% codetab Linux %}
 ```sh
+$CATALINA_HOME/bin/catalina.sh stop
 $CATALINA_HOME/bin/catalina.sh start
 ```
 {% endcodetab %}
 {% codetab Windows %}
 ```sh
+$CATALINA_HOME/bin/catalina.bat stop
 $CATALINA_HOME/bin/catalina.bat start
 ```
 {% endcodetab %}
 {% endcodetabs %}
 
-## Preparing the Database Schema
+### Preparing the Database Schema
 
 Execute the following scripts in your PostgreSQL database to create the required tables:
 
@@ -114,7 +111,7 @@ Next, copy the `powerauth-java-server.xml` configuration file to `$CATALINA_HOME
 
 [Download the latest PowerAuth Server](https://github.com/wultra/powerauth-server/releases) (`powerauth-java-server.war` file) and copy the WAR file to `$CATALINA_HOME/webapps` folder.
 
-You can now open [PowerAuth Server Welcome Page](http://localhost:8080/powerauth-java-server/) at http://localhost:8080/powerauth-java-server/ address.
+You can now open [PowerAuth Server Welcome Page](http://localhost:8080/powerauth-java-server/) at [http://localhost:8080/powerauth-java-server/](http://localhost:8080/powerauth-java-server/) address.
 
 ![ PowerAuth Server Welcome Page ](./08.png)
 
@@ -141,11 +138,7 @@ Next, copy the `powerauth-admin.xml` configuration file to `$CATALINA_HOME/conf/
 
 [Download the latest PowerAuth Admin](https://github.com/wultra/powerauth-admin/releases) (`powerauth-admin.war` file) and copy the WAR file to `$CATALINA_HOME/webapps` folder.
 
-You can now open [PowerAuth Admin](http://localhost:8080/powerauth-admin/) console at http://localhost:8080/powerauth-admin/ address.
-
-![ PowerAuth Server Welcome Page ](./08.png)
-
-In case this is your first PowerAuth Server installation and database is empty, the PowerAuth Admin will show you a UI that allows you to create your first application.
+You can now open [PowerAuth Admin](http://localhost:8080/powerauth-admin/) console at [http://localhost:8080/powerauth-admin/](http://localhost:8080/powerauth-admin/) address.
 
 ## Preparing the Mobile App Credentials
 
@@ -155,9 +148,27 @@ We will use `demo-application` as an app name:
 
 ![ PowerAuth Admin - New Application ](./09.png)
 
-After submitting the new application, you will see the values of app key, app secret, and master server public key. Provide your mobile developers with those values.
+After submitting the new application, you will see the values of application key, application secret, and master server public key. Provide your mobile developers with those values, so that they can configure their mobile apps.
 
 ![ PowerAuth Admin - Application Credentials ](./10.png)
+
+## Mobile App Management via the Internet Banking
+
+The end user should have an overview of the devices that are activated with his/her account. This is usually done by implementing a specific "self-service" section in the Internet banking. The goal of such section should be to allow typical administrative tasks, such as:
+
+- Creating a new activation via an activation code.
+- Listing the current active devices.
+- Blocking or removing an active device.
+
+The same functionality is usually implemented in the banking back-office application, so that the bank operators can manage mobile devices for their clients.
+
+### Activation using Activation Code
+
+The easiest way to activate a mobile client app is using an activation code. You can generate a new activation code for a particular user (this is how the user identity is connected with the mobile app) by calling the services published by the PowerAuth Server.
+
+### Listing Active Devices
+
+### Block and
 
 ## Customizing the Enrollment Server
 
@@ -226,7 +237,7 @@ Next, copy the `enrollment-server.xml` configuration file to `$CATALINA_HOME/con
 
 Copy the `enrollment-server.war` file you just built to `$CATALINA_HOME/webapps` folder.
 
-You can now open [Enrollment Server Swagger UI](http://localhost:8080/enrollment-server/swagger-ui.html) console at http://localhost:8080/enrollment-server/swagger-ui.html address to see the published resources.
+You can now open [Enrollment Server Swagger UI](http://localhost:8080/enrollment-server/swagger-ui.html) console at [http://localhost:8080/enrollment-server/swagger-ui.html](http://localhost:8080/enrollment-server/swagger-ui.html) address to see the published resources.
 
 ![ Enrollment Server Swagger UI Screen ](./11.png)
 
