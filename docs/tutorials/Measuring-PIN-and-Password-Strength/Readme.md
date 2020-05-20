@@ -76,9 +76,9 @@ try {
 	PasswordTester.getInstance().loadDictionary(assets, "en.dct")
 	// Test the password
 	val result = PasswordTester.getInstance().testPassword("test")
-	Log.d("Strength", result.name)
+	print("Strength", result.name)
 } catch (e: WrongPasswordException) {
-	Log.d("Strength", "Password check failed")
+	// Password check failed
 }
 ```
 {% endcodetab %}
@@ -119,23 +119,20 @@ import com.wultra.android.passphrasemeter.exceptions.*
 try {
     val passcode = "1456"
     val result = PasswordTester.getInstance().testPin(passcode)
-    var warnUser = false
+    var isWeak = false
 
-    if (result.isNotEmpty()) {
-        if (passcode.length <= 4) {
-            warnUser = result.contains(PinTestResult.FREQUENTLY_USED) || result.contains(PinTestResult.NOT_UNIQUE)
-        } else if (passcode.length <= 6) {
-            warnUser = result.contains(PinTestResult.FREQUENTLY_USED) || result.contains(PinTestResult.NOT_UNIQUE) || result.contains(PinTestResult.REPEATING_CHARACTERS)
-        } else {
-            warnUser = result.contains(PinTestResult.FREQUENTLY_USED) || result.contains(PinTestResult.NOT_UNIQUE) || result.contains(PinTestResult.REPEATING_CHARACTERS) || result.contains(PinTestResult.HAS_PATTERN)
-        }
-
-        if (warnUser) {
-            Log.d("Strength", "This PIN is WEAK. Use a different one.")
-        }
-
+    if (passcode.length <= 4) {
+        isWeak = result.contains(PinTestResult.FREQUENTLY_USED) || result.contains(PinTestResult.NOT_UNIQUE)
+    } else if (passcode.length <= 6) {
+        isWeak = result.contains(PinTestResult.FREQUENTLY_USED) || result.contains(PinTestResult.NOT_UNIQUE) || result.contains(PinTestResult.REPEATING_CHARACTERS)
     } else {
-        Log.d("Strength", "This PIN is OK.")
+        isWeak = result.contains(PinTestResult.FREQUENTLY_USED) || result.contains(PinTestResult.NOT_UNIQUE) || result.contains(PinTestResult.REPEATING_CHARACTERS) || result.contains(PinTestResult.HAS_PATTERN)
+    }
+    
+    if (isWeak) {
+        print("This PIN is WEAK. Use different one.")
+    } else {
+        print("PIN OK")
     }
 } catch (e: WrongPinException) {
     // PIN format error
@@ -148,19 +145,20 @@ import WultraPassphraseMeter
 
 let passcode = "1456"
 let result = PasswordTester.shared.testPin(passcode)
+var isWeak = false
 
 if passcode.count <= 4 {
-    if result.contains(.frequentlyUsed) || result.contains(.notUnique) {
-        print("This PIN is WEAK. Use different one.")
-    }
+    isWeak = result.contains(.frequentlyUsed) || result.contains(.notUnique)
 } else if passcode.count <= 6 {
-    if result.contains(.frequentlyUsed) || result.contains(.notUnique) || result.contains(.repeatingCharacters) {
-        print("This PIN is WEAK. Use different one.")
-    }
+    isWeak = result.contains(.frequentlyUsed) || result.contains(.notUnique) || result.contains(.repeatingCharacters)
 } else {
-    if result.contains(.frequentlyUsed) || result.contains(.notUnique) || result.contains(.repeatingCharacters) || result.contains(.patternFound) {
-        print("This PIN is WEAK. Use different one.")
-    }
+    isWeak = result.contains(.frequentlyUsed) || result.contains(.notUnique) || result.contains(.repeatingCharacters) || result.contains(.patternFound)
+}
+
+if isWeak {
+    print("This PIN is WEAK. Use different one.")
+} else {
+    print("PIN OK")
 }
 ```
 {% endcodetab %}
