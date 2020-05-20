@@ -28,8 +28,7 @@ _Note: PowerAuth Server supports various application servers and JPA 2.x compati
 When implementing a server-side support for the Mobile Security Suite, you need to perform several tasks:
 
 - Prepare the server infrastructure and database schema.
-- Deploy the server-side components.
-- Prepare the mobile app credentials.
+- Deploy and explore the server-side components.
 - Implement mobile app management in the Internet banking.
 - Customize the enrollment server to allow custom activations.
 - Prepare an API resource server with protected resources.
@@ -140,7 +139,7 @@ Next, copy the `powerauth-admin.xml` configuration file to `$CATALINA_HOME/conf/
 
 You can now open [PowerAuth Admin](http://localhost:8080/powerauth-admin/) console at [http://localhost:8080/powerauth-admin/](http://localhost:8080/powerauth-admin/) address.
 
-## Preparing the Mobile App Credentials
+#### Preparing the Mobile App Credentials
 
 You can use the PowerAuth Admin to generate the mobile app credentials. Mobile app developers will need those credentials in order to configure the mobile SDK. With the empty system, you can create your application simply by providing an "application name". Use some technical format for the application name, rather than a fancy visual name.
 
@@ -168,7 +167,11 @@ The easiest way to activate a mobile client app is using an activation code. You
 
 ### Listing Active Devices
 
-### Block and
+// TODO:
+
+### Block, Unblock and Remove Devices
+
+// TODO:
 
 ## Customizing the Enrollment Server
 
@@ -182,37 +185,25 @@ This is the part where you might need to start with an actual programming, since
 
 Start by cloning the Enrollment Server git repository and switching into the project folder:
 
-{% codetabs %}
-{% codetab Command Line %}
 ```sh
 git clone https://github.com/wultra/enrollment-server.git
 cd enrollment-server
 ```
-{% endcodetab %}
-{% endcodetabs %}
 
 You can use the version from the `develop` branch but this might get tricky, since you would have to install our development dependencies. Therefore, we suggest using a version from some of the release branches or - ideally - tags, for example:
 
-{% codetabs %}
-{% codetab Command Line %}
 ```sh
 # Replace the version number with the desired version.
 git checkout tags/0.24.0 -b tags/0.24.0
 ```
-{% endcodetab %}
-{% endcodetabs %}
 
 ### Building the Project
 
 The project uses Maven for the dependency management and project builds. You can build project simply by calling a `mvn package` command:
 
-{% codetabs %}
-{% codetab Command Line %}
 ```sh
 mvn clean package
 ```
-{% endcodetab %}
-{% endcodetabs %}
 
 The resulting output artifact is `./target/enrollment-server-0.24.0.war`. You can rename the file to just `enrollment-server.war`.
 
