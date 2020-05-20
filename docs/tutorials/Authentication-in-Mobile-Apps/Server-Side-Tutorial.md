@@ -34,7 +34,7 @@ When implementing a server-side support for the Mobile Security Suite, you need 
 - Customize the enrollment server.
 - Prepare an API resource server with protected resources.
 
-# Preparing the Infrastructure
+## Preparing the Infrastructure
 
 Besides the Apache Tomcat 9.0 and PostgreSQL database installation and configuration, you need to perform several generic configuration tasks:
 
@@ -42,17 +42,17 @@ Besides the Apache Tomcat 9.0 and PostgreSQL database installation and configura
 - Add Bouncy Castle JCE Provider library (JAR) to the server's classpath.
 - Starting Tomcat, if not running.
 
-## Adding JDBC Connector Library
+### Adding JDBC Connector Library
 
 Copy the [PostgreSQL JDBC Driver JAR file](https://jdbc.postgresql.org/download.html) to `$CATALINA_HOME/lib` folder.
 
 _Note: `$CATALINA_HOME` represents the home folder of Apache Tomcat 9.0 installation._
 
-## Adding Bouncy Castle JCE Provider
+### Adding Bouncy Castle JCE Provider
 
 Copy the [Bouncy Castle Provider JAR](https://www.bouncycastle.org/latest_releases.html) (`bcprov-jdk15on-${VERSION}.jar`) to `$CATALINA_HOME/lib` folder.
 
-## Starting Apache Tomcat
+### Starting Apache Tomcat
 
 In the case the Apache Tomcat instance is not running yet, start it using:
 
@@ -74,20 +74,20 @@ $CATALINA_HOME/bin/catalina.bat start
 {% endcodetab %}
 {% endcodetabs %}
 
-# Preparing the Database Schema
+## Preparing the Database Schema
 
 Execute the following scripts in your PostgreSQL database to create the required tables:
 
 - [PostgreSQL - Create Schema Script](https://github.com/wultra/powerauth-server/blob/develop/docs/sql/postgresql/create_schema.sql)
 
-# Deploy the Server-Side Components
+## Deploy the Server-Side Components
 
 For this tutorial, we will deploy two components:
 
 - [PowerAuth Server](https://github.com/wultra/powerauth-server/blob/develop/docs/Readme.md) - The server responsible for mobile device management.
 - [PowerAuth Admin](https://github.com/wultra/powerauth-admin/blob/develop/docs/Readme.md) - The administration console for the PowerAuth Server.
 
-## Deploy the PowerAuth Server
+### Deploy the PowerAuth Server
 
 First, prepare the required configuration XML file called `powerauth-java-server.xml` ([here](./powerauth-java-server.xml) is a template for download). In a minimal configuration, the only thing you need to configure is the JDBC database connectivity properties:
 
@@ -120,7 +120,7 @@ You can now open [PowerAuth Server Welcome Page](http://localhost:8080/powerauth
 
 The welcome page shows the version info, important configuration properties, and links to important resources.
 
-## Deploy the PowerAuth Admin
+### Deploy the PowerAuth Admin
 
 Deploying PowerAuth Admin, a GUI console for PowerAuth Server, follows a similar pattern as deploying the PowerAuth Server.
 
