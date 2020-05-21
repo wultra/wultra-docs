@@ -347,6 +347,10 @@ for (Activations activation : response) {
 
 Note that this call returns activations in all states (including removed or not completed) for all applications. You can filter out only the activations you need to be displayed in your list, or select a more specific method on the client instance.
 
+The resulting list visualization is up to you, here is a generic mockup:
+
+![ Internet Banking - Activation List ](./15.png)
+
 ### Block, Unblock and Remove Devices
 
 In case you want to block an active activation, unblock a blocked one, or remove the activation completely, there are a single line methods for that:
