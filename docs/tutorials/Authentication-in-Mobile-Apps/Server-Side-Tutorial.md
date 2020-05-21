@@ -2,7 +2,7 @@
 
 <!-- AUTHOR joshis_tweets 2020-05-04T00:00:00Z -->
 
-In this tutorial, we will show you how to deploy and implement back-end components for authentication in mobile banking or fintech apps.
+In this tutorial, we will show you how to deploy and implement back-end components for authentication in mobile banking or fintech apps. The tutorial prioritizes integration with Spring Boot but integration with other technologies, such as JavaEE or .NET, is also possible.
 
 This tutorial has four parts:
 
@@ -32,6 +32,7 @@ When implementing a server-side support for the Mobile Security Suite, you need 
 - Implement mobile app management in the Internet banking.
 - Customize the enrollment server to allow custom activations.
 - Prepare an API resource server with protected resources.
+- Test that everything works using the command-line tool.
 
 This is the component view on the infrastructure we are building in this tutorial:
 
@@ -60,6 +61,8 @@ Besides the Apache Tomcat 9.0 and PostgreSQL database installation and configura
 Execute the following scripts in your PostgreSQL database to create the required tables:
 
 - [PostgreSQL - Create Schema Script](https://github.com/wultra/powerauth-server/blob/develop/docs/sql/postgresql/create_schema.sql)
+
+You can learn more about the database structure in our [detailed documentation](https://github.com/wultra/powerauth-server/blob/develop/docs/Database-Structure.md).
 
 ### Adding Required Libraries
 
@@ -177,15 +180,10 @@ The same functionality is usually implemented in the banking back-office applica
 
 ### Using the PowerAuth SOAP Service Client
 
-The easiest way to call the PowerAuth Server services is to use our client library. The library currently uses a SOAP protocol but from your perspective, this is fully transparent. We have a library for two SOAP technologies:
-
-- Spring WS
-- Axis2
+Of course, you can directly call the PowerAuth Server RESTful APIs - the Swagger with documentation is available from the PowerAuth Server Welcome Page. However, the easiest way to call the PowerAuth Server services is to use our client library. The library currently uses a SOAP protocol but from your perspective, this is fully transparent.
 
 To add the library in your Maven project, use the following snippet:
 
-{% codetabs %}
-{% codetab Spring WS %}
 ```xml
 <dependency>
     <groupId>io.getlime.security</groupId>
@@ -193,22 +191,9 @@ To add the library in your Maven project, use the following snippet:
     <version>${powerauth.version}</version>
 </dependency>
 ```
-{% endcodetab %}
-{% codetab Axis2 %}
-```xml
-<dependency>
-    <groupId>io.getlime.security</groupId>
-    <artifactId>powerauth-java-client-axis</artifactId>
-    <version>${powerauth.version}</version>
-</dependency>
-```
-{% endcodetab %}
-{% endcodetabs %}
 
 You can then create a bean with the configured client:
 
-{% codetabs %}
-{% codetab Spring WS %}
 ```java
 @Configuration
 @ComponentScan(basePackages = {"io.getlime.security.powerauth"})
@@ -231,41 +216,13 @@ public class PowerAuthWebServiceConfiguration {
     }
 }
 ```
-{% endcodetab %}
-{% codetab Axis2 %}
-```java
-@Dependent
-public class PowerAuthBeanFactory {
-
-    @Produces
-    public PowerAuthServiceClient buildClient() {
-        try {
-            return new PowerAuthServiceClient("http://localhost:8080/powerauth-java-server/soap");
-        } catch (AxisFault axisFault) {
-            return null;
-        }
-    }
-}
-```
-{% endcodetab %}
-{% endcodetabs %}
 
 After that, you can simply `@Autowire` the object wherever needed:
 
-{% codetabs %}
-{% codetab Spring WS %}
 ```java
 @Autowired
 private PowerAuthServiceClient powerAuthServiceClient;
 ```
-{% endcodetab %}
-{% codetab Axis2 %}
-```java
-@Inject
-private PowerAuthServiceClient powerAuthServiceClient;
-```
-{% endcodetab %}
-{% endcodetabs %}
 
 ### Activation Using Activation Code
 
@@ -456,6 +413,7 @@ Start by adding a new `com.wultra.app.enrollmentserver.customization` package an
 {% codetabs %}
 {% codetab MyActivationProvider.java %}
 ```java
+@Service
 public class MyActivationProvider implements CustomActivationProvider {
 
     /**
@@ -497,6 +455,208 @@ public class MyActivationProvider implements CustomActivationProvider {
 And that's it! Your enrollment server will now process the custom activation credentials sent from the mobile clients, allowing an activation via the custom credentials. You can now build the project again and deploy the Enrollment Server just as you did earlier.
 
 ## Preparing API Resource Server With Protected Resources
+
+Finally, the last implementation part you need to take care of is publishing the protected API resources consumed by the mobile app. Usually, this is done by publishing new endpoints in an existing Spring application. For the simplicity, we will start with creating a new Spring Boot project.
+
+### Create New Spring Boot Project
+
+Create a new Spring Boot project first.
+
+Make sure to select "WAR" packaging.
+
+Select at least the "Spring Web" and "Spring Security" dependencies.
+
+And finally, name the project and select an appropriate location.
+
+You will end up with a clean, simple project.
+
+### Configuring the Components
+
+First, we need to open the `pom.xml` file and add the following dependency:
+
+```xml
+<dependency>
+    <groupId>io.getlime.security</groupId>
+    <artifactId>powerauth-restful-security-spring-annotation</artifactId>
+    <version>0.24.0</version>
+</dependency>
+```
+
+This dependency brings support for PowerAuth-Spring magic that will make integration work seamlessly.
+
+Next, you can create the configuration file for the PowerAuth service client, so that the application is able to communicate with the PowerAuth Server. The components will automatically pick the bean up.
+
+```java
+@Configuration
+@ComponentScan(basePackages = {"io.getlime.security.powerauth"})
+public class PowerAuthConfig {
+
+    @Bean
+    public Jaxb2Marshaller marshaller() {
+        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+        marshaller.setContextPath("io.getlime.powerauth.soap.v3");
+        return marshaller;
+    }
+
+    @Bean
+    public PowerAuthServiceClient powerAuthClient(Jaxb2Marshaller marshaller) {
+        PowerAuthServiceClient client = new PowerAuthServiceClient();
+        client.setDefaultUri("http://localhost:8080/powerauth-java-server/soap");
+        client.setMarshaller(marshaller);
+        client.setUnmarshaller(marshaller);
+        return client;
+    }
+
+}
+```
+
+To register all required PowerAuth components, create a Java class that implements the `WebMvcConfigurer` interface and creates all the necessary beans:
+
+```java
+@Configuration
+public class WebApplicationConfig implements WebMvcConfigurer {
+
+    @Bean
+    public PowerAuthWebArgumentResolver powerAuthWebArgumentResolver() {
+        return new PowerAuthWebArgumentResolver();
+    }
+
+    @Bean
+    public PowerAuthEncryptionArgumentResolver powerAuthEncryptionArgumentResolver() {
+        return new PowerAuthEncryptionArgumentResolver();
+    }
+
+    @Bean
+    public PowerAuthAnnotationInterceptor powerAuthInterceptor() {
+        return new PowerAuthAnnotationInterceptor();
+    }
+
+    @Bean
+    public FilterRegistrationBean<PowerAuthRequestFilter> powerAuthFilterRegistration() {
+        FilterRegistrationBean<PowerAuthRequestFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new PowerAuthRequestFilter());
+        registrationBean.setMatchAfter(true);
+        return registrationBean;
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(powerAuthWebArgumentResolver());
+        argumentResolvers.add(powerAuthEncryptionArgumentResolver());
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(powerAuthInterceptor());
+    }
+
+}
+```
+
+### Preparing the Authenticated Section
+
+First, we will configure Spring Security by implementing the `WebSecurityConfigurerAdapter` interface so that everything on a `/secure` context will require authenticated session to allow access:
+
+```java
+@Configuration
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private PowerAuthApiAuthenticationEntryPoint apiAuthenticationEntryPoint;
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests().antMatchers("/secure/**").fullyAuthenticated();
+        http.httpBasic().disable();
+        http.csrf().disable();
+        http.exceptionHandling().authenticationEntryPoint(apiAuthenticationEntryPoint);
+    }
+}
+```
+
+### Building the Login Endpoint
+
+To create the authenticated session, we will publish a simple `/login` endpoint that uses the `POST` HTTP method and is protected by the PowerAuth signature. Note that we used the `@PowerAuth` annotation with a `resourceId` value equal to `/login`. You need to pass the `resourceId` value to your mobile app developer in order to configure the request signing on the mobile app end.
+
+_Note: While the `resourceId` value is the same as the endpoint name in the example, you may actually choose any arbitrary String value for the `resourceId`. Using the same value as the endpoint name is convenient. However, it is also a big source of confusion among the developers since they sometimes mix up the values._
+
+Upon the successful user authentication, the instance of `PowerAuthApiAuthentication` will be automatically populated in the method parameter. This object extends `AbstractAuthenticationToken` from Spring Security, and so it can be used directly as an authentication object in the `SecurityContextHolder`.
+
+Here is the full login controller code:
+
+```java
+@RestController
+public class AuthenticationController {
+
+    @PostMapping(value = "/login")
+    @PowerAuth(resourceId = "/login")
+    public String login(PowerAuthApiAuthentication auth) throws PowerAuthAuthenticationException {
+        if (auth != null) {
+            // Create an authenticated session
+            SecurityContextHolder.getContext().setAuthentication((Authentication) auth);
+            return "OK";
+        } else {
+            // Handle authentication failure using some exception
+            throw new AuthenticationException();
+        }
+    }
+
+}
+```
+
+### Building the Payment Approval Endpoint
+
+We will now publish a `/secure/payment` endpoint that uses the `POST` HTTP method and that is protected by both the authenticated session and the PowerAuth signature. We are making an optional assumption in this tutorial that the users need to be authenticated before they can submit a payment. Again, we used the `@PowerAuth` annotation with a `resourceId` value. This time, however, we used the `/secure/payment` value to denote that this operation is a different operation from the `/login` operation we built earlier.
+
+The payment approval endpoint also contains a payment object as the `@RequestBody` instance. Bytes (byte-by-byte) of the request body are used during the signature verification. Upon the successful signature verification, the instance of `PowerAuthApiAuthentication` will be automatically populated in the method parameter. This time, use the object to obtain the user who authorized the particular payment, to see if the user can actually approve the payment. If everything checks out, you can then send the payment for the processing using your proprietary payment processing method.
+
+Here is the full payment approval controller code:
+
+```java
+@RestController("/secure")
+public class SecureController {
+
+    private static final Logger logger = LoggerFactory.getLogger(SecureController.class);
+
+    @PostMapping("/payment")
+    @PowerAuth(resourceId = "/secure/payment")
+    public String approvePayment(@RequestBody Payment payment, PowerAuthApiAuthentication auth) throws PowerAuthAuthenticationException {
+        if (auth != null) {
+
+            // Obtain the user ID
+            String userId = auth.getUserId();
+
+            // Check if the user can perform the given payment
+            if (userCanPerformPayment(userId, payment)) {
+
+                // Submit the payment for the processing
+                sendPayment(userId, payment);
+                logger.info("Payment was processed: {}, {}", userId, payment);
+            } else {
+                // Handle authorization failure
+                logger.info("Authorization failed: {}, {}", userId, payment);
+                throw new AuthorizationException();
+            }
+            return "OK";
+        } else {
+            // Handle authentication failure
+            logger.info("Authentication failed");
+            throw new AuthenticationException();
+        }
+    }
+
+    private void sendPayment(String userId, Payment payment) {
+        // Your logic to process the payment approved by user with given ID
+    }
+
+    private boolean userCanPerformPayment(String userId, Payment payment) {
+        // Your logic to evaluate user access rights to the payment
+        return true;
+    }
+}
+```
+
+## Testing the Infrastructure Using the Command Line Tool
 
 // TODO:
 
