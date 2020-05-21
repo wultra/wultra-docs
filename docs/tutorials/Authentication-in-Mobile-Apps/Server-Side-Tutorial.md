@@ -33,7 +33,6 @@ When implementing a server-side support for the Mobile Security Suite, you need 
 - Implement mobile app management in the Internet banking.
 - Customize the enrollment server to allow custom activations.
 - Prepare an API resource server with protected resources.
-- Test that everything works using the command-line tool.
 
 This is the component view on the infrastructure we are building in this tutorial:
 
@@ -169,7 +168,7 @@ After submitting the new application, you will see the values of application key
 
 ![ PowerAuth Admin - Application Credentials ](./10.png)
 
-## Mobile App Management via the Internet Banking
+## Manage Devices in the Internet Banking
 
 The end user should have an overview of the devices that are activated with his/her account. This is usually done by implementing a specific "self-service" section in the Internet banking. The goal of such section should be to allow typical administrative tasks, such as:
 
@@ -455,7 +454,7 @@ public class MyActivationProvider implements CustomActivationProvider {
 
 And that's it! Your enrollment server will now process the custom activation credentials sent from the mobile clients, allowing an activation via the custom credentials. You can now build the project again and deploy the Enrollment Server just as you did earlier.
 
-## Preparing API Resource Server With Protected Resources
+## Preparing Protected API Resources
 
 Finally, the last implementation part you need to take care of is publishing the protected API resources consumed by the mobile app. Usually, this is done by publishing new endpoints in an existing Spring application. For the simplicity, we will start with creating a new Spring Boot project.
 
@@ -658,10 +657,6 @@ public class SecureController {
     }
 }
 ```
-
-## Testing the Infrastructure Using the Command Line Tool
-
-// TODO:
 
 ## Continue Reading
 
