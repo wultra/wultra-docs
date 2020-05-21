@@ -460,15 +460,25 @@ Finally, the last implementation part you need to take care of is publishing the
 
 ### Create New Spring Boot Project
 
-Create a new Spring Boot project first.
+Let's create a new Spring Boot project first.
+
+![ IntelliJ Idea - New Spring Boot Project ](./16.png)
 
 Make sure to select "WAR" packaging.
 
+![ IntelliJ Idea - Project Properties ](./17.png)
+
 Select at least the "Spring Web" and "Spring Security" dependencies.
+
+![ IntelliJ Idea - Project Dependencies ](./18.png)
 
 And finally, name the project and select an appropriate location.
 
+![ IntelliJ Idea - Project Location ](./19.png)
+
 You will end up with a clean, simple project.
+
+![ IntelliJ Idea - Inside New Project ](./20.png)
 
 ### Configuring the Components
 
