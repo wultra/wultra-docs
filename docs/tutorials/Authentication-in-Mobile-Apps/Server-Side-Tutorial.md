@@ -92,8 +92,8 @@ Execute the following scripts in your PostgreSQL database to create the required
 
 For this tutorial, we will deploy two components:
 
-- [PowerAuth Server](https://github.com/wultra/powerauth-server/blob/develop/docs/Readme.md) - The server responsible for mobile device management.
-- [PowerAuth Admin](https://github.com/wultra/powerauth-admin/blob/develop/docs/Readme.md) - The administration console for the PowerAuth Server.
+- [PowerAuth Server](https://github.com/wultra/powerauth-server) - The server responsible for mobile device management.
+- [PowerAuth Admin](https://github.com/wultra/powerauth-admin) - The administration console for the PowerAuth Server.
 
 ### Deploy the PowerAuth Server
 
