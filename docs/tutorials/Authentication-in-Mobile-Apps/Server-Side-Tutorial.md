@@ -37,7 +37,7 @@ This is the component view on the infrastructure we are building in this tutoria
 
 ![ Mobile Security Suite - Back-End Systems Overview ](./13.png)
 
-While the picture might look daunting, have no fear - everything is in fact straight forward. Pay attention to the numbered blue boxes:
+While the picture might look daunting, have no fear - everything is in fact straight-forward. Have a coffee, print the picture, and pay attention to the numbered blue boxes:
 
 1. **PowerAuth Server** - This is the component that keeps track of registered devices and helps with the critical processes, such as activation or transaction signing. It should be deployed in the secure infrastructure, not accessible from the outside.
 2. **PowerAuth Admin** - A GUI administration console for PowerAuth Server. While you could do the same thing using the PowerAuth Server API, this makes everything a bit more convenient.
@@ -49,9 +49,17 @@ While the picture might look daunting, have no fear - everything is in fact stra
 
 Besides the Apache Tomcat 9.0 and PostgreSQL database installation and configuration, you need to perform several generic configuration tasks:
 
-- Add PostgreSQL JDBC Connector library (JAR) to the server's classpath.
-- Add Bouncy Castle JCE Provider library (JAR) to the server's classpath.
-- Starting Tomcat, if not running.
+- Prepare the database schema, so that the required tables are in place.
+- Add the required libraries to the Tomcat `/lib` folder.
+    - PostgreSQL JDBC Connector library (JAR)
+    - Bouncy Castle JCE Provider library (JAR)
+- Restart Tomcat, to apply the changes.
+
+### Preparing the Database Schema
+
+Execute the following scripts in your PostgreSQL database to create the required tables:
+
+- [PostgreSQL - Create Schema Script](https://github.com/wultra/powerauth-server/blob/develop/docs/sql/postgresql/create_schema.sql)
 
 ### Adding Required Libraries
 
@@ -82,15 +90,9 @@ $CATALINA_HOME/bin/catalina.bat start
 {% endcodetab %}
 {% endcodetabs %}
 
-### Preparing the Database Schema
-
-Execute the following scripts in your PostgreSQL database to create the required tables:
-
-- [PostgreSQL - Create Schema Script](https://github.com/wultra/powerauth-server/blob/develop/docs/sql/postgresql/create_schema.sql)
-
 ## Deploy the Server-Side Components
 
-For this tutorial, we will deploy two components:
+For this tutorial, we will deploy just two components:
 
 - [PowerAuth Server](https://github.com/wultra/powerauth-server) - The server responsible for mobile device management.
 - [PowerAuth Admin](https://github.com/wultra/powerauth-admin) - The administration console for the PowerAuth Server.
@@ -173,7 +175,7 @@ The end user should have an overview of the devices that are activated with his/
 
 The same functionality is usually implemented in the banking back-office application, so that the bank operators can manage mobile devices for their clients.
 
-### Using the PowerAuth Service Client
+### Using the PowerAuth SOAP Service Client
 
 The easiest way to call the PowerAuth Server services is to use our client library. The library currently uses a SOAP protocol but from your perspective, this is fully transparent. We have a library for two SOAP technologies:
 
@@ -265,7 +267,7 @@ private PowerAuthServiceClient powerAuthServiceClient;
 {% endcodetab %}
 {% endcodetabs %}
 
-### Activation using Activation Code
+### Activation Using Activation Code
 
 The easiest way to activate a mobile client app is using an activation code. You can generate a new activation code for a particular user (this is how the user identity is connected with the mobile app) by calling the services published by the PowerAuth Server.
 
@@ -313,11 +315,12 @@ ActivationStatus status = response.getActivationStatus();
 // For unfinished activations, you can also obtain the activation code again
 String activationCode = activation.getActivationCode();
 String activationSignature = activation.getActivationSignature();
+String activationFingerprint = activation.getDevicePublicKeyFingerprint();
 ```
 
 Of course, you can also receive the `REMOVED` status in a response. In such case, you should terminate the user flow and let the user start over.
 
-In case the activation is in `PENDING_COMMIT` state, it is time to commit it. You can combine this step with some additional verification on your side, for example, checking a value of an SMS OTP code.
+In case the activation is in `PENDING_COMMIT` state, it is time to commit it. You can combine this step with some additional verification on your side, for example, checking a value of an SMS OTP code. You should also display the "activation fingerprint" - see the call to `getDevicePublicKeyFingerprint` method in the example above. This value is also displayed on the mobile device, user should check it to confirm that the key exchange during the activation was completed correctly.
 
 ```java
 // Call the SOAP service with activation ID obtained earlier.
@@ -347,7 +350,7 @@ for (Activations activation : response) {
 
 Note that this call returns activations in all states (including removed or not completed) for all applications. You can filter out only the activations you need to be displayed in your list, or select a more specific method on the client instance.
 
-The resulting list visualization is up to you, here is a generic mockup:
+The resulting list visualization is up to you, here is a generic mockup capturing most of the possible states:
 
 ![ Internet Banking - Activation List ](./15.png)
 
@@ -366,9 +369,9 @@ UnblockActivationResponse response = powerAuthServiceClient.unblockActivation(ac
 RemoveActivationResponse response = powerAuthServiceClient.removeActivation(activationId);
 ```
 
-When blocking the activation, you may specify a reason of why the activation is blocked. This can be null or any string you chose. We only have one reserved value of `"MAX_FAILED_ATTEMPTS"` for activations blocked because user authentication failed too many times.
+When blocking the activation, you may specify a reason of why the activation is blocked. This can be `null` or any string you chose. We only have one reserved value of `"MAX_FAILED_ATTEMPTS"` for activations blocked because user authentication failed too many times.
 
-## Customizing the Enrollment Server
+## Deploying the Enrollment Server
 
 Enrollment Server is the component that the mobile app actually calls. No calls are performed from the mobile app to the PowerAuth Server - this component should be deployed in a secure infrastructure.
 
