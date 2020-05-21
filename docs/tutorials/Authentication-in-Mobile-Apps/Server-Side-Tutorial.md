@@ -1,6 +1,7 @@
 # Implementing the Server-Side for Authentication in Mobile Banking Apps (SCA)
 
 <!-- AUTHOR joshis_tweets 2020-05-04T00:00:00Z -->
+<!-- SIDEBAR _Sidebar_Server.md -->
 
 In this tutorial, we will show you how to deploy and implement back-end components for authentication in mobile banking or fintech apps. The tutorial prioritizes integration with Spring Boot but integration with other technologies, such as JavaEE or .NET, is also possible.
 
@@ -492,9 +493,9 @@ First, we need to open the `pom.xml` file and add the following dependency:
 </dependency>
 ```
 
-This dependency brings support for PowerAuth-Spring magic that will make integration work seamlessly.
+This dependency brings support for the PowerAuth-Spring magic that will make the integration work seamlessly.
 
-Next, you can create the configuration file for the PowerAuth service client, so that the application is able to communicate with the PowerAuth Server. The components will automatically pick the bean up.
+Next, you can create the `PowerAuthConfig` configuration file for the PowerAuth service client, so that the application is able to communicate with the PowerAuth Server. The integration components will automatically pick the bean up and use it.
 
 ```java
 @Configuration
@@ -520,7 +521,7 @@ public class PowerAuthConfig {
 }
 ```
 
-To register all required PowerAuth components, create a Java class that implements the `WebMvcConfigurer` interface and creates all the necessary beans:
+To register all the required PowerAuth components, create a new `WebApplicationConfig` Java class that implements the `WebMvcConfigurer` interface:
 
 ```java
 @Configuration
@@ -563,23 +564,19 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 }
 ```
 
-### Preparing the Authenticated Section
+### Configuring Spring Security
 
-First, we will configure Spring Security by implementing the `WebSecurityConfigurerAdapter` interface so that everything on a `/secure` context will require authenticated session to allow access:
+To restrict access to some resources, we will configure Spring Security by implementing the `WebSecurityConfigurerAdapter` interface. The configuration disables the default HTTP Basic authentication and CSRF (we do not need it for the mobile API). It also enforce an authentication for all resources on a `/secure/**` path:
 
 ```java
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private PowerAuthApiAuthenticationEntryPoint apiAuthenticationEntryPoint;
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/secure/**").fullyAuthenticated();
-        http.httpBasic().disable();
-        http.csrf().disable();
-        http.exceptionHandling().authenticationEntryPoint(apiAuthenticationEntryPoint);
+        http
+            .httpBasic().disable().csrf().disable()
+            .authorizeRequests().antMatchers("/secure/**").fullyAuthenticated();
     }
 }
 ```
@@ -626,7 +623,6 @@ Here is the full payment approval controller code:
 @RestController("/secure")
 public class SecureController {
 
-    private static final Logger logger = LoggerFactory.getLogger(SecureController.class);
 
     @PostMapping("/payment")
     @PowerAuth(resourceId = "/secure/payment")
@@ -641,16 +637,13 @@ public class SecureController {
 
                 // Submit the payment for the processing
                 sendPayment(userId, payment);
-                logger.info("Payment was processed: {}, {}", userId, payment);
             } else {
                 // Handle authorization failure
-                logger.info("Authorization failed: {}, {}", userId, payment);
                 throw new AuthorizationException();
             }
             return "OK";
         } else {
             // Handle authentication failure
-            logger.info("Authentication failed");
             throw new AuthenticationException();
         }
     }
