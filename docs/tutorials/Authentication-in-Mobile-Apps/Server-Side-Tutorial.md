@@ -1,7 +1,7 @@
 # Implementing the Server-Side for Authentication in Mobile Banking Apps (SCA)
 
 <!-- AUTHOR joshis_tweets 2020-05-04T00:00:00Z -->
-<!-- SIDEBAR _Sidebar_Server.md -->
+<!-- SIDEBAR _Sidebar_Server.md sticky -->
 
 In this tutorial, we will show you how to deploy and implement back-end components for authentication in mobile banking or fintech apps. The tutorial prioritizes integration with Spring Boot but integration with other technologies, such as JavaEE or .NET, is also possible.
 
