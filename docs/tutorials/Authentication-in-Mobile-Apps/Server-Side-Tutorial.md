@@ -33,6 +33,18 @@ When implementing a server-side support for the Mobile Security Suite, you need 
 - Customize the enrollment server to allow custom activations.
 - Prepare an API resource server with protected resources.
 
+This is the component view on the infrastructure we are building in this tutorial:
+
+![ Mobile Security Suite - Back-End Systems Overview ](./13.png)
+
+While the picture might look daunting, have no fear - everything is in fact straight forward. Pay attention to the numbered blue boxes:
+
+1. **PowerAuth Server** - This is the component that keeps track of registered devices and helps with the critical processes, such as activation or transaction signing. It should be deployed in the secure infrastructure, not accessible from the outside.
+2. **PowerAuth Admin** - A GUI administration console for PowerAuth Server. While you could do the same thing using the PowerAuth Server API, this makes everything a bit more convenient.
+3. **Extension for Internet banking** (or a back-office system) - Here, we will show you how to list and manage active devices and how to generate the activation code for the purposes of a new device activation.
+4. **Enrollment Server** - A component that publishes an API for the mobile app in order to allow the device enrollment. We will show you how to deploy the vanilla version of the server (that supports activation using activation code) and how to extend the server with a custom activation method.
+5. **API Resource Server** - A component that publishes protected API endpoints, such as login and payment approval. We will show you how to secure a resource in your Spring Boot application.
+
 ## Preparing the Infrastructure
 
 Besides the Apache Tomcat 9.0 and PostgreSQL database installation and configuration, you need to perform several generic configuration tasks:
@@ -161,17 +173,196 @@ The end user should have an overview of the devices that are activated with his/
 
 The same functionality is usually implemented in the banking back-office application, so that the bank operators can manage mobile devices for their clients.
 
+### Using the PowerAuth Service Client
+
+The easiest way to call the PowerAuth Server services is to use our client library. The library currently uses a SOAP protocol but from your perspective, this is fully transparent. We have a library for two SOAP technologies:
+
+- Spring WS
+- Axis2
+
+To add the library in your Maven project, use the following snippet:
+
+{% codetabs %}
+{% codetab Spring WS %}
+```xml
+<dependency>
+    <groupId>io.getlime.security</groupId>
+    <artifactId>powerauth-java-client-spring</artifactId>
+    <version>${powerauth.version}</version>
+</dependency>
+```
+{% endcodetab %}
+{% codetab Axis2 %}
+```xml
+<dependency>
+    <groupId>io.getlime.security</groupId>
+    <artifactId>powerauth-java-client-axis</artifactId>
+    <version>${powerauth.version}</version>
+</dependency>
+```
+{% endcodetab %}
+{% endcodetabs %}
+
+You can then create a bean with the configured client:
+
+{% codetabs %}
+{% codetab Spring WS %}
+```java
+@Configuration
+@ComponentScan(basePackages = {"io.getlime.security.powerauth"})
+public class PowerAuthWebServiceConfiguration {
+
+    @Bean
+    public Jaxb2Marshaller marshaller() {
+        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+        marshaller.setContextPath("io.getlime.powerauth.soap.v3");
+        return marshaller;
+    }
+
+    @Bean
+    public PowerAuthServiceClient powerAuthClient(Jaxb2Marshaller marshaller) {
+        PowerAuthServiceClient client = new PowerAuthServiceClient();
+        client.setDefaultUri("http://localhost:8080/powerauth-java-server/soap");
+        client.setMarshaller(marshaller);
+        client.setUnmarshaller(marshaller);
+        return client;
+    }
+}
+```
+{% endcodetab %}
+{% codetab Axis2 %}
+```java
+@Dependent
+public class PowerAuthBeanFactory {
+
+    @Produces
+    public PowerAuthServiceClient buildClient() {
+        try {
+            return new PowerAuthServiceClient("http://localhost:8080/powerauth-java-server/soap");
+        } catch (AxisFault axisFault) {
+            return null;
+        }
+    }
+}
+```
+{% endcodetab %}
+{% endcodetabs %}
+
+After that, you can simply `@Autowire` the object wherever needed:
+
+{% codetabs %}
+{% codetab Spring WS %}
+```java
+@Autowired
+private PowerAuthServiceClient powerAuthServiceClient;
+```
+{% endcodetab %}
+{% codetab Axis2 %}
+```java
+@Inject
+private PowerAuthServiceClient powerAuthServiceClient;
+```
+{% endcodetab %}
+{% endcodetabs %}
+
 ### Activation using Activation Code
 
 The easiest way to activate a mobile client app is using an activation code. You can generate a new activation code for a particular user (this is how the user identity is connected with the mobile app) by calling the services published by the PowerAuth Server.
 
+Your internet banking first needs to generate the activation code for the logged in user, and after the user performs the key exchange on the mobile device, you need to commit the activation.
+
+Generally, the process looks like this:
+
+![ Internet Banking - New Activation ](./14.png)
+
+To generate the activation code, you can call:
+
+```java
+// Your actual user and application identifier
+String userId = "1234";
+Long applicationId = 1;
+
+// Call the SOAP service
+InitActivationResponse response = powerAuthServiceClient.initActivation(userId, applicationId);
+
+// Get the activation code and activation code signature
+String activationId = response.getActivationId(); // unique ID
+String activationCode = response.getActivationCode();
+String activationSignature = response.getActivationSignature();
+
+// Prepare the QR code payload with the signed activation code.
+// We use # to separate the two values in the QR code.
+String qrCodeString = activationCode + "#" + activationSignature;
+```
+
+Now, generating the activation code is only one part of the issue. At the end of the process, you also need to commit the activation to make it usable. You should allow committing the activation as soon as the activation moves to the `PENDING_COMMIT` status. Activation moves to the state from the `CREATED` state as soon as the user completes the key exchange on the mobile device.
+
+You can obtain the activation status at any time (either via periodic polling, or on a button click initiated by the user) by calling the `getActivationStatus` method:
+
+```java
+// Call the SOAP service with activation ID obtained earlier.
+GetActivationStatusResponse response = powerAuthServiceClient.getActivationStatus(activationId);
+
+// Get generic activation attributes
+String activationId = activation.getActivationId(); // unique ID
+String userId = response.getUserId();
+Long appId = response.getApplicationId();
+String activationName = response.getActivationName(); // may be empt
+ActivationStatus status = response.getActivationStatus();
+
+// For unfinished activations, you can also obtain the activation code again
+String activationCode = activation.getActivationCode();
+String activationSignature = activation.getActivationSignature();
+```
+
+Of course, you can also receive the `REMOVED` status in a response. In such case, you should terminate the user flow and let the user start over.
+
+In case the activation is in `PENDING_COMMIT` state, it is time to commit it. You can combine this step with some additional verification on your side, for example, checking a value of an SMS OTP code.
+
+```java
+// Call the SOAP service with activation ID obtained earlier.
+CommitActivationResponse response = powerAuthServiceClient.commitActivation(activationId);
+```
+
 ### Listing Active Devices
 
-// TODO:
+To list all active devices for given user, use the `getActivationListForUser` method:
+
+```java
+// Your actual user and application identifier
+String userId = "1234";
+
+// Call the SOAP service.
+List<Activations> response = powerAuthServiceClient.getActivationListForUser(userId);
+
+for (Activations activation : response) {
+    String activationId = activation.getActivationId(); // unique ID
+    String userId = response.getUserId();
+    Long appId = response.getApplicationId();
+    String activationName = response.getActivationName(); // may be empty
+    ActivationStatus status = response.getActivationStatus();
+}
+
+```
+
+Note that this call returns activations in all states (including removed or not completed) for all applications. You can filter out only the activations you need to be displayed in your list, or select a more specific method on the client instance.
 
 ### Block, Unblock and Remove Devices
 
-// TODO:
+In case you want to block an active activation, unblock a blocked one, or remove the activation completely, there are a single line methods for that:
+
+```java
+// Short way to block the activation.
+BlockActivationResponse response = powerAuthServiceClient.blockActivation(activationId, blockedReason);
+
+// Short way to unblock the activation
+UnblockActivationResponse response = powerAuthServiceClient.unblockActivation(activationId);
+
+// Short way to remove the activation
+RemoveActivationResponse response = powerAuthServiceClient.removeActivation(activationId);
+```
+
+When blocking the activation, you may specify a reason of why the activation is blocked. This can be null or any string you chose. We only have one reserved value of `"MAX_FAILED_ATTEMPTS"` for activations blocked because user authentication failed too many times.
 
 ## Customizing the Enrollment Server
 
