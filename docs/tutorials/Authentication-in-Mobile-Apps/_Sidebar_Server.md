@@ -15,3 +15,7 @@
 [Deploying the Enrollment Server](#deploying-the-enrollment-server)
 
 [Preparing Protected API Resources](#preparing-protected-api-resources)
+
+[Resources](#resources)
+
+[Continue Reading](#continue-reading)

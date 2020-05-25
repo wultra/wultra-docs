@@ -91,7 +91,7 @@ Of course, every authentication and transaction signing system also implements s
 
 Please refer to the detailed documentation for more information about those.
 
-## Other Resources
+## Resources
 
 Of course, you can always find more details in our reference documentation:
 
