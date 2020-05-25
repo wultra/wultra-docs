@@ -1,6 +1,6 @@
 **Table of Contents**
 
-[Home](Readme.md)
+[Home](Readme.md#)
 
 [Mobile Authentication Overview](Readme.md#mobile-authentication-overview)
 

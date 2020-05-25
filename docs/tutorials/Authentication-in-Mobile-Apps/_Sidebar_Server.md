@@ -4,7 +4,7 @@
 
 **Table of Contents**
 
-[Home](Server-Side-Tutorial.md)
+[Home](Server-Side-Tutorial.md#)
 
 [Prerequisites](Server-Side-Tutorial.md#prerequisites)
 

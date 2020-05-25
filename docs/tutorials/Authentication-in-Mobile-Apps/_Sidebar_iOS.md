@@ -4,7 +4,7 @@
 
 **Table of Contents**
 
-[Home](iOS-Tutorial.md)
+[Home](iOS-Tutorial.md#)
 
 [Prerequisites](iOS-Tutorial.md#prerequisites)
 

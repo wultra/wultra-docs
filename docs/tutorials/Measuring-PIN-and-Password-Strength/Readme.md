@@ -1,6 +1,4 @@
-<!-- begin remove -->
 # Measuring PIN and Password Strength
-<!-- end -->
 
 <!-- AUTHOR realKober 2020-05-18T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->

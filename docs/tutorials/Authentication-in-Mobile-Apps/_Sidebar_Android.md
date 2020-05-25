@@ -4,7 +4,7 @@
 
 **Table of Contents**
 
-[Home](Android-Tutorial.md)
+[Home](Android-Tutorial.md#)
 
 [Prerequisites](Android-Tutorial.md#prerequisites)
 
