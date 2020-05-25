@@ -321,7 +321,7 @@ To cover the typical use-cases efficiently, the unified PIN keyboard should be c
 - **The HTTP method** - (Optional) The HTTP method to be used for the call. For the most cases, the calls should be made via the `POST` value and hence the `POST` value should be the default.
 - **The HTTP headers** - (Optional) Value of any other HTTP headers you need to use when calling your service.
 
-### Checking the Activation Status
+### Checking the Activation Status Before Signing
 
 We covered a similar use-case earlier in the context of the new activation flow. However, you should also check for the activation status before every attempt to use the transaction signing since the activation might have been blocked or removed on the server side.
 

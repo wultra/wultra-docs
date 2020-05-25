@@ -1,6 +1,10 @@
+<!-- begin remove -->
+# Sidebar for Android Tutorial
+<!-- end -->
+
 **Table of Contents**
 
-[Home](Android-Tutorial.md#page-top)
+[Home](Android-Tutorial.md)
 
 [Prerequisites](Android-Tutorial.md#prerequisites)
 

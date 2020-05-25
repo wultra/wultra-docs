@@ -1,6 +1,10 @@
+<!-- begin remove -->
+# Sidebar for Server-Side Tutorial
+<!-- end -->
+
 **Table of Contents**
 
-[Home](Server-Side-Tutorial.md#page-top)
+[Home](Server-Side-Tutorial.md)
 
 [Prerequisites](Server-Side-Tutorial.md#prerequisites)
 

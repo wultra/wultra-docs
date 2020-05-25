@@ -1,6 +1,10 @@
+<!-- begin remove -->
+# Sidebar for iOS Tutorial
+<!-- end -->
+
 **Table of Contents**
 
-[Home](iOS-Tutorial.md#page-top)
+[Home](iOS-Tutorial.md)
 
 [Prerequisites](iOS-Tutorial.md#prerequisites)
 
