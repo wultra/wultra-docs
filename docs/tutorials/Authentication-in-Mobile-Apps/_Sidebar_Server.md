@@ -1,6 +1,4 @@
-<!-- begin remove -->
 # Sidebar for Server-Side Tutorial
-<!-- end -->
 
 **Table of Contents**
 

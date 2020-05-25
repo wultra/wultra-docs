@@ -1,6 +1,4 @@
-<!-- begin remove -->
 # Sidebar for iOS Tutorial
-<!-- end -->
 
 **Table of Contents**
 

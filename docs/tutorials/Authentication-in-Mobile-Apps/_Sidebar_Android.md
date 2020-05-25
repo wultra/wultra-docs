@@ -1,6 +1,4 @@
-<!-- begin remove -->
 # Sidebar for Android Tutorial
-<!-- end -->
 
 **Table of Contents**
 
