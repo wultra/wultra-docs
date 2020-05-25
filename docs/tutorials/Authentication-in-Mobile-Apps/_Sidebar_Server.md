@@ -1,21 +1,21 @@
 **Table of Contents**
 
-[Home](#page-top)
+[Home](Server-Side-Tutorial.md#page-top)
 
-[Prerequisites](#prerequisites)
+[Prerequisites](Server-Side-Tutorial.md#prerequisites)
 
-[Introduction](#introduction)
+[Introduction](Server-Side-Tutorial.md#introduction)
 
-[Preparing the Infrastructure](#preparing-the-infrastructure)
+[Preparing the Infrastructure](Server-Side-Tutorial.md#preparing-the-infrastructure)
 
-[Deploy the Server-Side Components](#deploy-the-server-side-components)
+[Deploy the Server-Side Components](Server-Side-Tutorial.md#deploy-the-server-side-components)
 
-[Manage Devices in the Internet Banking](#manage-devices-in-the-internet-banking)
+[Manage Devices in the Internet Banking](Server-Side-Tutorial.md#manage-devices-in-the-internet-banking)
 
-[Deploying the Enrollment Server](#deploying-the-enrollment-server)
+[Deploying the Enrollment Server](Server-Side-Tutorial.md#deploying-the-enrollment-server)
 
-[Preparing Protected API Resources](#preparing-protected-api-resources)
+[Preparing Protected API Resources](Server-Side-Tutorial.md#preparing-protected-api-resources)
 
-[Resources](#resources)
+[Resources](Server-Side-Tutorial.md#resources)
 
-[Continue Reading](#continue-reading)
+[Continue Reading](Server-Side-Tutorial.md#continue-reading)

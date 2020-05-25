@@ -1,7 +1,7 @@
 # Implementing Authentication in Mobile Banking Apps (SCA) on Android Platform
 
 <!-- AUTHOR joshis_tweets 2020-05-04T00:00:00Z -->
-<!-- SIDEBAR _Sidebar_Mobile.md sticky -->
+<!-- SIDEBAR _Sidebar_Android.md sticky -->
 
 In this tutorial, we will show you how to implement authentication into your mobile banking or fintech app on Android.
 

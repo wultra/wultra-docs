@@ -1,15 +1,15 @@
 **Table of Contents**
 
-[Home](#page-top)
+[Home](Readme.md#page-top)
 
-[Mobile Authentication Overview](#mobile-authentication-overview)
+[Mobile Authentication Overview](Readme.md#mobile-authentication-overview)
 
-[Activation](#activation)
+[Activation](Readme.md#activation)
 
-[Transaction Signing](#transaction-signing)
+[Transaction Signing](Readme.md#transaction-signing)
 
-[Other Use-Cases](#other-use-cases)
+[Other Use-Cases](Readme.md#other-use-cases)
 
-[Resources](#resources)
+[Resources](Readme.md#resources)
 
-[Continue Reading](#continue-reading)
+[Continue Reading](Readme.md#continue-reading)

@@ -1,17 +1,17 @@
 **Table of Contents**
 
-[Home](#page-top)
+[Home](Readme.md#page-top)
 
-[UX Perspective](#ux-perspective)
+[UX Perspective](Readme.md#ux-perspective)
 
-[User Interface](#user-interface)
+[User Interface](Readme.md#user-interface)
 
-[Getting the SDK](#getting-the-sdk)
+[Getting the SDK](Readme.md#getting-the-sdk)
 
-[Testing Passwords](#testing-passwords)
+[Testing Passwords](Readme.md#testing-passwords)
 
-[Testing PIN Codes](#testing-pin-codes)
+[Testing PIN Codes](Readme.md#testing-pin-codes)
 
-[Asynchronous Usage](#asynchronous-usage)
+[Asynchronous Usage](Readme.md#asynchronous-usage)
 
-[Summary](#summary)
+[Summary](Readme.md#summary)
