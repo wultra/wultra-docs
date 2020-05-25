@@ -658,6 +658,15 @@ public class SecureController {
 }
 ```
 
+## Resources
+
+You can find more details about the server-side components in our reference documentation:
+
+- [PowerAuth Server](https://github.com/wultra/powerauth-server)
+- [PowerAuth Admin](https://github.com/wultra/powerauth-admin)
+- [Enrollment Server](https://github.com/wultra/enrollment-server)
+- [PowerAuth RESTful Integration](https://github.com/wultra/powerauth-restful-integration)
+
 ## Continue Reading
 
 Proceed with one of the following chapters:
