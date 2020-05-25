@@ -1,5 +1,3 @@
-# Sidebar for iOS Tutorial
-
 **Table of Contents**
 
 [Home](iOS-Tutorial.md#)

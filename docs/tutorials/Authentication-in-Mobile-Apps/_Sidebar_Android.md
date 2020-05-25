@@ -1,5 +1,3 @@
-# Sidebar for Android Tutorial
-
 **Table of Contents**
 
 [Home](Android-Tutorial.md#)

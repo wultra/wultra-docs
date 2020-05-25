@@ -1,5 +1,3 @@
-# Sidebar for Server-Side Tutorial
-
 **Table of Contents**
 
 [Home](Server-Side-Tutorial.md#)
