@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+
+    <!-- Database Configuration - JDBC -->
+    <Parameter name="spring.datasource.driver-class-name" value="org.postgresql.Driver"/>
+    <Parameter name="spring.datasource.url" value="jdbc:postgresql://localhost:5432/postgres"/>
+    <Parameter name="spring.datasource.username" value="$YOUR_DB_USERNAME"/>
+    <Parameter name="spring.datasource.password" value="$YOUR_DB_PASSWORD"/>
+
+</Context>
