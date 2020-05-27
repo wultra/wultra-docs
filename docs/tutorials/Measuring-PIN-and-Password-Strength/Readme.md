@@ -202,7 +202,7 @@ private var queue: OperationQueue =  {
 
 // ...
 
-func processPassword(_ password	: String) {
+func processPassword(_ password : String) {
     // if the user types too fast, cancel waiting operations and add new one
     queue.cancelAllOperations()
     queue.addOperation {
