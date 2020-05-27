@@ -74,12 +74,12 @@ import com.wultra.android.passphrasemeter.exceptions.*
 // then you need to load that dictionary first.
 // assets is property of ContextThemeWrapper
 try {
-	PasswordTester.getInstance().loadDictionary(assets, "en.dct")
-	// Test the password
-	val result = PasswordTester.getInstance().testPassword("test")
-	print("Strength", result.name)
+    PasswordTester.getInstance().loadDictionary(assets, "en.dct")
+    // Test the password
+    val result = PasswordTester.getInstance().testPassword("test")
+    print("Strength", result.name)
 } catch (e: WrongPasswordException) {
-	// Password check failed
+    // Password check failed
 }
 ```
 {% endcodetab %}
@@ -185,7 +185,7 @@ import android.support.annotation.WorkerThread
 
 @WorkerThread
 private fun processPassword(password: String) {
-	// ...
+    // ...
 }
 ```
 {% endcodetab %}
@@ -202,7 +202,7 @@ private var queue: OperationQueue =  {
 
 // ...
 
-func processPassword(_ password	: String) {
+func processPassword(_ password : String) {
     // if the user types too fast, cancel waiting operations and add new one
     queue.cancelAllOperations()
     queue.addOperation {
