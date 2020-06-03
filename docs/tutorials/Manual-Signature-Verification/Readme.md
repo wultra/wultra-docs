@@ -3,7 +3,7 @@
 <!-- AUTHOR joshis_tweets 2020-06-04T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
 
-In this tutorial, we will show you how to verify PowerAuth signatures manually on the server-side. While the task is relatively simple, it is very sensitive to any minor inconsistencies. Do not get frustrated if the signature verification does not work for you the first time. If you get stuck, do not hesitate to contact our engineers for help.
+In this tutorial, we will show you how to verify PowerAuth signatures manually on the server-side. While the task is relatively simple, it is very sensitive to any minor inconsistencies. Do not get frustrated if the signature verification does not work for you the first time. If you get stuck, do not hesitate to [contact our engineers for help](#support).
 
 ## Introduction
 
@@ -73,7 +73,7 @@ The PowerAuth signature header has a fixed prefix `PowerAuth `, followed by the 
 In our Java code, we use the `PowerAuthHttpHeader` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthHttpHeader.java)) to do this work. The important part of the Java code that we use for the header parsing looks like this:
 
 ```java
-protected static final String POWERAUTH_PREFIX = ;
+protected static final String POWERAUTH_PREFIX = "PowerAuth ";
 
 protected Map<String, String> parseHttpHeader(String header) {
     // Check if the header is null
