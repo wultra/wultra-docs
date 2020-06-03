@@ -1,6 +1,7 @@
 # Verifying PowerAuth Signatures On The Server
 
 <!-- AUTHOR joshis_tweets 2020-06-04T00:00:00Z -->
+<!-- SIDEBAR _Sidebar.md sticky -->
 
 In this tutorial, we will show you how to verify PowerAuth signatures manually on the server-side. While the task is relatively simple, it is very sensitive to any minor inconsistencies. Do not get frustrated if the signature verification does not work for you the first time. If you get stuck, do not hesitate to contact our engineers for help.
 
@@ -125,17 +126,19 @@ In the case the HTTP request uses any other HTTP method than `GET`, this task is
 
 For `GET` requests, this gets a bit more tricky, since `GET` requests usually do not have any body. While this may not be a problem in some cases, we include query parameters into the request data in case they are present. To achieve precisely the same value of request data on the server and client, we apply a canonization algorithm on the query attributes:
 
-1. Sort the query attribute by name.
-2. In the case there are more than one query attribute with the same name, sort the query attributes also by the value.
-3. Create a new query string with ordered query params, such as `param1=value1&param2=value2&...`.
+1. Sort the query attribute by attribute name.
+2. If there are multiple query attributes with the same name, sort the query attributes also by the value as a secondary criterion.
+3. Create a new query string with ordered query attributes.
 
-We have a special `PowerAuthRequestCanonizationUtils` for this task ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthRequestCanonizationUtils.java)). The code is a bit too long and boring for a copy-paste to this tutorial, in case you need to handle signed `GET` requests, have a look into our implementation.
+For example, we change `key_b=value_b&key_b=value_a&key_a=value_a` to `key_a=value_a&key_b=value_a&key_b=value_b`.
+
+We have a special `PowerAuthRequestCanonizationUtils` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthRequestCanonizationUtils.java)) for this task. The code is a bit too long and boring for a copy-paste to this tutorial. If you need to handle signed `GET` requests, have a look into our implementation.
 
 ## Building the Signature Base String
 
-Now, when we have the request data and parsed HTTP header, we may proceed to building the signature base string. This is the string value that was actually signed on the mobile device! `#excided #almostthere`
+Now, when we have the request data and parsed HTTP header, we may proceed to building the signature base string. This is the string value that was actually signed on the mobile device.
 
-Building the signature base string is simple if we have all the data in place. We use our own `PowerAuthHttpBody` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthHttpBody.java)) to do most of the logic.
+Building the signature base string is simple once we have all the data we talked about earlier in place. We use our own `PowerAuthHttpBody` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthHttpBody.java)) to do the most of the logic.
 
 The important Java code is the following:
 
@@ -174,11 +177,19 @@ To call the method, you need to know:
     - **Note: The nonce value should be Base64 encoded only once. In our code, we receive nonce in the HTTP header as a Base64 encoded string, we decode it to the bytes, and when building a signature base string, we encode it to Base64 again. While this looks like extra work, at least we can validate the correct format of the value as well as sufficient length of the underlying `byte[]`.**
 - The request data - We obtained those in the section above.
 
+The result should look something like this:
+
+```
+POST&L29wZXJhdGlvbi9hdXRob3JpemU=&j1MADdlwDmN3ZV7cFt74Qg==&eyJyZXF1ZXN0T2JqZWN0I
+jp7ImlkIjoiNzBkMDM5MjktNmZkZC00MzE1LTk1NzQtYzk3ZGM2ZDU2YWJhIiwiZGF0YSI6IkEyIn19&
+Ec1RlAr6B3Il6wEg9OQLXA==
+```
+
 At this moment, we should have everything to call the PowerAuth Server API.
 
 ## Verifying the Signatures
 
-This is the moment of truth. After your API server receives the signed request from the mobile app, you need to call the PowerAuth Server API to check that the signature is correct.
+This is the moment of truth. After your API server receives a signed HTTP request from the mobile app, you need to call the PowerAuth Server API to check that the signature is correct.
 
 You can use the following RESTful API for that:
 
@@ -207,8 +218,6 @@ You can use the following RESTful API for that:
 | `signature` | Signature value. | Comes in the signature HTTP header. |
 | `signatureType` | Signature type. | Comes in the signature HTTP header. Note: The PowerAuth Service uses enum values in upper-case, while the HTTP header comes in lower-case format. The values are otherwise the same. |
 | `signatureVersion` | Signature version. | Comes in the signature HTTP header. |
-
-_Note: We also have a SOAP service, if you like this better. [Here is the documentation](https://developers.wultra.com/docs/2020.05/powerauth-server/SOAP-Service-Methods), including the link to WSDL definitions._
 
 You will receive the following response:
 
@@ -242,7 +251,9 @@ You will receive the following response:
 | `responseObject.remainingAttempts` | Number of the remaining authentication attempts. |
 | `responseObject.signatureType` | Used signature type. |
 
-The first thing you must do is to check the `responseObject.signatureValid` value. If false, the signature verification failed and you should return `HTTP 401` in the response to the mobile client.
+_Note: We also have a SOAP service. If you like this better, [here is the documentation](https://developers.wultra.com/docs/2020.05/powerauth-server/SOAP-Service-Methods), including the link to WSDL definitions._
+
+The first thing you must do is to check the `responseObject.signatureValid` value. If the value is `false`, the signature verification failed and you should return `HTTP 401` in the response to the mobile client.
 
 If the signature verification was successful, you can now work with the remaining response values in any way your business logic requires.
 
