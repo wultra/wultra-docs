@@ -2,7 +2,9 @@
 
 [Home](Readme.md#)
 
-[Overview](Readme.md#overview)
+[Introduction](Readme.md#introduction)
+
+[Mobile App Perspective](Readme.md#mobile-app-perspective)
 
 [Parsing the Signature Header](Readme.md#parsing-the-signature-header)
 

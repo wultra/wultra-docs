@@ -1,19 +1,28 @@
-# Verifying PowerAuth Signatures Manually On The Server
+# Verifying PowerAuth Signatures On The Server
 
 <!-- AUTHOR joshis_tweets 2020-06-04T00:00:00Z -->
 
-When implementing mobile authentication and authorization, you need to implement at least two processes: [activation](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md#activation) (mobile device enrollment) and [transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md#transaction-signing).
-
-The activation process can be fully externalized into the [Enrollment Server](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#deploying-the-enrollment-server) component that is fully independent from any systems you already have. This externalization follows a similar logic that allows you to separate, for example, the OAuth 2.0 Authorization Service from OAuth 2.0 Resource Service.
-
-The transaction signing process is much more tightly coupled with your API resources. As a result, you usually need to integrate the PowerAuth signature verification logic into your existing systems. If you use Java and Spring framework, this is a trivial task thanks to our magical support for Spring, as we show in our [tutorial on mobile authentication and transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#preparing-protected-api-resources). However, not all systems use Spring, or even Java. What if you use .NET, Java, Ruby, Python, or any other server-side technology? Do not worry - adding the support for signature verification is not difficult.
-
 In this tutorial, we will show you how to verify PowerAuth signatures manually. While the task is relatively simple, it is very sensitive to any minor inconsistencies. Do not get frustrated if signature verification does not work the first time. If you get stuck, do not hesitate to contact our engineers for help.
 
-## Overview
+## Introduction
 
-The signatures are computed on the mobile device, using our iOS or Android SDK.
-They are computed using the following input values:
+When implementing mobile authentication and authorization, you need to implement at least two core processes:
+
+- [Activation](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md#activation) - mobile device enrollment
+- [Transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md#transaction-signing) - for example, login or payment approval
+
+The activation process can be externalized into a standalone [Enrollment Server](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#deploying-the-enrollment-server) application. It can take over the activation process entirely and it can be deployed fully independently from any systems you already have.
+
+The transaction signing process is much more tightly coupled with your protected API resources. As a result, you usually need to integrate the PowerAuth signature verification logic into your existing systems that publish the protected resources. This is a trivial task if you use Spring framework thanks to our magical Spring `@PowerAuth` annotation, as we show in our [tutorial on mobile authentication and transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#preparing-protected-api-resources).
+
+However, not all systems use Spring, or even Java. What if you use .NET, Java, Ruby, Python, or any other server-side technology? Do not worry - adding the support for signature verification is not difficult.
+
+
+## Mobile App Perspective
+
+To understand the server-side signature verification, it is helpful to understand how the signatures are computed on the mobile device, using our iOS or Android SDK.
+
+When computing a signature, the mobile SDK requires the following input values:
 
 - **HTTP method**, usually `POST`.
     - For signed requests, we recommend always using the `POST` method.
@@ -26,8 +35,13 @@ They are computed using the following input values:
 
 Based on the data, the mobile app produces an HTTP header with the PowerAuth signature, that looks like this (of course, without the masked value):
 
-```http
-X-PowerAuth-Authorization: PowerAuth pa_version="3.1", pa_activation_id="f8******-****-****-****-**********76", pa_application_key="Bz******************iQ==", pa_nonce="GM******************ZQ==", pa_signature_type="possession_knowledge", pa_signature="wXay*************************************U="
+```
+X-PowerAuth-Authorization: PowerAuth pa_version="3.1",
+    pa_activation_id="f8******-****-****-****-**********76",
+    pa_application_key="Bz******************iQ==",
+    pa_nonce="GM******************ZQ==",
+    pa_signature_type="possession_knowledge",
+    pa_signature="wXay*************************************U="
 ```
 
 As you can see, the header contains the:
