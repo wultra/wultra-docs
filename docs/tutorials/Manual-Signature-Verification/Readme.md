@@ -3,18 +3,18 @@
 <!-- AUTHOR joshis_tweets 2020-06-04T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
 
-In this tutorial, we will show you how to verify PowerAuth signatures manually on the server-side. While the task is relatively simple, it is very sensitive to any minor inconsistencies. Do not get frustrated if the signature verification does not work for you the first time. If you get stuck, do not hesitate to contact our engineers for help.
+In this tutorial, we will show you how to verify PowerAuth signatures manually on the server-side. While the task is relatively simple, it is very sensitive to any minor inconsistencies. Do not get frustrated if the signature verification does not work for you the first time. If you get stuck, do not hesitate to [contact our engineers for help](https://developers.wultra.com/docs/develop/#support#docucheck-keep-link).
 
 ## Introduction
 
-When implementing [mobile banking authentication and authorization](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md), you need to implement at least two core processes:
+When implementing [mobile banking authentication and authorization](../Authentication-in-Mobile-Apps/Readme.md), you need to implement at least two core processes:
 
-- [Activation](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md#activation) - mobile device enrollment
-- [Transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md#transaction-signing) - for example, login or payment approval
+- [Activation](../Authentication-in-Mobile-Apps/Readme.md#activation) - mobile device enrollment
+- [Transaction signing](../Authentication-in-Mobile-Apps/Readme.md#transaction-signing) - for example, login or payment approval
 
-The **activation** process can be entirely externalized into a standalone [Enrollment Server](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#deploying-the-enrollment-server) application. Enrollment server can take over the activation process and it can be deployed fully independently from your existing systems.
+The **activation** process can be entirely externalized into a standalone [Enrollment Server](../Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#deploying-the-enrollment-server) application. Enrollment server can take over the activation process and it can be deployed fully independently from your existing systems.
 
-The **transaction signing** process is much more tightly coupled with your protected API resources. As a result, you usually need to integrate the PowerAuth signature verification logic into your existing systems that publish those protected resources. This is a trivial task if you use Spring framework thanks to our magical `@PowerAuth` annotation, as we illustrate in our [tutorial on mobile authentication and transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#preparing-protected-api-resources).
+The **transaction signing** process is much more tightly coupled with your protected API resources. As a result, you usually need to integrate the PowerAuth signature verification logic into your existing systems that publish those protected resources. This is a trivial task if you use Spring framework thanks to our magical `@PowerAuth` annotation, as we illustrate in our [tutorial on mobile authentication and transaction signing](../Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#preparing-protected-api-resources).
 
 However, not all systems use Spring, or even Java. What if you use .NET, Java, Ruby, Python, or any other server-side technology? Do not worry - adding the support for manual ad-hoc signature verification is not difficult.
 
@@ -28,7 +28,7 @@ When computing a signature, the mobile SDK requires the following input values:
 - **HTTP method**, usually `POST`.
     - For signed requests, we always recommend using the `POST` method.
 - **Resource ID**, this a constant that client and server needs to agree on beforehand.
-    - The value of this constant is usually (by convention) set to the relevant part of the URI that gets called. For example, if the URI is `https://api.example.com/app-context/1.0/login`, the resource ID would be set to `/login` value.
+    - The value of this constant can be anything, but it is usually (by convention) set to the relevant part of the URI that gets called. For example, if the URI is `https://api.example.com/app-context/1.0/login`, the resource ID would be set to `/login` value.
     - _Note: We use URI ID instead of the full URL since it could be difficult to deduce the correct path on the server side. Systems may run in different clusters and in different URI contexts (for example, the server could see `https://internal-machine/domain1/app-context/1.0-rel202005/login` instead of the above-mentioned address)._
 - **HTTP request data**
     - for `POST`, `PUT` and `DELETE` requests, this is just the HTTP request body
@@ -70,10 +70,10 @@ This is the first thing that you should check: If you expect the signature heade
 
 The PowerAuth signature header has a fixed prefix `PowerAuth `, followed by the comma separated key-value pairs: `key1="value1", key2="value2"`. Note that the values are always in quotes.
 
-In our Java code, we use the `PowerAuthHttpHeader` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthHttpHeader.java)) to do this work. The important part of the Java code that we use for the header parsing looks like this:
+In our Java code, we use the `PowerAuthHttpHeader` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthHttpHeader.java#docucheck-keep-link)) to do this work. The important part of the Java code that we use for the header parsing looks like this:
 
 ```java
-protected static final String POWERAUTH_PREFIX = ;
+protected static final String POWERAUTH_PREFIX = "PowerAuth ";
 
 protected Map<String, String> parseHttpHeader(String header) {
     // Check if the header is null
@@ -105,7 +105,7 @@ protected Map<String, String> parseHttpHeader(String header) {
 }
 ```
 
-Then we have a convenience `PowerAuthSignatureHttpHeader` subclass ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthSignatureHttpHeader.java)) for the signature header type that only does the more convenient (and typed) value extraction.
+Then we have a convenience `PowerAuthSignatureHttpHeader` subclass ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthSignatureHttpHeader.java#docucheck-keep-link)) for the signature header type that only does the more convenient (and typed) value extraction.
 
 Note that every signature header must contain the following values:
 
@@ -116,7 +116,7 @@ Note that every signature header must contain the following values:
 - `pa_signature_type` - The signature type.
 - `pa_version` - Algorithm version.
 
-You should validate them, just to make sure they contain structurally correct values. We use a `PowerAuthSignatureHttpHeaderValidator` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/validator/PowerAuthSignatureHttpHeaderValidator.java)) for that. The validation logic is longer (not suitable for copy pasting here) but very straight-forward.
+You should validate them, just to make sure they contain structurally correct values. We use a `PowerAuthSignatureHttpHeaderValidator` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/validator/PowerAuthSignatureHttpHeaderValidator.java#docucheck-keep-link)) for that. The validation logic is longer (not suitable for copy pasting here) but very straight-forward.
 
 Again, if parsing of the HTTP header fails, or the header does not contain some of the required values, or the header value validation fails, you should stop the processing and return `HTTP 401`.
 
@@ -132,13 +132,13 @@ For `GET` requests, this gets a bit more tricky, since `GET` requests usually do
 
 For example, we change `key_b=value_b&key_b=value_a&key_a=value_a` to `key_a=value_a&key_b=value_a&key_b=value_b`.
 
-We have a special `PowerAuthRequestCanonizationUtils` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthRequestCanonizationUtils.java)) for this task. The code is a bit too long and boring for a copy-paste to this tutorial. If you need to handle signed `GET` requests, have a look into our implementation.
+We have a special `PowerAuthRequestCanonizationUtils` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthRequestCanonizationUtils.java#docucheck-keep-link)) for this task. The code is a bit too long and boring for a copy-paste to this tutorial. If you need to handle signed `GET` requests, have a look into our implementation.
 
 ## Building the Signature Base String
 
 Now, when we have the request data and parsed HTTP header, we may proceed to building the signature base string. This is the string value that was actually signed on the mobile device.
 
-Building the signature base string is simple once we have all the data we talked about earlier in place. We use our own `PowerAuthHttpBody` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthHttpBody.java)) to do the most of the logic.
+Building the signature base string is simple once we have all the data we talked about earlier in place. We use our own `PowerAuthHttpBody` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthHttpBody.java#docucheck-keep-link)) to do the most of the logic.
 
 The important Java code is the following:
 
@@ -251,7 +251,7 @@ You will receive the following response:
 | `responseObject.remainingAttempts` | Number of the remaining authentication attempts. |
 | `responseObject.signatureType` | Used signature type. |
 
-_Note: We also have a SOAP service. If you like this better, [here is the documentation](https://developers.wultra.com/docs/2020.05/powerauth-server/SOAP-Service-Methods), including the link to WSDL definitions._
+_Note: We also have a SOAP service. If you like this better, [here is the documentation](https://github.com/wultra/powerauth-server/blob/develop/docs/SOAP-Service-Methods.md), including the link to WSDL definitions._
 
 The first thing you must do is to check the `responseObject.signatureValid` value. If the value is `false`, the signature verification failed and you should return `HTTP 401` in the response to the mobile client.
 
