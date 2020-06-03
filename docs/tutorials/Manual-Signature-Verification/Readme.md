@@ -2,38 +2,38 @@
 
 <!-- AUTHOR joshis_tweets 2020-06-04T00:00:00Z -->
 
-In this tutorial, we will show you how to verify PowerAuth signatures manually. While the task is relatively simple, it is very sensitive to any minor inconsistencies. Do not get frustrated if signature verification does not work the first time. If you get stuck, do not hesitate to contact our engineers for help.
+In this tutorial, we will show you how to verify PowerAuth signatures manually on the server-side. While the task is relatively simple, it is very sensitive to any minor inconsistencies. Do not get frustrated if the signature verification does not work for you the first time. If you get stuck, do not hesitate to contact our engineers for help.
 
 ## Introduction
 
-When implementing mobile authentication and authorization, you need to implement at least two core processes:
+When implementing [mobile banking authentication and authorization](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md), you need to implement at least two core processes:
 
 - [Activation](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md#activation) - mobile device enrollment
 - [Transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md#transaction-signing) - for example, login or payment approval
 
-The activation process can be externalized into a standalone [Enrollment Server](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#deploying-the-enrollment-server) application. It can take over the activation process entirely and it can be deployed fully independently from any systems you already have.
+The **activation** process can be entirely externalized into a standalone [Enrollment Server](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#deploying-the-enrollment-server) application. Enrollment server can take over the activation process and it can be deployed fully independently from your existing systems.
 
-The transaction signing process is much more tightly coupled with your protected API resources. As a result, you usually need to integrate the PowerAuth signature verification logic into your existing systems that publish the protected resources. This is a trivial task if you use Spring framework thanks to our magical Spring `@PowerAuth` annotation, as we show in our [tutorial on mobile authentication and transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#preparing-protected-api-resources).
+The **transaction signing** process is much more tightly coupled with your protected API resources. As a result, you usually need to integrate the PowerAuth signature verification logic into your existing systems that publish those protected resources. This is a trivial task if you use Spring framework thanks to our magical `@PowerAuth` annotation, as we illustrate in our [tutorial on mobile authentication and transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#preparing-protected-api-resources).
 
-However, not all systems use Spring, or even Java. What if you use .NET, Java, Ruby, Python, or any other server-side technology? Do not worry - adding the support for signature verification is not difficult.
+However, not all systems use Spring, or even Java. What if you use .NET, Java, Ruby, Python, or any other server-side technology? Do not worry - adding the support for manual ad-hoc signature verification is not difficult.
 
 
 ## Mobile App Perspective
 
-To understand the server-side signature verification, it is helpful to understand how the signatures are computed on the mobile device, using our iOS or Android SDK.
+To understand the server-side signature verification better, it is helpful to understand how the signatures are computed on the mobile device, using our iOS or Android SDK.
 
 When computing a signature, the mobile SDK requires the following input values:
 
 - **HTTP method**, usually `POST`.
-    - For signed requests, we recommend always using the `POST` method.
+    - For signed requests, we always recommend using the `POST` method.
 - **Resource ID**, this a constant that client and server needs to agree on beforehand.
-    - The value of this constant is usually (by convention) the relevant part of the URI that gets called. For example, if the URI is `https://api.myserver.com/application-context/1.0/login`, the resource ID would be set to `/login` value.
-    - _Note: We do not use the full URL since it could be difficult to deduce the correct path on the server side. Systems may run in different clusters and in different URI contexts (for example, the server could see `https://internal-machine/domain1/application-context/1.0-rel202005/login` instead of the above-mentioned address)._
+    - The value of this constant is usually (by convention) set to the relevant part of the URI that gets called. For example, if the URI is `https://api.example.com/app-context/1.0/login`, the resource ID would be set to `/login` value.
+    - _Note: We use URI ID instead of the full URL since it could be difficult to deduce the correct path on the server side. Systems may run in different clusters and in different URI contexts (for example, the server could see `https://internal-machine/domain1/app-context/1.0-rel202005/login` instead of the above-mentioned address)._
 - **HTTP request data**
-    - for `POST` requests (and other requests with the body), this is just HTTP request body
+    - for `POST`, `PUT` and `DELETE` requests, this is just the HTTP request body
     - for `GET` requests, we use a canonicalized request query parameters
 
-Based on the data, the mobile app produces an HTTP header with the PowerAuth signature, that looks like this (of course, without the masked value):
+Based on these input values, the mobile app produces an HTTP header with the PowerAuth signature, that looks like this one:
 
 ```
 X-PowerAuth-Authorization: PowerAuth pa_version="3.1",
@@ -46,26 +46,26 @@ X-PowerAuth-Authorization: PowerAuth pa_version="3.1",
 
 As you can see, the header contains the:
 
-- **Signature version** - version of the used algorithm
-- **Activation ID** - identifier of the cryptographic element
-- **Application key** - identifier of the application version
-- **Nonce** - a random value used when computing the cryptographic signature
-- **Signature type** - the type of the signature, denotes factors that were used when computing the signature
-- **Signature** - the actual value of the signature
+- **Signature version** - A version of the used algorithm.
+- **Activation ID** - An identifier of the cryptographic element.
+- **Application key** - An identifier of the application version.
+- **Nonce** - A random value used when computing the cryptographic signature.
+- **Signature type** - A type of the signature, represents the authentication factors that were used when computing the signature.
+- **Signature** - An actual value of the signature.
 
 The goal of the server is to:
 
-1. Accept the HTTP request send by the mobile application.
-2. Extract all important data from the HTTP request.
-3. Transform the values precisely (bit-by-bit) to an appropriate format.
-4. Call the PowerAuth Server method that verifies the signature and returns additional results of the verification, such as (and mainly...) the user ID.
-5. Follow-up on the signature verification result with own business logic.
+1. Accept the HTTP request sent by the mobile application.
+2. Extract all important elements from the HTTP request.
+3. Transform these elements precisely (bit-by-bit) to an appropriate format.
+4. Call the PowerAuth Server method that verifies the signature and returns additional results of the verification, mainly the user ID.
+5. Use the signature verification result to follow-up with your own business logic.
 
 ## Parsing the Signature Header
 
-The first task that needs to be carried out is parsing the HTTP header with the PowerAuth signature. Get the value of the `X-PowerAuth-Authorization` header.
+The first task that needs to be carried out is parsing the HTTP header with the PowerAuth signature. Get the value of the `X-PowerAuth-Authorization` header from the incoming request.
 
-This is the first thing that you should check: If you expect the header and it is not there, you should stop the processing and return `HTTP 401`.
+This is the first thing that you should check: If you expect the signature header on a given resource and it is not there, you should stop the processing and return `HTTP 401`.
 
 The PowerAuth signature header has a fixed prefix `PowerAuth `, followed by the comma separated key-value pairs: `key1="value1", key2="value2"`. Note that the values are always in quotes.
 
@@ -105,6 +105,19 @@ protected Map<String, String> parseHttpHeader(String header) {
 ```
 
 Then we have a convenience `PowerAuthSignatureHttpHeader` subclass ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthSignatureHttpHeader.java)) for the signature header type that only does the more convenient (and typed) value extraction.
+
+Note that every signature header must contain the following values:
+
+- `pa_activation_id` - Activation ID.
+- `pa_application_key` - Application version ID.
+- `pa_nonce` - Cryptographic nonce (Base64 encoded).
+- `pa_signature` - The signature value.
+- `pa_signature_type` - The signature type.
+- `pa_version` - Algorithm version.
+
+You should validate them, just to make sure they contain structurally correct values. We use a `PowerAuthSignatureHttpHeaderValidator` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/validator/PowerAuthSignatureHttpHeaderValidator.java)) for that. The validation logic is longer (not suitable for copy pasting here) but very straight-forward.
+
+Again, if parsing of the HTTP header fails, or the header does not contain some of the required values, or the header value validation fails, you should stop the processing and return `HTTP 401`.
 
 ## Obtaining the Request Data
 
