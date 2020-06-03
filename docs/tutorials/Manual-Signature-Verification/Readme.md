@@ -55,11 +55,11 @@ As you can see, the header contains the:
 
 The goal of the server is to:
 
-- Accept the HTTP request send by the mobile application.
-- Extract all important data from the request.
-- Transform the values precisely (bit-by-bit) to appropriate format.
-- Call the PowerAuth Server method that verifies the signature and returns additional results of the verification, such as (and mainly...) the user ID.
-- Follow-up on the signature verification result with own business logic.
+1. Accept the HTTP request send by the mobile application.
+2. Extract all important data from the HTTP request.
+3. Transform the values precisely (bit-by-bit) to an appropriate format.
+4. Call the PowerAuth Server method that verifies the signature and returns additional results of the verification, such as (and mainly...) the user ID.
+5. Follow-up on the signature verification result with own business logic.
 
 ## Parsing the Signature Header
 
@@ -163,7 +163,7 @@ To call the method, you need to know:
 
 At this moment, we should have everything to call the PowerAuth Server API.
 
-## Calling the Signature Verification Service
+## Verifying the Signatures
 
 This is the moment of truth. After your API server receives the signed request from the mobile app, you need to call the PowerAuth Server API to check that the signature is correct.
 
@@ -183,6 +183,8 @@ You can use the following RESTful API for that:
   }
 }
 ```
+
+**Request Body Structure**
 
 | Parameter | Description | Obtained at |
 |---|---|---|
@@ -212,6 +214,8 @@ You will receive the following response:
   }
 }
 ```
+
+**Response Body Structure**
 
 | Parameter | Description |
 |---|---|

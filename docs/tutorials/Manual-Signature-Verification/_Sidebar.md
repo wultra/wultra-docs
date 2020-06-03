@@ -12,6 +12,6 @@
 
 [Building the Signature Base String](Readme.md#building-the-signature-base-string)
 
-[Calling the Signature Verification Service](Readme.md#calling-the-signature-verification-service)
+[Verifying the Signatures](Readme.md#verifying-the-signatures)
 
 [Summary](Readme.md#summary)
