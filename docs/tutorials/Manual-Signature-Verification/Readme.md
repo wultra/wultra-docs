@@ -3,7 +3,7 @@
 <!-- AUTHOR joshis_tweets 2020-06-04T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
 
-In this tutorial, we will show you how to verify PowerAuth signatures manually on the server-side. While the task is relatively simple, it is very sensitive to any minor inconsistencies. Do not get frustrated if the signature verification does not work for you the first time. If you get stuck, do not hesitate to [contact our engineers for help](https://developers.wultra.com/docs/develop/#support#docucheck-keep-link).
+In this tutorial, we will show you how to verify PowerAuth signatures manually on the server-side. While the task is relatively simple, it is very sensitive to any minor inconsistencies. Do not get frustrated if the signature verification does not work for you the first time. If you get stuck, do not hesitate to contact our engineers for help.
 
 ## Introduction
 
