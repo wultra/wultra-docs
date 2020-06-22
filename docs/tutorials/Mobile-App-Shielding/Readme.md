@@ -6,21 +6,23 @@
 <div id="banner">
     <div class="alert alert-warning">
         <strong>Personalized Configuration Required.</strong><br/>
-        <span>In order to follow this tutorial, you need to purchase the App Shielding technology by Wultra and have a configuration prepared by Wultra engineers that specifically designed for your application. Contact your representative in order to obtain it.</span>
+        <span>In order to follow this tutorial, you need to purchase the App Shielding technology by Wultra and have a tooling as well as custom configuration prepared by Wultra engineers. Both tooling and configuration is specifically designed for your application. Contact your sales representative or technical consultant in order to obtain the required components.</span>
     </div>
 </div>
 
-In this tutorial, we will show you how to implement App Shielding by Wultra into your mobile apps on iOS and Android.
-
-This tutorial has three parts:
+In this tutorial, we will show you how to implement App Shielding by Wultra into your mobile apps on iOS and Android. This tutorial has three parts:
 
 - **Mobile App Shielding Overview**
-- [App Shielding for iOS](iOS-Tutorial.md)
-- [App Shielding for Android](Android-Tutorial.md)
+- [App Shielding for iOS](./iOS-Tutorial.md)
+- [App Shielding for Android](./Android-Tutorial.md)
 
 ## Introduction
 
-Mobile Application Shielding (or App Shielding, for short) protects your mobile app against a broad range of attacks caused by various OS vulnerabilities. It hardens your app by strong code obfuscation, sensitive info extraction (hiding strings, keys and other constants embedded in the app), additional integrity checks and by adding an active self-protecting code. As a result, it makes sure that your app is protected even if running on a jailbroken/rooted device. It prevents debugger connections, stops code or framework injection, or prevents running the app in virtualized environment or on emulator. Additionally, it protects your app from untrusted screen readers, fake keyboards, blocks screen sharing or user/system screenshots.
+Mobile Application Shielding (or App Shielding, for short) protects your mobile app against a broad range of attacks caused by various OS vulnerabilities.
+
+![ App Shielding - Principle ](./app-shielding.png)
+
+It hardens your app by strong code obfuscation, sensitive info extraction (hiding strings, keys and other constants embedded in the app), additional integrity checks and by adding an active self-protecting code. As a result, it makes sure that your app is protected even if running on a jailbroken/rooted device. It prevents debugger connections, stops code or framework injection, or prevents running the app in virtualized environment or on emulator. Additionally, it protects your app from untrusted screen readers, fake keyboards, blocks screen sharing or user/system screenshots.
 
 <div id="banner">
     <div class="alert alert-info">
@@ -29,6 +31,16 @@ Mobile Application Shielding (or App Shielding, for short) protects your mobile 
         <a href="https://mobile-security.gitbook.io/masvs/security-requirements/0x15-v8-resiliency_against_reverse_engineering_requirements" target="\_blank">Learn more</a>
     </div>
 </div>
+
+## Applying App Shielding
+
+For both iOS and Android, the App Shielding is applied automatically, by running a script with Wultra provided configuration over an existing `*.apk` or `*.ipa` file.
+
+![ App Shielding - Automated deployment ](./app-shielding-script.png)
+
+On both platforms, you can shield apps using a command-line script and configuration we prepare for you. This allows running App Shielding as the part of your continuous integration process. You can also integrate the App Shielding as a plugin to IDE (on iOS, using a custom script, on Android, using a Gradle plugin), for easier development.
+
+Optionally, you can also include the App Shielding SDK in your app and handle some specific situation the way you want. However, this is an advanced functionality that we do not recommend when starting with App Shielding deployment.
 
 ## App Shielding Deployment Consequences
 

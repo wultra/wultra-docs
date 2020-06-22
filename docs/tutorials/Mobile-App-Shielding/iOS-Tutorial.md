@@ -3,7 +3,18 @@
 <!-- AUTHOR joshis_tweets 2020-06-22T00:00:00Z -->
 <!-- SIDEBAR _Sidebar_iOS.md sticky -->
 
-In this tutorial, we will show you how to implement App Shielding in your iOS app.
+<div id="banner">
+    <div class="alert alert-warning">
+        <strong>Personalized Configuration Required.</strong><br/>
+        <span>In order to follow this tutorial, you need to purchase the App Shielding technology by Wultra and have a tooling as well as custom configuration prepared by Wultra engineers. Both tooling and configuration is specifically designed for your application. Contact your sales representative or technical consultant in order to obtain the required components.</span>
+    </div>
+</div>
+
+In this tutorial, we will show you how to implement App Shielding in your iOS app. This tutorial has three parts:
+
+- [Mobile App Shielding Overview](./Readme.md)
+- **App Shielding for iOS**
+- [App Shielding for Android](./Android-Tutorial.md)
 
 ## Prerequisites
 
