@@ -2,7 +2,7 @@
 
 [Home](Android-Tutorial.md#)
 
-[Setup](Android-Tutorial.md#setup)
+[Prerequisites](Android-Tutorial.md#prerequisites)
 
 [Running From the Command-Line](Android-Tutorial.md#running-from-the-command-line)
 

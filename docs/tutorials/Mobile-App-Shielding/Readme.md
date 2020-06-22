@@ -26,18 +26,18 @@ Mobile Application Shielding (or App Shielding, for short) protects your mobile 
     <div class="alert alert-info">
         <strong>OWASP Mobile App Sec Verification Standard.</strong><br/>
         <span>App Shielding covers the issues from category V8: Resilience.</span><br/>
-        <a href="https://mobile-security.gitbook.io/masvs/security-requirements/0x15-v8-resiliency_against_reverse_engineering_requirements">Learn more</a>
+        <a href="https://mobile-security.gitbook.io/masvs/security-requirements/0x15-v8-resiliency_against_reverse_engineering_requirements" target="\_blank">Learn more</a>
     </div>
 </div>
 
-## Consequences of App Shielding Deployment
+## App Shielding Deployment Consequences
 
 Applying App Shielding on your mobile app, has the following consequences:
 
 - **You will exclude some users.** By using App Shielding, you accepted the idea that you prefer having a secure mobile runtime requirement from the ability to run your app anywhere. In certain situations, the App Shielding will terminate your app and redirect the user on your website with explanation. While this issue is small in practice (single cases per 100k users), you need to get ready that some users will ask questions or write angry comments about this, and you should prepare web pages that explain why the app crashed.
 - **Your app will be bigger and startup a bit slower.** App Shielding adds ~3MB to your app size for each platform, and it will slow down your app cold startup time by ~300ms (depending on a device model and Android version).
 
-## Setting Up Web Pages With Crash Explanation
+## Web Pages With Crash Explanation
 
 In certain situations, the App Shielding will terminate your app and redirect the user on your website. You need to provide the content on such website to the end user to explain what happened. We recommend:
 

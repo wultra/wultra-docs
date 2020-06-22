@@ -2,7 +2,7 @@
 
 [Home](iOS-Tutorial.md#)
 
-[Setup](iOS-Tutorial.md#setup)
+[Prerequisites](iOS-Tutorial.md#prerequisites)
 
 [Running From the Command-Line](iOS-Tutorial.md#running-from-the-command-line)
 

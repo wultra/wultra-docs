@@ -4,6 +4,6 @@
 
 [Introduction](Readme.md#introduction)
 
-[Consequences of App Shielding Deployment](Readme.md#consequences-of-app-shielding-deployment)
+[Deployment Consequences](Readme.md#app-shielding-deployment-consequences)
 
-[Setting Up Web Pages With Crash Explanation](Readme.md#setting-up-web-pages-with-crash-explanation)
+[Web Pages With Crash Explanation](Readme.md#web-pages-with-crash-explanation)
