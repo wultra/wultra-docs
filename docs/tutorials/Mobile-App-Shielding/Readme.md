@@ -1,4 +1,4 @@
-# Mobile App Shielding Quick-Start
+# Mobile App Shielding Quick Start
 
 <!-- AUTHOR joshis_tweets 2020-06-22T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
