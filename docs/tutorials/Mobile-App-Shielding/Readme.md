@@ -28,7 +28,7 @@ It hardens your app by strong code obfuscation, sensitive info extraction (hidin
     <div class="alert alert-info">
         <strong>OWASP Mobile App Sec Verification Standard.</strong><br/>
         <span>App Shielding covers the issues from category V8: Resilience.</span><br/>
-        <a href="https://mobile-security.gitbook.io/masvs/security-requirements/0x15-v8-resiliency_against_reverse_engineering_requirements" target="\_blank">Learn more</a>
+        <a href="https://mobile-security.gitbook.io/masvs/security-requirements/0x15-v8-resiliency_against_reverse_engineering_requirements" target="blank">Learn more</a>
     </div>
 </div>
 
@@ -46,21 +46,30 @@ Optionally, you can also include the App Shielding SDK in your app and handle so
 
 Applying App Shielding on your mobile app, has the following consequences:
 
-- **You will exclude some users.** By using App Shielding, you accepted the idea that you prefer having a secure mobile runtime requirement from the ability to run your app anywhere. In certain situations, the App Shielding will terminate your app and redirect the user on your website with explanation. While this issue is small in practice (single cases per 100k users), you need to get ready that some users will ask questions or write angry comments about this, and you should prepare web pages that explain why the app crashed.
+- **You will exclude some users.** By using App Shielding, you accepted the idea that you prefer having a secure mobile runtime requirement from the ability to run your app anywhere. In certain situations, the App Shielding will terminate your app and redirect the user on your website with explanation. While this issue is small in practice (single cases per 100k users), you need to get ready that some users will ask questions or write angry comments about this, and you should prepare web pages that explain why the app exited.
 - **Your app will be bigger and startup a bit slower.** App Shielding adds ~3MB to your app size for each platform, and it will slow down your app cold startup time by ~300ms (depending on a device model and Android version).
 
-## Web Pages With Crash Explanation
+## Web Pages With Exit Reason Explanation
 
-In certain situations, the App Shielding will terminate your app and redirect the user on your website. You need to provide the content on such website to the end user to explain what happened. We recommend:
+In certain situations, the App Shielding will terminate your app and redirect the user on your website. You need to provide the content on such website to the end user to explain what happened.
+
+We prepared a simple plain HTML bundle with the example files (in English) and snippet for Google Analytics (Universal Analytics):
+
+- [Download](./template.zip)
+- [Example](./template/en/index.html){:target="blank"}
+
+You can modify the plain HTML files and upload them to some FTP storage as a quick fix, or (preferably) prepare content in your main CMS system based on these examples.
+
+In any case, we recommend:
 
 - Preparing separate websites for iOS or Android platforms.
 - Cover at these four topics with separate pages:
   - Debugger Connection - Displayed when debugger attempted to connect to your app and App Shielding did not manage to block such attempt.
   - Foreign Code Insertion - A foreign code was inserted into an app, by native code hooks, framework injection or code injection.
   - Repackaging Detection - The app bundle was modified.
-    - _(Note: This website may not display in certain situations, application will be terminated without the redirect.)_
+    - _Note: This website may not display in certain situations, application will be terminated without the redirect._
   - Emulator Detection - The app was launched on emulator or in other untrusted runtime environment.
-    _(Note: This website may not display in certain situations, application will be terminated without the redirect.)_
+    _Note: This website may not display in certain situations, application will be terminated without the redirect._
 - Preparing the websites in your main language, or allowing the website to switch language (possibly automatically, based on the `Accept-Language` header).
 - Answering the following questions:
   - What happened?
@@ -70,14 +79,7 @@ In certain situations, the App Shielding will terminate your app and redirect th
 - Adding contact information, so that the customers can reach you easily.
 - Adding an analytics tool on the website and monitor the traffic.
 
-When terminating the app, App Shielding will automatically redirect to the page appropriate for the particular situation and it will add additional information about the crash (such as device vendor and model, Android OS version, etc.) to the URL query parameters, where your analytics tool can pick it up.
-
-We prepared a simple plain HTML bundle with the example files (in English) and snippet for Google Analytics:
-
-- [Download](./template.zip)
-- [Example](./template/en/index.html){:target="\_blank"}
-
-You can modify the plain HTML files and upload them to some FTP storage as a quick fix, or (preferably) prepare content in your main CMS system based on these examples.
+When terminating the app, App Shielding will automatically redirect to the page appropriate for the particular situation and it will add additional information about the exit reason (such as device vendor and model, Android OS version, etc.) to the URL query parameters, where your analytics tool can pick it up.
 
 ## Continue Reading
 
