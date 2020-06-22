@@ -108,6 +108,13 @@ else
 fi
 ```
 
+## Continue Reading
+
+Proceed with one of the following chapters:
+
+- [App Shielding Overview](./Readme.md)
+- [App Shielding for Android](./Android-Tutorial.md)
+
 ## Conclusion
 
 In this tutorial, we showed you how to apply App Shielding to your iOS app using the command-line or via Xcode integration, including a practical example of our custom script we use on the Mobile Token project.

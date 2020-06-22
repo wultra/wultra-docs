@@ -53,6 +53,13 @@ To run App Shielding on your app project from the Android studio, you can apply 
     ```
 5. Run an `assemble` task for the flavor.
 
+## Continue Reading
+
+Proceed with one of the following chapters:
+
+- [App Shielding Overview](./Readme.md)
+- [App Shielding for iOS](./iOS-Tutorial.md)
+
 ## Conclusion
 
 In this tutorial, we showed you how to apply App Shielding to your Android app using the command-line script or via Android Studio (using the Gradle integration).

@@ -60,30 +60,33 @@ We prepared a simple plain HTML bundle with the example files (in English) and s
 
 You can modify the plain HTML files and upload them to some FTP storage as a quick fix, or (preferably) prepare content in your main CMS system based on these examples.
 
-In any case, we recommend:
+When terminating the app, App Shielding will automatically redirect to the page appropriate for the particular situation and it will add additional information about the exit reason (such as device vendor and model, Android OS version, etc.) to the URL query parameters, where your analytics tool can pick it up.
 
-- Preparing separate websites for iOS or Android platforms.
-- Cover at these four topics with separate pages:
-  - Debugger Connection - Displayed when debugger attempted to connect to your app and App Shielding did not manage to block such attempt.
-  - Foreign Code Insertion - A foreign code was inserted into an app, by native code hooks, framework injection or code injection.
-  - Repackaging Detection - The app bundle was modified.
+### Building Own Exit Reason Pages
+
+In case you decide to build your own content for the pages that explain the exit reason, we recommend the following best practices:
+
+- Prepare separate websites for iOS or Android platforms.
+- Cover these four topics with separate pages:
+  - **Debugger Connection** - Displayed when debugger attempted to connect to your app and App Shielding did not manage to block such attempt.
+  - **Foreign Code Insertion** - A foreign code was inserted into an app, by native code hooks, framework injection or code injection.
+  - **Repackaging Detection** - The app bundle was modified.
     - _Note: This website may not display in certain situations, application will be terminated without the redirect._
-  - Emulator Detection - The app was launched on emulator or in other untrusted runtime environment.
+  - **Emulator Detection** - The app was launched on emulator or in other untrusted runtime environment.
     _Note: This website may not display in certain situations, application will be terminated without the redirect._
-- Preparing the websites in your main language, or allowing the website to switch language (possibly automatically, based on the `Accept-Language` header).
-- Answering the following questions:
+- Prepare the websites in your main language.
+  - If possible, allow the website to switch language, possibly automatically based on the `Accept-Language` header.
+- Answer the following questions to the user whose app just "crashed" (exited):
   - What happened?
   - What can be the consequence of the issue?
   - What could be the cause of the issue?
   - How can the user fix the issue.
-- Adding contact information, so that the customers can reach you easily.
-- Adding an analytics tool on the website and monitor the traffic.
-
-When terminating the app, App Shielding will automatically redirect to the page appropriate for the particular situation and it will add additional information about the exit reason (such as device vendor and model, Android OS version, etc.) to the URL query parameters, where your analytics tool can pick it up.
+- Add your contact information, so that the customers can reach you easily.
+- Add an analytics tool on the website and monitor the traffic.
 
 ## Continue Reading
 
 Proceed with one of the following chapters:
 
-- [App Shielding for iOS](iOS-Tutorial.md)
-- [App Shielding for Android](Android-Tutorial.md)
+- [App Shielding for iOS](./iOS-Tutorial.md)
+- [App Shielding for Android](./Android-Tutorial.md)
