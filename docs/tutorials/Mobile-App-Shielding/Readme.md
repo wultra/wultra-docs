@@ -3,14 +3,14 @@
 <!-- AUTHOR joshis_tweets 2020-06-22T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
 
-In this tutorial, we will show you how to implement App Shielding by Wultra into your mobile apps on iOS and Android.
-
 <div id="banner">
     <div class="alert alert-warning">
-        <strong>Personalized Configuration Required.</strong>
+        <strong>Personalized Configuration Required.</strong><br/>
         <span>In order to follow this tutorial, you need to purchase the App Shielding technology by Wultra and have a configuration prepared by Wultra engineers that specifically designed for your application. Contact your representative in order to obtain it.</span>
     </div>
 </div>
+
+In this tutorial, we will show you how to implement App Shielding by Wultra into your mobile apps on iOS and Android.
 
 This tutorial has three parts:
 
@@ -24,8 +24,8 @@ Mobile Application Shielding (or App Shielding, for short) protects your mobile 
 
 <div id="banner">
     <div class="alert alert-info">
-        <strong>OWASP Mobile App Sec Verification Standard.</strong>
-        <span>App Shielding covers the issues from category V8: Resilience.</span>
+        <strong>OWASP Mobile App Sec Verification Standard.</strong><br/>
+        <span>App Shielding covers the issues from category V8: Resilience.</span><br/>
         <a href="https://mobile-security.gitbook.io/masvs/security-requirements/0x15-v8-resiliency_against_reverse_engineering_requirements">Learn more</a>
     </div>
 </div>
@@ -63,7 +63,7 @@ When terminating the app, App Shielding will automatically redirect to the page 
 We prepared a simple plain HTML bundle with the example files (in English) and snippet for Google Analytics:
 
 - [Download](./template.zip)
-- [Demo](./template/index.html)
+- [Example](./template/en/index.html){:target="\_blank"}
 
 You can modify the plain HTML files and upload them to some FTP storage as a quick fix, or (preferably) prepare content in your main CMS system based on these examples.
 
