@@ -251,7 +251,7 @@ You will receive the following response:
 | `responseObject.remainingAttempts` | Number of the remaining authentication attempts. |
 | `responseObject.signatureType` | Used signature type. |
 
-_Note: We also have a SOAP service. If you like this better, [here is the documentation](https://github.com/wultra/powerauth-server/blob/develop/docs/SOAP-Service-Methods.md), including the link to WSDL definitions._
+_Note: We also have a SOAP service. If you like this better, [here is the documentation](https://github.com/wultra/powerauth-server/blob/develop/docs/WebServices-Methods.md), including the link to WSDL definitions._
 
 The first thing you must do is to check the `responseObject.signatureValid` value. If the value is `false`, the signature verification failed and you should return `HTTP 401` in the response to the mobile client.
 
