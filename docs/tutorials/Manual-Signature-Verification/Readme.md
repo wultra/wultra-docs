@@ -8,14 +8,14 @@ In this tutorial, we will show you how to verify PowerAuth signatures manually o
 
 ## Introduction
 
-When implementing [mobile banking authentication and authorization](../Authentication-in-Mobile-Apps/Readme.md), you need to implement at least two core processes:
+When implementing [mobile banking authentication and authorization](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md), you need to implement at least two core processes:
 
-- [Activation](../Authentication-in-Mobile-Apps/Readme.md#activation) - mobile device enrollment
-- [Transaction signing](../Authentication-in-Mobile-Apps/Readme.md#transaction-signing) - for example, login or payment approval
+- [Activation](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md#activation) - mobile device enrollment
+- [Transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md#transaction-signing) - for example, login or payment approval
 
-The **activation** process can be entirely externalized into a standalone [Enrollment Server](../Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#deploying-the-enrollment-server) application. Enrollment server can take over the activation process and it can be deployed fully independently from your existing systems.
+The **activation** process can be entirely externalized into a standalone [Enrollment Server](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#deploying-the-enrollment-server) application. Enrollment server can take over the activation process and it can be deployed fully independently from your existing systems.
 
-The **transaction signing** process is much more tightly coupled with your protected API resources. As a result, you usually need to integrate the PowerAuth signature verification logic into your existing systems that publish those protected resources. This is a trivial task if you use Spring framework thanks to our magical `@PowerAuth` annotation, as we illustrate in our [tutorial on mobile authentication and transaction signing](../Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#preparing-protected-api-resources).
+The **transaction signing** process is much more tightly coupled with your protected API resources. As a result, you usually need to integrate the PowerAuth signature verification logic into your existing systems that publish those protected resources. This is a trivial task if you use Spring framework thanks to our magical `@PowerAuth` annotation, as we illustrate in our [tutorial on mobile authentication and transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#preparing-protected-api-resources).
 
 However, not all systems use Spring, or even Java. What if you use .NET, Java, Ruby, Python, or any other server-side technology? Do not worry - adding the support for manual ad-hoc signature verification is not difficult.
 
