@@ -8,10 +8,10 @@ In this tutorial, we will show you how to verify PowerAuth signatures manually o
 
 ## Introduction
 
-When implementing [mobile banking authentication and authorization](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md), you need to implement at least two core processes:
+When implementing [mobile banking authentication and authorization](../Authentication-in-Mobile-Apps/), you need to implement at least two core processes:
 
-- [Activation](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md#activation) - mobile device enrollment
-- [Transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md#transaction-signing) - for example, login or payment approval
+- [Activation](../Authentication-in-Mobile-Apps/#activation) - mobile device enrollment
+- [Transaction signing](../Authentication-in-Mobile-Apps/#transaction-signing) - for example, login or payment approval
 
 The **activation** process can be entirely externalized into a standalone [Enrollment Server](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#deploying-the-enrollment-server) application. Enrollment server can take over the activation process and it can be deployed fully independently from your existing systems.
 
