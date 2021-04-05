@@ -337,7 +337,7 @@ When blocking the activation, you may specify a reason of why the activation is 
 
 Enrollment Server is the component that the mobile app actually calls. No calls are performed from the mobile app to the PowerAuth Server - this component should be deployed in a secure infrastructure.
 
-<!-- begin box warn -->
+<!-- begin box warning -->
 For the sake of simplicity, we will deploy all components into a single Tomcat instance. However, you should use two Tomcat instances for the production deployment.
 <!-- end -->
 

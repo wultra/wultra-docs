@@ -89,7 +89,7 @@ PowerAuthSDK powerAuthSDK = new PowerAuthSDK.Builder(configuration)
 {% endcodetab %}
 {% endcodetabs %}
 
-<!-- begin box warn -->
+<!-- begin box warning -->
 In case you use a development infrastructure with self-signed certificates, make sure to set `PA2ClientSslNoValidationStrategy` instance to networking - see the [reference guide for more details](https://github.com/wultra/powerauth-mobile-sdk/blob/develop/docs/PowerAuth-SDK-for-Android.md#working-with-invalid-ssl-certificates).
 <!-- end -->
 
