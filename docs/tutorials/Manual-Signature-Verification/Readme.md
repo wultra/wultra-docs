@@ -2,19 +2,20 @@
 
 <!-- AUTHOR joshis_tweets 2020-06-04T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
+<!-- TEMPLATE tutorial -->
 
 In this tutorial, we will show you how to verify PowerAuth signatures manually on the server-side. While the task is relatively simple, it is very sensitive to any minor inconsistencies. Do not get frustrated if the signature verification does not work for you the first time. If you get stuck, do not hesitate to contact our engineers for help.
 
 ## Introduction
 
-When implementing [mobile banking authentication and authorization](../Authentication-in-Mobile-Apps/Readme.md), you need to implement at least two core processes:
+When implementing [mobile banking authentication and authorization](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md), you need to implement at least two core processes:
 
-- [Activation](../Authentication-in-Mobile-Apps/Readme.md#activation) - mobile device enrollment
-- [Transaction signing](../Authentication-in-Mobile-Apps/Readme.md#transaction-signing) - for example, login or payment approval
+- [Activation](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md) - mobile device enrollment
+- [Transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Readme.md) - for example, login or payment approval
 
-The **activation** process can be entirely externalized into a standalone [Enrollment Server](../Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#deploying-the-enrollment-server) application. Enrollment server can take over the activation process and it can be deployed fully independently from your existing systems.
+The **activation** process can be entirely externalized into a standalone [Enrollment Server](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#deploying-the-enrollment-server) application. Enrollment server can take over the activation process and it can be deployed fully independently from your existing systems.
 
-The **transaction signing** process is much more tightly coupled with your protected API resources. As a result, you usually need to integrate the PowerAuth signature verification logic into your existing systems that publish those protected resources. This is a trivial task if you use Spring framework thanks to our magical `@PowerAuth` annotation, as we illustrate in our [tutorial on mobile authentication and transaction signing](../Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#preparing-protected-api-resources).
+The **transaction signing** process is much more tightly coupled with your protected API resources. As a result, you usually need to integrate the PowerAuth signature verification logic into your existing systems that publish those protected resources. This is a trivial task if you use Spring framework thanks to our magical `@PowerAuth` annotation, as we illustrate in our [tutorial on mobile authentication and transaction signing](https://github.com/wultra/wultra-docs/blob/develop/docs/tutorials/Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#preparing-protected-api-resources).
 
 However, not all systems use Spring, or even Java. What if you use .NET, Java, Ruby, Python, or any other server-side technology? Do not worry - adding the support for manual ad-hoc signature verification is not difficult.
 
@@ -251,7 +252,7 @@ You will receive the following response:
 | `responseObject.remainingAttempts` | Number of the remaining authentication attempts. |
 | `responseObject.signatureType` | Used signature type. |
 
-_Note: We also have a SOAP service. If you like this better, [here is the documentation](https://github.com/wultra/powerauth-server/blob/develop/docs/SOAP-Service-Methods.md), including the link to WSDL definitions._
+_Note: We also have a SOAP service. If you like this better, [here is the documentation](https://github.com/wultra/powerauth-server/blob/develop/docs/WebServices-Methods.md), including the link to WSDL definitions._
 
 The first thing you must do is to check the `responseObject.signatureValid` value. If the value is `false`, the signature verification failed and you should return `HTTP 401` in the response to the mobile client.
 

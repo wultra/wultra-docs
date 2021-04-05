@@ -2,6 +2,7 @@
 
 <!-- AUTHOR realKober 2020-05-18T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
+<!-- TEMPLATE tutorial -->
 
 Selecting a weak PIN code or an easy-to-guess password is one of the most common issues of modern mobile authentication. According to the [research by DataGenetics](https://www.datagenetics.com/blog/september32012/), over 10% of users simply chose "1234" as a PIN code in the case the system allows it.  
 
