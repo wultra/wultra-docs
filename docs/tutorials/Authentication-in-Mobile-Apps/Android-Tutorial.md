@@ -88,7 +88,9 @@ PowerAuthSDK powerAuthSDK = new PowerAuthSDK.Builder(configuration)
 {% endcodetab %}
 {% endcodetabs %}
 
-_Note: In case you use a development infrastructure with self-signed certificates, make sure to set `PA2ClientSslNoValidationStrategy` instance to networking - see the [reference guide for more details](https://github.com/wultra/powerauth-mobile-sdk/blob/develop/docs/PowerAuth-SDK-for-Android.md#working-with-invalid-ssl-certificates)._
+<!-- begin box warn -->
+In case you use a development infrastructure with self-signed certificates, make sure to set `PA2ClientSslNoValidationStrategy` instance to networking - see the [reference guide for more details](https://github.com/wultra/powerauth-mobile-sdk/blob/develop/docs/PowerAuth-SDK-for-Android.md#working-with-invalid-ssl-certificates).
+<!-- end -->
 
 ## Checking the Activation Status
 
@@ -136,7 +138,11 @@ Here is an example mockup of the screens that need to be implemented:
 In the case no usable activation is available on the Android device, you can guide the user through the steps to create it. Each activation has two major flows on the mobile device:
 
 - **Creating the Activation** - Exchanging the user's identity proof with the server for the cryptographic activation data.
-- **Committing the Activation** - Storing the cryptographic activation data on the device using the user's local credentials. _Note: Thanks to this step, the user credentials, such as PIN code or biometric information, never leave the mobile device and are only used locally, to obtain cryptographic data required during the transaction signing._
+- **Committing the Activation** - Storing the cryptographic activation data on the device using the user's local credentials.
+
+<!-- begin box info -->
+Thanks to this step, the user credentials, such as PIN code or biometric information, never leave the mobile device and are only used locally, to obtain cryptographic data required during the transaction signing.
+<!-- end -->
 
 ### Creating the Activation
 
@@ -177,7 +183,10 @@ powerAuthSDK.createActivation(activation, new ICreateActivationListener() {
 {% endcodetab %}
 {% endcodetabs %}
 
-_Note: You can let the user scan the activation code from a QR code, to make the process faster and improve the user convenience, but you should also allow the manual entry as a backup._
+
+<!-- begin box info -->
+You can let the user scan the activation code from a QR code, to make the process faster and improve the user convenience, but you should also allow the manual entry as a backup.
+<!-- end -->
 
 ##### Mockups
 

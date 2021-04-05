@@ -22,7 +22,9 @@ This tutorial assumes, that you have:
 - [PostgreSQL 12 database](https://www.postgresql.org/) installation.
 - Java IDE for developing Spring Boot applications (we will use [IntelliJ Idea](https://www.jetbrains.com/idea/)).
 
-_Note: PowerAuth Server supports various application servers and JPA 2.x compatible database engines. For the sake of simplicity, we decided to go with setup on Tomcat and PostgreSQL._
+<!-- begin box info -->
+PowerAuth Server supports various application servers and JPA 2.x compatible database engines. For the sake of simplicity, we decided to go with setup on Tomcat and PostgreSQL.
+<!-- end -->
 
 ## Introduction
 
@@ -121,7 +123,9 @@ First, prepare the required configuration XML file called `powerauth-java-server
 {% endcodetab %}
 {% endcodetabs %}
 
-_Note: All our applications are a common Spring Boot applications and therefore, you can configure any other well-known Spring Boot properties._
+<!-- begin box info -->
+All our applications are a common Spring Boot applications and therefore, you can configure any other well-known Spring Boot properties.
+<!-- end -->
 
 Next, copy the `powerauth-java-server.xml` configuration file to `$CATALINA_HOME/conf/Catalina/localhost/` folder. Tomcat automatically picks up the file and will use the configuration for the `/powerauth-java-server` context.
 
@@ -332,7 +336,9 @@ When blocking the activation, you may specify a reason of why the activation is 
 
 Enrollment Server is the component that the mobile app actually calls. No calls are performed from the mobile app to the PowerAuth Server - this component should be deployed in a secure infrastructure.
 
-**For the sake of simplicity, we will deploy all components into a single Tomcat instance. However, you should use two Tomcat instances for the production deployment.**
+<!-- begin box warn -->
+For the sake of simplicity, we will deploy all components into a single Tomcat instance. However, you should use two Tomcat instances for the production deployment.
+<!-- end -->
 
 This is the part where you might need to start with an actual programming, since the enrollment process can be customized. For example, you can use custom user credentials as an identity proof for the enrollment - we will show you that part.
 
@@ -584,7 +590,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 To create the authenticated session, we will publish a simple `/login` endpoint that uses the `POST` HTTP method and is protected by the PowerAuth signature. Note that we used the `@PowerAuth` annotation with a `resourceId` value equal to `/login`. You need to pass the `resourceId` value to your mobile app developer in order to configure the request signing on the mobile app end.
 
-_Note: While the `resourceId` value is the same as the endpoint name in the example, you may actually choose any arbitrary String value for the `resourceId`. Using the same value as the endpoint name is convenient. However, it is also a big source of confusion among the developers since they sometimes mix up the values._
+<!-- begin box warn -->
+While the `resourceId` value is the same as the endpoint name in the example, you may actually choose any arbitrary String value for the `resourceId`. Using the same value as the endpoint name is convenient. However, it is also a big source of confusion among the developers since they sometimes mix up the values.
+<!-- end -->
 
 Upon the successful user authentication, the instance of `PowerAuthApiAuthentication` will be automatically populated in the method parameter. This object extends `AbstractAuthenticationToken` from Spring Security, and so it can be used directly as an authentication object in the `SecurityContextHolder`.
 

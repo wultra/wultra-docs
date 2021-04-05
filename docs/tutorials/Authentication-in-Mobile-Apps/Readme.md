@@ -51,7 +51,9 @@ Unlike in the on-device activation, no external system for verifying the credent
 
 To understand this out-of-band process better, you can look at the activation code as at a special one-time token-like credentials for a given user that are managed in the mobile management server and will expire after a short time.
 
-**Note: In both activation scenarios, the mobile app only communicates with the mobile enrollment server, never with the mobile management server. Only back-end applications communicate with the mobile management server.**
+<!-- begin box info -->
+In both activation scenarios, the mobile app only communicates with the mobile enrollment server, never with the mobile management server. Only back-end applications communicate with the mobile management server.
+<!-- end -->
 
 ## Transaction Signing
 
@@ -61,7 +63,9 @@ The transaction signing is technically used for all types of operations - login,
 
 In the case of the login, the signature is computed only from the authentication factors. In the case of the payment (or other similar operation that generally has some data assigned to it), the both authentication factors and operation data is reflected in the resulting signature.
 
-_Note: The PSD2 legislation uses the term "dynamic linking" for this dependency of the signature on the operation data. PSD2 mandates using at least the other party account number and a payment amount as data that enters the signature (in PSD2 terminology, the "Authentication Code"), and the use of at least two authentication factors._
+<!-- begin box info -->
+The PSD2 legislation uses the term "dynamic linking" for this dependency of the signature on the operation data. PSD2 mandates using at least the other party account number and a payment amount as data that enters the signature (in PSD2 terminology, the "Authentication Code"), and the use of at least two authentication factors.
+<!-- end -->
 
 The number of authentication attempts is limited. If the signature verification fails, the number of remaining accounts is decremented. If there are no more attempts left, the activation is blocked.
 
@@ -78,7 +82,6 @@ The overview diagram of the transaction signing for payment approval is not much
 ![ Payment approval ](./02b.png)
 
 The main difference is that after a successful signature verification, the payment is sent for the further processing after being approved by a given user. The invisible difference is that the signature is computed using the payment data.
-
 
 ## Other Use-Cases
 
