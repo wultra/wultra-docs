@@ -4,12 +4,10 @@
 <!-- SIDEBAR _Sidebar_Android.md sticky -->
 <!-- TEMPLATE tutorial -->
 
-<div id="banner">
-    <div class="alert alert-warning">
-        <strong>Personalized Configuration Required.</strong><br/>
-        <span>In order to follow this tutorial, you need to purchase the App Shielding technology by Wultra and have a tooling as well as custom configuration prepared by Wultra engineers. Both tooling and configuration is specifically designed for your application. Contact your sales representative or technical consultant in order to obtain the required components.</span>
-    </div>
-</div>
+<!-- begin box warning -->
+**Personalized Configuration Required.**<br/>
+In order to follow this tutorial, you need to purchase the App Shielding technology by Wultra and have a tooling as well as custom configuration prepared by Wultra engineers. Both tooling and configuration is specifically designed for your application. Contact your sales representative or technical consultant in order to obtain the required components.
+<!-- end -->
 
 In this tutorial, we will show you how to implement App Shielding in your Android app. This tutorial has three parts:
 

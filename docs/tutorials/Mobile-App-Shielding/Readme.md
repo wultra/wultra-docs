@@ -5,8 +5,8 @@
 <!-- TEMPLATE tutorial -->
 
 <!-- begin box warning -->
-<strong>Personalized Configuration Required.</strong><br/>
-<span>In order to follow this tutorial, you need to purchase the App Shielding technology by Wultra and have a tooling as well as custom configuration prepared by Wultra engineers. Both tooling and configuration is specifically designed for your application. Contact your sales representative or technical consultant in order to obtain the required components.</span>
+**Personalized Configuration Required.**<br/>
+In order to follow this tutorial, you need to purchase the App Shielding technology by Wultra and have a tooling as well as custom configuration prepared by Wultra engineers. Both tooling and configuration is specifically designed for your application. Contact your sales representative or technical consultant in order to obtain the required components.
 <!-- end -->
 
 In this tutorial, we will show you how to implement App Shielding by Wultra into your mobile apps on iOS and Android. This tutorial has three parts:
@@ -24,9 +24,9 @@ Mobile Application Shielding (or App Shielding, for short) protects your mobile 
 It hardens your app by strong code obfuscation, sensitive info extraction (hiding strings, keys and other constants embedded in the app), additional integrity checks and by adding an active self-protecting code. As a result, it makes sure that your app is protected even if running on a jailbroken/rooted device. It prevents debugger connections, stops code or framework injection, or prevents running the app in virtualized environment or on emulator. Additionally, it protects your app from untrusted screen readers, fake keyboards, blocks screen sharing or user/system screenshots.
 
 <!-- begin box info -->
-<strong>OWASP Mobile App Sec Verification Standard.</strong><br/>
-<span>App Shielding covers the issues from category V8: Resilience.</span><br/>
-<a href="https://mobile-security.gitbook.io/masvs/security-requirements/0x15-v8-resiliency_against_reverse_engineering_requirements" target="blank">Learn more</a>
+**OWASP Mobile App Sec Verification Standard.**<br/>
+App Shielding covers the issues from category V8: Resilience.<br/>
+[Learn more](https://mobile-security.gitbook.io/masvs/security-requirements/0x15-v8-resiliency_against_reverse_engineering_requirements){:target="_blank"}
 <!-- end -->
 
 ## Applying App Shielding
