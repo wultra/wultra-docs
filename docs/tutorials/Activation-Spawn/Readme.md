@@ -9,6 +9,12 @@ To make the activation process of a secondary apps easier and to allow faster us
 
 The purpose of the activation spawn is to enable creating a new activation for an secondary app using another, main app. From the customer perspective, this can be communicated, for example, through a message: "Activate mobile trading app using our mobile banking app".
 
+## User's Perspective
+
+The following mockup shows the user experience of the Activation Spawn process:
+
+![ Activation Spawn Screen Flow ](./activation-spawn.png)
+
 ## Activation Spawn Actors
 
 The process has two actors:
