@@ -1,4 +1,7 @@
 # Activation Spawn SDK
+<!-- AUTHOR joshis_tweets 2021-09-17T00:00:00Z -->
+<!-- SIDEBAR _Sidebar.md sticky -->
+<!-- TEMPLATE tutorial -->
 
 The purpose of the activation spawn process is to enable creating a new activation for an secondary app using another, main app. From the customer perspective, this can be communicated, for example, through a message: "Activate mobile banking using our mobile token app".
 
