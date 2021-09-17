@@ -1,9 +1,15 @@
-# Activation Spawn SDK
+# Introducing the Activation Spawn
 <!-- AUTHOR joshis_tweets 2021-09-17T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
 <!-- TEMPLATE tutorial -->
 
-The purpose of the activation spawn process is to enable creating a new activation for an secondary app using another, main app. From the customer perspective, this can be communicated, for example, through a message: "Activate mobile banking using our mobile token app".
+It is common for an organizations to have more than one mobile apps. Usually though, one mobile app is considered the "main application", while the other apps are "secondary". For example, a bank can have the mobile banking app, mobile brokerage app, mortgage management app, and so on. With multiple apps in place, many of the use-cases organizations must solve become complicated. For example, if a user loses the smartphone, he/she needs to recover multiple apps.
+
+To make the activation process of a secondary apps easier and to allow faster user onboarding to new innovative products, we are introducing the activation spawn.
+
+The purpose of the activation spawn is to enable creating a new activation for an secondary app using another, main app. From the customer perspective, this can be communicated, for example, through a message: "Activate mobile trading app using our mobile banking app".
+
+## Activation Spawn Actors
 
 The process has two actors:
 
@@ -12,6 +18,6 @@ The process has two actors:
 
 ## Continue Reading
 
-[Activaton Spawn on iOS](Activation-Spawn-on-iOS.md#)
-[Activaton Spawn on Android](Activation-Spawn-on-Android.md#)
-[Activation Spawn API Reference](Activation-Spawn-API-Reference.md)
+- [Activaton Spawn on iOS](Activation-Spawn-on-iOS.md#)
+- [Activaton Spawn on Android](Activation-Spawn-on-Android.md#)
+- [Activation Spawn API Reference](Activation-Spawn-API-Reference.md)

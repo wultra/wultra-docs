@@ -54,6 +54,6 @@ After decrypting, the request and response look like this:
 
 ## Continue Reading
 
-[Overview](Readme.md#)
-[Activaton Spawn on iOS](Activation-Spawn-on-iOS.md#)
-[Activaton Spawn on Android](Activation-Spawn-on-Android.md#)
+- [Overview](Readme.md#)
+- [Activaton Spawn on iOS](Activation-Spawn-on-iOS.md#)
+- [Activaton Spawn on Android](Activation-Spawn-on-Android.md#)
