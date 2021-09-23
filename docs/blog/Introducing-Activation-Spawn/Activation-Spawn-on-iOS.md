@@ -24,17 +24,19 @@ pod 'PowerAuth2'
 pod 'WultraActivationSpawn'
 ```
 
+<!-- begin box info -->
+Note that `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks are not publicly available. [Follow this guide](Configuring-Private-Cocoapods-Repository.md) to configure your project to receive private Wultra libraries.
+<!-- end -->
+
 3. Define the secondary apps that are available for activation.
 
-You can create the app representation by instantiating the `WASApplication` class. It provides a deep link scheme, an App Store link, backend ID, and other properties such as name and description.
+You can create the app representation by instantiating the `WASApplication` class. It provides a deep link scheme, an App Store link and backend ID.
 
 ```swift
 let app = WASApplication(
     deeplinkScheme: "instagram",
     appStoreIdentifier: 389801252,
-    backendIdentifier: "instagram",
-    name: "Instagram",
-    description: "Instagram app"
+    backendIdentifier: "instagram"
 )
 ```
 
@@ -71,15 +73,15 @@ let auth = PowerAuthAuthentication()
 // ..
 // ..
 
-// powerauth is configured and activated PowerAuth SDK instance
-// app is WASApplication instance
-powerauth.retrieveActivationData(authentication: auth, for: app) { result in
-    switch result {
-    case .success(let data):
-        // activation data retrieved
-    case .failure(let error):
-        // process error
+do {
+    // powerauth is configured and activated PowerAuth SDK instance
+    // app is WASApplication instance
+    let activator = try WASActivator(powerAuth: powerauth, config: .init(sslValidation: .default))
+    activator.retrieveActivationData(for: app, with: auth) { result in 
+        // process the data or error
     }
+} catch {
+    // activator failed to be created
 }
 ```
 
@@ -89,22 +91,22 @@ powerauth.retrieveActivationData(authentication: auth, for: app) { result in
 import WultraActivationSpawn
 import WultraDeviceFingerprint
 
-// Create activator with fingerprint generator. This needs to be the same as in
+// Create transporter with fingerprint generator. This needs to be the same as in
 // the app that will receive the deep link. mainAppSecret is the pre-shared
-// value specific for the main app. secondaryAppSecret is a pre-shared value
-// specific for the secondary app.
-let activator: WASActivator
+// value specific for the main app. 
+let transporter: WASTransporter
 do {
     let generator = try DeviceFingerprintGenerator.stable(forVendor: false, withAdditionalData: mainAppSecret, validFor: 10)
-    activator = WASActivator(generator: generator, sharedInfo: secondaryAppSecret)
+    transporter = WASTransporter(generator: generator)
 } catch {
     // activator failed to create fingerprint generator
     return
 }
 
-// app is `WASApplication` retrieved from `localSpawnActivationList` (or it can be manually created)
-// data is activation data retrieved from `getActivationCode` call
-activator.activate(application: app, with: data) { result in
+// app is WASApplication
+// data is activation data retrieved from `retrieveActivationData` call
+// secondaryAppSecret is a pre-shared value specific for the secondary app.
+transporter.transport(data: data, to: app, with: secondaryAppSecret) { result in
     switch result {
     case .success:
         // activation data transported to the other app
@@ -141,14 +143,13 @@ activator.activate(application: app, with: data) { result in
 import WultraActivationSpawn
 import WultraDeviceFingerprint
 
-// create activator with fingerprint generator. this needs to be the same as in the app that creates the deep link
-let activator: WASActivator
+// Create transporter with fingerprint generator. This needs to be the same as in the app that creates the deep link.
+let transporter: WASTransporter
 do {
     let generator = try DeviceFingerprintGenerator.stable(forVendor: false, withAdditionalData: mainAppSecret, validFor: 10)
-    // sharedInfo is demo baked-in data
-    activator = WASActivator(generator: generator, sharedInfo: secondaryAppSecret)
+    transporter = WASTransporter(generator: generator)
 } catch {
-    // activator failed to create fingerprint generator
+    // failed to create fingerprint generator
     return
 }
 
@@ -156,9 +157,10 @@ do {
 // or SwiftUI, activation name is the name of the user device / model for
 // display purposes
 do {
-    let data = try activator.process(deeplink: url)
+    // sharedInfo is demo baked-in data
+    let data = try transporter.process(deeplink: url, with: sharedInfo)
     // powerauth is configured but not activated `PowerAuthSDK` instance
-    powerauth.createActivation(withName: activationName, activationData: data) { result in
+    powerauth.createActivation(data: data, name: activationName) { result in
     	// process the activation result
     }
 } catch let e {
