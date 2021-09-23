@@ -30,13 +30,13 @@ Note that `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks are n
 
 3. Define the secondary apps that are available for activation.
 
-You can create the app representation by instantiating the `WASApplication` class. It provides a deep link scheme, an App Store link and backend ID.
+You can create the app representation by instantiating the `WASApplication` class. It provides a deep link scheme, an App Store ID and backend ID.
 
 ```swift
 let app = WASApplication(
-    deeplinkScheme: "instagram",
+    deeplinkScheme: "apptoactivate",
     appStoreIdentifier: 389801252,
-    backendIdentifier: "instagram"
+    backendIdentifier: "MyApplicationToActivate"
 )
 ```
 
