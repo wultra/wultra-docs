@@ -16,7 +16,7 @@ The activation spawn API only has one endpoint.
 <!-- begin api POST /api/activation/code -->
 ### Get The Activation Code
 
-Fetches the activation code from the server. The service requires 2FA PowerAuth signature (`POSSESSION_KNOWLEDGE` or `POSSESSION_BIOMETRY`) and it uses activation scope payload encryption to protect the server call request and response from being intercepted.
+Fetches the activation code from the server. The service requires a 2FA PowerAuth signature (`POSSESSION_KNOWLEDGE` or `POSSESSION_BIOMETRY`), and it uses activation scope payload encryption to protect the server call request and response from being intercepted.
 
 <!-- begin box info -->
 This endpoint is published by the [Enrollment Server](https://github.com/wultra/enrollment-server) component, where it must be explicitly enabled.

@@ -33,7 +33,7 @@ This tutorial contains information on how to implement both parts of activation 
 2. Add Project Dependency
 
     Once you add the Maven repository, you can add activation spawn dependency to your Android project.
-    
+
     ```groovy
     android {
         dependencies {
@@ -44,10 +44,8 @@ This tutorial contains information on how to implement both parts of activation 
 
 ## Main Application
 
-1. If your application targets Android 11+ (SDK 30+), you need to declare the query "permissions" 
-   for the package name of Target App in the `AndroidManifest.xml` of the Source App. Otherwise
-   you won't be able to detect if the app is already installed.
-   
+1. If your application targets Android 11+ (SDK 30+), you need to declare the query "permissions" for the package name of Target App in the `AndroidManifest.xml` of the Source App. Otherwise, you won't be able to detect if the app is already installed.
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -57,7 +55,7 @@ package="com.yourcompany.yourapp">
          <!-- package name of your secondary app -->
         <package android:name="com.mycompany.secondaryapplication"/>
     </queries>
-    
+
     <!-- rest of your manifest -->
 
 </manifest>
@@ -65,7 +63,7 @@ package="com.yourcompany.yourapp">
 
 2. Define the secondary apps that are available for activation.
 
-You can create the app representation by instantiating the `SpawnableApplication` class. It provides a package name, a deeplink scheme and backend ID.
+You can create the app representation by instantiating the `SpawnableApplication` class. It provides a package name, a deep link scheme, and a backend ID.
 
 ```kotlin
 import com.wultra.android.activationspawn.SpawnableApplication
@@ -73,9 +71,9 @@ import com.wultra.android.activationspawn.SpawnableApplication
 val application = SpawnableApplication(
     // package name of the app
     "com.company.android.application",
-    // url deeplink scheme (for example from myAppScheme://settings) 
+    // url deeplink scheme (for example from myAppScheme://settings)
     "myAppScheme",
-    // needs to be provided by the powerauth backend administrator at your company 
+    // needs to be provided by the powerauth backend administrator at your company
     "AA1122XYZ"
 )
 ```
@@ -111,7 +109,7 @@ try {
     } else {
         // when app is not installed, open it's store page
         manager.openStore(app)
-        
+
     }
 } catch (t: Throwable) {
    //handle isInstalled exception
@@ -157,7 +155,7 @@ try {
 
 ### Secondary App
 
-1. Declare a deeplink scheme in the `AndroidManifest.xml` for the application to enable digesting the deeplink.
+1. Declare a deep link scheme in the `AndroidManifest.xml` for the application to enable digesting the deep link.
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -188,19 +186,19 @@ import com.wultra.android.activationspawn.*
 import io.getlime.security.powerauth.networking.response.CreateActivationResult
 import io.getlime.security.powerauth.networking.response.ICreateActivationListener
 import io.getlime.security.powerauth.sdk.PowerAuthSDK
-    
+
 class TestActivity: Activity() {
-    
+
     // dependencies you need to prepare
     private lateinit var manager: ActivationSpawnManager
     private lateinit var powerAuth: PowerAuthSDK
-    
+
     // Additional data for transport (must be the same for both Source and Target App).
     private val sharedInfo: ByteArray? = null
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-    
+
         val data = intent.data
         if (data != null) {
             try {
@@ -209,7 +207,7 @@ class TestActivity: Activity() {
                     override fun onActivationCreateSucceed(result: CreateActivationResult) {
                         // continue with the activation
                     }
-    
+
                     override fun onActivationCreateFailed(t: Throwable) {
                         // process the error
                     }

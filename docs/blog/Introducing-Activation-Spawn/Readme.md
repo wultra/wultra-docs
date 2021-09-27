@@ -3,11 +3,11 @@
 <!-- SIDEBAR _Sidebar.md sticky -->
 <!-- TEMPLATE tutorial -->
 
-It is common for an organizations to have more than one mobile apps. Usually though, one mobile app is considered the "main application", while the other apps are "secondary". For example, a bank can have the mobile banking app, mobile brokerage app, mortgage management app, and so on. With multiple apps in place, many of the use-cases organizations must solve become complicated. For example, if a user loses the smartphone, he/she needs to recover multiple apps.
+It is common for organizations to have more than one mobile apps. Usually, though, one mobile app is considered the "main application," while the other apps are "secondary." For example, a bank can have a mobile banking app, mobile brokerage app, mortgage management app, etc. With multiple apps in place, many of the use-cases organizations must solve become complicated. For example, if a user loses the smartphone, they need to recover multiple apps.
 
-To make the activation process of a secondary apps easier and to allow faster user onboarding to new innovative products, we are introducing the activation spawn.
+To make the activation process of secondary apps easier and to allow faster user onboarding to new innovative products, we are introducing the activation spawn.
 
-The purpose of the activation spawn is to enable creating a new activation for an secondary app using another, main app. From the customer perspective, this can be communicated, for example, through a message: "Activate mobile trading app using our mobile banking app".
+The purpose of the activation spawn is to create a new activation for a secondary app using the main app. From the customer perspective, this can be communicated, for example, through a message: "Activate mobile trading app using our mobile banking app."
 
 ## User's Perspective
 

@@ -19,7 +19,7 @@ Activation Spawn iOS SDK is distributed through the Wultra Artifactory which pro
    machine wultra.jfrog.io
          login [name@yourcompany.com]
          password [password]
-   ``` 
+   ```
 
 3. Synchronize remote repositories locally:
 

@@ -8,4 +8,6 @@
 
 **Additional Resources**
 
+[Configuring Private Cocoapods](Configuring-Private-Cocoapods.md)
+
 [Activation Spawn API Reference](Activation-Spawn-API-Reference.md)
