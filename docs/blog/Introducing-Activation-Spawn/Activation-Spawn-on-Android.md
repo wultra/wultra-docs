@@ -5,167 +5,222 @@
 
 This tutorial contains information on how to implement both parts of activation spawn (main and secondary, read [the activation spawn overview](./Readme.md) for more information) on Android.
 
+## Gradle Integration
+
+1. Add Maven Repositories
+
+    Add new Maven repositories pointing to Wultra Artifactory.
+
+    ```groovy
+    repositories {
+        maven {
+            url 'https://wultra.jfrog.io/artifactory/activation-spawn-android/'
+            credentials {
+                username = wultraArtifactoryUsername
+                password = wultraArtifactoryPass
+            }
+        }
+        maven {
+            url 'https://wultra.jfrog.io/artifactory/device-fingerprint-android/'
+            credentials {
+                username = wultraArtifactoryUsername
+                password = wultraArtifactoryPass
+            }
+        }
+    }
+    ```
+
+2. Add Project Dependency
+
+    Once you add the Maven repository, you can add activation spawn dependency to your Android project.
+    
+    ```groovy
+    android {
+        dependencies {
+            implementation "com.wultra.android.activationspawn:activation-spawn:${WULTRA_ACTIVATION_SPAWN_MANAGER}"
+        }
+    }
+    ```
+
 ## Main Application
 
-1. Your app needs to declare that it can activate such an app in `Info.plist`:
-
+1. If your application targets Android 11+ (SDK 30+), you need to declare the query "permissions" 
+   for the package name of Target App in the `AndroidManifest.xml` of the Source App. Otherwise
+   you won't be able to detect if the app is already installed.
+   
 ```xml
-<key>LSApplicationQueriesSchemes</key>
-<array>
-    <string>apptoactivate</string>
-</array>
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+package="com.yourcompany.yourapp">
+
+    <queries>
+         <!-- package name of your secondary app -->
+        <package android:name="com.mycompany.secondaryapplication"/>
+    </queries>
+    
+    <!-- rest of your manifest -->
+
+</manifest>
 ```
 
-2. You need to add `WultraDeviceFingerprint`, `WultraActivationSpawn`, and `PowerAuth2` dependency to your project via Cocoapods.
+2. Define the secondary apps that are available for activation.
 
-```rb
-pod 'WultraDeviceFingerprint'
-pod 'PowerAuth2'
-pod 'WultraActivationSpawn'
-```
+You can create the app representation by instantiating the `SpawnableApplication` class. It provides a package name, a deeplink scheme and backend ID.
 
-3. Define the secondary apps that are available for activation.
+```kotlin
+import com.wultra.android.activationspawn.SpawnableApplication
 
-You can create the app representation by instantiating the `WASApplication` class. It provides a deep link scheme, an App Store link, backend ID, and other properties such as name and description.
-
-```swift
-let app = WASApplication(
-    deeplinkScheme: "instagram",
-    appStoreIdentifier: 389801252,
-    backendIdentifier: "instagram",
-    name: "Instagram",
-    description: "Instagram app"
+val application = SpawnableApplication(
+    // package name of the app
+    "com.company.android.application",
+    // url deeplink scheme (for example from myAppScheme://settings) 
+    "myAppScheme",
+    // needs to be provided by the powerauth backend administrator at your company 
+    "AA1122XYZ"
 )
+```
+
+3. Create `ActivationSpawnManager` instance.
+
+```kotlin
+import com.wultra.android.devicefingerprint.DeviceFingerprintGenerator
+import com.wultra.android.activationspawn.createSpawnManager
+
+// Additional data for generator (must be the same for both Source and Target App).
+val additionalData: ByteArray? = null
+
+// Note that the generator configuration must be the same
+// for both Target and Source App. Please consult with Wultra
+// what configuration suits your needs.
+private val generator = DeviceFingerprintGenerator.getSemiStable(appContext, false, 10, additionalData)
+
+// manager that handles the activation
+// powerAuth is configured PowerAuthSDK instance
+// appContext is application `Context` instance
+private val manager = powerAuth.createSpawnManager(appContext, SSLValidationStrategy.default(), generator, "https://your-domain.com/your-app")
 ```
 
 4. Check if the secondary app is installed:
 
-```swift
-import WultraActivationSpawn
+```kotlin
+// manager is instance of ApplicationSpawnManager
 
-// app is WASApplication instance
-do {
-    if try app.isInstalled() {
+try {
+    if (manager.isInstalled(application)) {
         // app is installed
     } else {
-        // when app is not installed, open it's store page sheet
-        // self is a view controller, when using SwiftUI, you can replace
-        // it with UIApplication.shared.windows.first?.rootViewController?
-        self.openAppStoreProductPage(application: app) {
-            print("Done!")
-        }
+        // when app is not installed, open it's store page
+        manager.openStore(app)
+        
     }
-} catch {
-    // handle isInstalled error
+} catch (t: Throwable) {
+   //handle isInstalled exception
 }
 ```
 
 5. Retrieve activation data for the user:
 
-```swift
-import WultraActivationSpawn
-import PowerAuth2
+```kotlin
+import io.getlime.security.powerauth.sdk.PowerAuthAuthentication
+import com.wultra.android.activationspawn.IRetrieveActivationDataListener
+import com.wultra.android.activationspawn.ActivationSpawnData
+import com.wultra.android.powerauth.networking.error.ApiError
 
-let auth = PowerAuthAuthentication()
+val auth = PowerAuthAuthentication()
 // prepare authentication object for 2FA
 // ..
 // ..
 
-// powerauth is configured and activated PowerAuth SDK instance
-// app is WASApplication instance
-powerauth.retrieveActivationData(authentication: auth, for: app) { result in
-    switch result {
-    case .success(let data):
+// manager is instance of ApplicationSpawnManager
+manager.retrieveActivationData(app, auth, object : IRetrieveActivationDataListener {
+    override fun onSuccess(data: ActivationSpawnData) {
         // activation data retrieved
-    case .failure(let error):
-        // process error
     }
-}
+
+    override fun onError(error: ApiError) {
+        // process the error
+    }
+})
 ```
 
 6. Activate the app by forwarding the activation data via URL scheme.
 
-```swift
-import WultraActivationSpawn
-import WultraDeviceFingerprint
+```kotlin
 
-// Create activator with fingerprint generator. This needs to be the same as in
-// the app that will receive the deep link. mainAppSecret is the pre-shared
-// value specific for the main app. secondaryAppSecret is a pre-shared value
-// specific for the secondary app.
-let activator: WASActivator
-do {
-    let generator = try DeviceFingerprintGenerator.stable(forVendor: false, withAdditionalData: mainAppSecret, validFor: 10)
-    activator = WASActivator(generator: generator, sharedInfo: secondaryAppSecret)
-} catch {
-    // activator failed to create fingerprint generator
-    return
-}
-
-// app is `WASApplication` retrieved from `localSpawnActivationList` (or it can be manually created)
-// data is activation data retrieved from `getActivationCode` call
-activator.activate(application: app, with: data) { result in
-    switch result {
-    case .success:
-        // activation data transported to the other app
-    case .failure(let error):
-        // activation data failed to transport
-    }
+try {
+    // sharedInfo is a pre-shared value
+    manager.transportDataToApp(data, application, sharedInfo)
+} catch (t: Throwable) {
+    // process the error
 }
 ```
 
 ### Secondary App
 
-1. The secondary app needs to declare a deep link which will be used for transportation in `Info.plist`:
+1. Declare a deeplink scheme in the `AndroidManifest.xml` for the application to enable digesting the deeplink.
 
 ```xml
-<key>CFBundleURLTypes</key>
-<array>
-    <dict>
-        <key>CFBundleTypeRole</key>
-        <string>Editor</string>
-        <key>CFBundleURLName</key>
-        <string>deeplink</string>
-        <key>CFBundleURLSchemes</key>
-        <array>
-            <string>apptoactivate</string>
-        </array>
-    </dict>
-</array>
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mycompany.secondaryapplication">
+    <application>
+        <activity
+            android:name=".MyActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="myAppScheme" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
 
 ```
 
 2. When the secondary app is opened from the activation deep link, it needs to parse it using our helper methods. If the data is correctly retrieved, the app can proceed with a standard PowerAuth activation (under the hood, it is a standard activation via activation code and activation OTP):
 
-```swift
-import WultraActivationSpawn
-import WultraDeviceFingerprint
-
-// create activator with fingerprint generator. this needs to be the same as in the app that creates the deep link
-let activator: WASActivator
-do {
-    let generator = try DeviceFingerprintGenerator.stable(forVendor: false, withAdditionalData: mainAppSecret, validFor: 10)
-    // sharedInfo is demo baked-in data
-    activator = WASActivator(generator: generator, sharedInfo: secondaryAppSecret)
-} catch {
-    // activator failed to create fingerprint generator
-    return
-}
-
-// url is the URL object retrieved from the deep link API provided by the UIKit
-// or SwiftUI, activation name is the name of the user device / model for
-// display purposes
-do {
-    let data = try activator.process(deeplink: url)
-    // powerauth is configured but not activated `PowerAuthSDK` instance
-    powerauth.createActivation(withName: activationName, activationData: data) { result in
-    	// process the activation result
+```kotlin
+import android.app.Activity
+import android.os.Bundle
+import com.wultra.android.activationspawn.*
+import io.getlime.security.powerauth.networking.response.CreateActivationResult
+import io.getlime.security.powerauth.networking.response.ICreateActivationListener
+import io.getlime.security.powerauth.sdk.PowerAuthSDK
+    
+class TestActivity: Activity() {
+    
+    // dependencies you need to prepare
+    private lateinit var manager: ActivationSpawnManager
+    private lateinit var powerAuth: PowerAuthSDK
+    
+    // Additional data for transport (must be the same for both Source and Target App).
+    private val sharedInfo: ByteArray? = null
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    
+        val data = intent.data
+        if (data != null) {
+            try {
+                val activationData = manager.processDeeplink(data, sharedInfo)
+                powerAuth.createActivation(activationData, "Simon's phone", object : ICreateActivationListener {
+                    override fun onActivationCreateSucceed(result: CreateActivationResult) {
+                        // continue with the activation
+                    }
+    
+                    override fun onActivationCreateFailed(t: Throwable) {
+                        // process the error
+                    }
+                })
+            } catch (t: Throwable) {
+                // deeplink cannot be processed
+            }
+        }
     }
-} catch let e {
-    // process the error
 }
 ```
-
 ## Continue Reading
 
 - [Overview](Readme.md#)
