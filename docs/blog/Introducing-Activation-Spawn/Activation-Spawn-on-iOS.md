@@ -7,6 +7,10 @@ This tutorial contains information on how to implement both parts of activation 
 
 ## Main Application
 
+<!-- begin box info -->
+Note that `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks are not publicly available. [Follow this guide](Configuring-Private-Cocoapods-Repository.md) to configure your project to receive private Wultra libraries.
+<!-- end -->
+
 1. Your app needs to declare that it can activate such an app in `Info.plist`:
 
     ```xml
@@ -23,10 +27,6 @@ This tutorial contains information on how to implement both parts of activation 
     pod 'PowerAuth2'
     pod 'WultraActivationSpawn'
     ```
-
-    <!-- begin box info -->
-    Note that `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks are not publicly available. [Follow this guide](Configuring-Private-Cocoapods-Repository.md) to configure your project to receive private Wultra libraries.
-    <!-- end -->
 
 3. Define the secondary apps that are available for activation.
 
