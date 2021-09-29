@@ -1,3 +1,3 @@
-# Blog Posts
+# Blog Post Archive
 
 <!-- template posts -->
