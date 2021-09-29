@@ -1,1 +1,3 @@
-# Blog
+# Blog Posts
+
+<!-- template posts -->
