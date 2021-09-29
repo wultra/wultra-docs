@@ -24,9 +24,9 @@ This tutorial contains information on how to implement both parts of activation 
     pod 'WultraActivationSpawn'
     ```
 
-    <!-- begin box info -->
-    Note that `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks are not publicly available. [Follow this guide](Configuring-Private-Cocoapods-Repository.md) to configure your project to receive private Wultra libraries.
-    <!-- end -->
+<!-- begin box info -->
+Note that `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks are not publicly available. [Follow this guide](Configuring-Private-Cocoapods-Repository.md) to configure your project to receive private Wultra libraries.
+<!-- end -->
 
 3. Define the secondary apps that are available for activation.
 
