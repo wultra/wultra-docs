@@ -14,6 +14,7 @@ Note that `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks are n
 You need to add `WultraDeviceFingerprint`, `WultraActivationSpawn`, and `PowerAuth2` dependency to your project via Cocoapods.
 
 ```rb
+use_frameworks!
 pod 'WultraDeviceFingerprint'
 pod 'PowerAuth2'
 pod 'WultraActivationSpawn'
