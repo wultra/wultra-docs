@@ -1,41 +1,19 @@
-# Measuring PIN and Password Strength
+# Measuring PIN and Password Strength with Wultra Passphrase Meter
 
 <!-- AUTHOR realKober 2020-05-18T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
 <!-- TEMPLATE tutorial -->
 
-Selecting a weak PIN code or an easy-to-guess password is one of the most common issues of modern mobile authentication. According to the [research by DataGenetics](https://www.datagenetics.com/blog/september32012/), over 10% of users simply chose "1234" as a PIN code in the case the system allows it.  
+This tutorial will show you how to add a password and a PIN strength meter feature to your Android or iOS app using the open-source [Wultra Passphrase Meter](https://github.com/wultra/passphrase-meter#docucheck-keep-link).
 
-To tackle this issue, the password strength testers became a common part of the modern application. This tutorial will show you how to easily add a password and PIN strength meter feature to your Android or iOS app.
+Parts of the repository are [iOS](https://github.com/wultra/passphrase-meter/blob/develop/docs/Platform-iOS.md#example-project#docucheck-keep-link) and [Android](https://github.com/wultra/passphrase-meter/blob/develop/docs/Platform-Android.md#example-project#docucheck-keep-link) demo apps that you can try.
 
-Wultra Passphrase Meter is available as an [open-source project](https://github.com/wultra/passphrase-meter#docucheck-keep-link). Part of the repository is an [iOS](https://github.com/wultra/passphrase-meter/blob/develop/docs/Platform-iOS.md#example-project#docucheck-keep-link) and [Android](https://github.com/wultra/passphrase-meter/blob/develop/docs/Platform-Android.md#example-project#docucheck-keep-link) demo app that you can try.
-
-## UX Perspective
-
-Imagine that in your otherwise a very nice and polished application, you will force the users to type a complex password: at least 12 characters long, must contain at least one uppercase character, one digit, and two special symbols for each authentication or authorization attempt. This way, you can be sure that your users will use strong passwords. However, you can also expect bad ratings at the official stores or people not using your application at all.
-
-Striking the right balance between security and the password type (PIN vs. password) and password complexity (4 vs. 6 digit long PIN, password length) is important. You should always spend some time thinking about this issue.
-
-## User Interface
-
-### PIN Strength Check
-
-You should check the PIN code strength after a user choses the whole PIN code value. In case that the selected PIN code is weak, a user should be notified by a "disruptive" UI and offered a choice to either continue with a weak PIN code, or to select a different one.
-
-![ PIN check ](./01.gif)
-
-### Password Strength Check
-
-Password strength checking should be done "on-the-go", after each modification of the password and the evaluation result should be presented to the user in a textual or other graphical format.
-
-![ PIN check ](./02.gif)
-
-## Getting the SDK
+## Installation 
 
 {% codetabs %}
 {% codetab Android %}
 
-To get Wultra Passphrase Meter for Android up and running in your app, add following dependency in your `gradle.build` file:
+Add following dependency in your `gradle.build` file:
 
 ```groovy
 repositories {
