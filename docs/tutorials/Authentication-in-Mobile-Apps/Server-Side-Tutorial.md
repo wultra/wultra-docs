@@ -75,26 +75,23 @@ You can add the Bouncy Castle JCE provider the same way. Copy the [Bouncy Castle
 
 Restart the Apache Tomcat instance for these changes to take effect:
 
-{% codetabs %}
-{% codetab macOS %}
+<!-- begin tabs -->
+<!-- tab macOS -->
 ```sh
 $CATALINA_HOME/bin/catalina stop
 $CATALINA_HOME/bin/catalina start
 ```
-{% endcodetab %}
-{% codetab Linux %}
+<!-- tab Linux -->
 ```sh
 $CATALINA_HOME/bin/catalina.sh stop
 $CATALINA_HOME/bin/catalina.sh start
 ```
-{% endcodetab %}
-{% codetab Windows %}
+<!-- tab Windows -->
 ```sh
 $CATALINA_HOME/bin/catalina.bat stop
 $CATALINA_HOME/bin/catalina.bat start
 ```
-{% endcodetab %}
-{% endcodetabs %}
+<!-- end -->
 
 ## Deploy the Server-Side Components
 
@@ -107,8 +104,8 @@ For this tutorial, we will deploy just two components:
 
 First, prepare the required configuration XML file called `powerauth-java-server.xml` ([here](./powerauth-java-server.xml) is a template for download). In a minimal configuration, the only thing you need to configure is the JDBC database connectivity properties:
 
-{% codetabs %}
-{% codetab powerauth-java-server.xml %}
+<!-- begin tabs -->
+<!-- tab powerauth-java-server.xml -->
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Context>
@@ -121,8 +118,7 @@ First, prepare the required configuration XML file called `powerauth-java-server
 
 </Context>
 ```
-{% endcodetab %}
-{% endcodetabs %}
+<!-- end -->
 
 <!-- begin box info -->
 All our applications are a common Spring Boot applications and therefore, you can configure any other well-known Spring Boot properties.
@@ -142,18 +138,17 @@ The welcome page shows the version info, important configuration properties, and
 
 Deploying PowerAuth Admin, a GUI console for PowerAuth Server, follows a similar pattern as deploying the PowerAuth Server.
 
-First, prepare an XML configuration file `powerauth-admin.xml` ([here](./powerauth-admin.xml) is a template for download). This time, the file only contains a single property: a SOAP interface address of the PowerAuth Server instance running on `localhost:8080` address.
+First, prepare an XML configuration file `powerauth-admin.xml` ([here](./powerauth-admin.xml) is a template for download). This time, the file only contains a single property: a REST interface address of the PowerAuth Server instance running on `localhost:8080` address.
 
-{% codetabs %}
-{% codetab powerauth-admin.xml %}
+<!-- begin tabs -->
+<!-- tab powerauth-admin.xml -->
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Context>
-    <Parameter name="powerauth.service.url" value="http://localhost:8080/powerauth-java-server/soap"/>
+    <Parameter name="powerauth.service.url" value="http://localhost:8080/powerauth-java-server/rest"/>
 </Context>
 ```
-{% endcodetab %}
-{% endcodetabs %}
+<!-- end -->
 
 Next, copy the `powerauth-admin.xml` configuration file to `$CATALINA_HOME/conf/Catalina/localhost/` folder. Tomcat automatically picks up the file and will use the configuration for the `/powerauth-admin` context.
 
@@ -183,16 +178,16 @@ The end user should have an overview of the devices that are activated with his/
 
 The same functionality is usually implemented in the banking back-office application, so that the bank operators can manage mobile devices for their clients.
 
-### Using the PowerAuth SOAP Service Client
+### Using the PowerAuth REST Service Client
 
-Of course, you can directly call the PowerAuth Server RESTful APIs - the Swagger with documentation is available from the PowerAuth Server Welcome Page. However, the easiest way to call the PowerAuth Server services is to use our client library. The library currently uses a SOAP protocol but from your perspective, this is fully transparent.
+Of course, you can directly call the PowerAuth Server RESTful APIs - the Swagger with documentation is available from the PowerAuth Server Welcome Page. However, the easiest way to call the PowerAuth Server services is to use our client library.
 
 To add the library in your Maven project, use the following snippet:
 
 ```xml
 <dependency>
     <groupId>io.getlime.security</groupId>
-    <artifactId>powerauth-java-client-spring</artifactId>
+    <artifactId>powerauth-rest-client-spring</artifactId>
     <version>${powerauth.version}</version>
 </dependency>
 ```
@@ -201,24 +196,15 @@ You can then create a bean with the configured client:
 
 ```java
 @Configuration
-@ComponentScan(basePackages = {"io.getlime.security.powerauth"})
+@ComponentScan(basePackages = {"io.getlime.security.powerauth", ,"com.wultra.security.powerauth"})
 public class PowerAuthWebServiceConfiguration {
 
     @Bean
-    public Jaxb2Marshaller marshaller() {
-        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPath("io.getlime.powerauth.soap.v3");
-        return marshaller;
+    public PowerAuthClient powerAuthRestClient() {
+        final String url = "http://localhost:8080/powerauth-java-server/rest";
+        return new PowerAuthRestClient(url);
     }
 
-    @Bean
-    public PowerAuthServiceClient powerAuthClient(Jaxb2Marshaller marshaller) {
-        PowerAuthServiceClient client = new PowerAuthServiceClient();
-        client.setDefaultUri("http://localhost:8080/powerauth-java-server/soap");
-        client.setMarshaller(marshaller);
-        client.setUnmarshaller(marshaller);
-        return client;
-    }
 }
 ```
 
@@ -226,7 +212,7 @@ After that, you can simply `@Autowire` the object wherever needed:
 
 ```java
 @Autowired
-private PowerAuthServiceClient powerAuthServiceClient;
+private PowerAuthClient powerAuthServiceClient;
 ```
 
 ### Activation Using Activation Code
@@ -246,7 +232,7 @@ To generate the activation code, you can call:
 String userId = "1234";
 Long applicationId = 1;
 
-// Call the SOAP service
+// Call the REST service
 InitActivationResponse response = powerAuthServiceClient.initActivation(userId, applicationId);
 
 // Get the activation code and activation code signature
@@ -264,7 +250,7 @@ Now, generating the activation code is only one part of the issue. At the end of
 You can obtain the activation status at any time (either via periodic polling, or on a button click initiated by the user) by calling the `getActivationStatus` method:
 
 ```java
-// Call the SOAP service with activation ID obtained earlier.
+// Call the REST service with activation ID obtained earlier.
 GetActivationStatusResponse response = powerAuthServiceClient.getActivationStatus(activationId);
 
 // Get generic activation attributes
@@ -285,7 +271,7 @@ Of course, you can also receive the `REMOVED` status in a response. In such case
 In case the activation is in `PENDING_COMMIT` state, it is time to commit it. You can combine this step with some additional verification on your side, for example, checking a value of an SMS OTP code. You should also display the "activation fingerprint" - see the call to `getDevicePublicKeyFingerprint` method in the example above. This value is also displayed on the mobile device, user should check it to confirm that the key exchange during the activation was completed correctly.
 
 ```java
-// Call the SOAP service with activation ID obtained earlier.
+// Call the REST service with activation ID obtained earlier.
 CommitActivationResponse response = powerAuthServiceClient.commitActivation(activationId);
 ```
 
@@ -297,7 +283,7 @@ To list all active devices for given user, use the `getActivationListForUser` me
 // Your actual user and application identifier
 String userId = "1234";
 
-// Call the SOAP service.
+// Call the REST service.
 List<Activations> response = powerAuthServiceClient.getActivationListForUser(userId);
 
 for (Activations activation : response) {
@@ -373,18 +359,17 @@ The resulting output artifact is `./target/enrollment-server-0.24.0.war`. You ca
 
 Deploying Enrollment Server follows a similar pattern as deploying the PowerAuth Server and PowerAuth Admin.
 
-First, prepare an XML configuration file `enrollment-server.xml` ([here](./enrollment-server.xml) is a template for download). The file again only contains a single property: a SOAP interface address of the PowerAuth Server instance running on `localhost:8080` address.
+First, prepare an XML configuration file `enrollment-server.xml` ([here](./enrollment-server.xml) is a template for download). The file again only contains a single property: a REST interface address of the PowerAuth Server instance running on `localhost:8080` address.
 
-{% codetabs %}
-{% codetab enrollment-server.xml %}
+<!-- begin tabs -->
+<!-- tab enrollment-server.xml -->
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Context>
-    <Parameter name="powerauth.service.url" value="http://localhost:8080/powerauth-java-server/soap"/>
+    <Parameter name="powerauth.service.url" value="http://localhost:8080/powerauth-java-server/rest"/>
 </Context>
 ```
-{% endcodetab %}
-{% endcodetabs %}
+<!-- end -->
 
 Next, copy the `enrollment-server.xml` configuration file to `$CATALINA_HOME/conf/Catalina/localhost/` folder. Tomcat automatically picks up the file and will use the configuration for the `/enrollment-server` context.
 
@@ -417,8 +402,8 @@ Start by adding a new `com.wultra.app.enrollmentserver.customization` package an
 - `lookupUserIdForAttributes` - This is a method that translates provided credentials (user identity proof) to a particular user ID. This method may either return `null` in case credentials do not match, or throw a new `PowerAuthActivationException`.
 - `shouldAutoCommitActivation` - This method specifies if the activation should be automatically committed after the key exchange, or if a cooperation of some other system is required (for example, confirming the activation via the Internet banking). In our case, we will implement this method so that it auto-commits activation after custom activation is processed.
 
-{% codetabs %}
-{% codetab MyActivationProvider.java %}
+<!-- begin tabs -->
+<!-- tab MyActivationProvider.java -->
 ```java
 @Service
 public class MyActivationProvider implements CustomActivationProvider {
@@ -456,8 +441,7 @@ public class MyActivationProvider implements CustomActivationProvider {
     }
 }
 ```
-{% endcodetab %}
-{% endcodetabs %}
+<!-- end -->
 
 And that's it! Your enrollment server will now process the custom activation credentials sent from the mobile clients, allowing an activation via the custom credentials. You can now build the project again and deploy the Enrollment Server just as you did earlier.
 
