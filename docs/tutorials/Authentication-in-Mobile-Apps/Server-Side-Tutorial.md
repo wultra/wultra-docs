@@ -542,7 +542,7 @@ public class WebApplicationConfig implements WebMvcConfigurer {
         registry.addInterceptor(powerAuthInterceptor());
     }
 
-  @Override
+    @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(powerAuthWebArgumentResolver());
         argumentResolvers.add(powerAuthEncryptionArgumentResolver());
