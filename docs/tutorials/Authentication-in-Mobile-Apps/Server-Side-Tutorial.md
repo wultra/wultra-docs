@@ -497,8 +497,9 @@ public class PowerAuthConfig {
 
     @Bean
     public PowerAuthClient powerAuthClient() {
+        final String url = "http://localhost:8080/powerauth-java-server/rest";
         try {
-            return new PowerAuthRestClient(powerAuthServiceUrl);
+            return new PowerAuthRestClient(url);
         } catch (PowerAuthClientException ex) {
             logger.error(ex.getMessage(), ex);
             return null;
