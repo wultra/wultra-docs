@@ -320,7 +320,7 @@ UnblockActivationResponse response = powerAuthServiceClient.unblockActivation(ac
 RemoveActivationResponse response = powerAuthServiceClient.removeActivation(activationId);
 ```
 
-When blocking the activation, you may specify a reason of why the activation is blocked. This can be `null` or any string you chose. We only have one reserved value of `"MAX_FAILED_ATTEMPTS"` for activations blocked because user authentication failed too many times.
+When blocking the activation, you may specify a reason of why the activation is blocked. This can be `null` or any string you chose. We only have reserved values of `"MAX_FAILED_ATTEMPTS"` for activations blocked because user authentication failed too many times and `NOT_SPECIFIED` for an unknown reason.
 
 ## Deploying the Enrollment Server
 
