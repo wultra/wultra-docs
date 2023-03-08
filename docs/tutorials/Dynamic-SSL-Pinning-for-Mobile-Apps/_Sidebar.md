@@ -2,14 +2,6 @@
 
 [Home](Readme.md#)
 
-[Register at Malwarelytics](Readme.md#register-at-malwarelytics)
+[Solution Components](Readme.md#solution-components)
 
-[Get the Malwarelytics SDK](Readme.md#get-the-malwarelytics-sdk)
-
-[Obtain API Keys](Readme.md#obtain-api-keys)
-
-[Integrate the SDK](Readme.md#integrate-the-sdk)
-
-[Customize the UI Appearance](Readme.md#customize-the-ui-appearance)
-
-[Summary](Readme.md#summary)
+[Security Principle](Readme.md#security-principle)

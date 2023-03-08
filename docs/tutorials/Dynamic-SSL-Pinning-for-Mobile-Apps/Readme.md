@@ -18,7 +18,7 @@ Dynamic TLS/SSL certificate pinning by [Wultra](https://wultra.com) uses two com
 
 The components are displayed on the following image:
 
-![ Architecture overview ](./01.gif)
+![ Architecture overview ](./01.png)
 
 ## Security Principle
 
