@@ -6,5 +6,6 @@
     <Parameter name="spring.datasource.url" value="jdbc:postgresql://localhost:5432/postgres"/>
     <Parameter name="spring.datasource.username" value="$YOUR_DB_USERNAME"/>
     <Parameter name="spring.datasource.password" value="$YOUR_DB_PASSWORD"/>
+    <Parameter name="spring.jpa.database-platform" value="org.hibernate.dialect.PostgreSQLDialect"/>
 
 </Context>

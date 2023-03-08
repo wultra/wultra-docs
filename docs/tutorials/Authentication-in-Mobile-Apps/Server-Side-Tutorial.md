@@ -4,7 +4,7 @@
 <!-- SIDEBAR _Sidebar_Server.md sticky -->
 <!-- TEMPLATE tutorial -->
 
-In this tutorial, we will show you how to deploy and implement back-end components for authentication in mobile banking or fintech apps. The tutorial prioritizes integration with Spring Boot but integration with other technologies, such as JavaEE or .NET, is also possible.
+In this tutorial, we will show you how to deploy and implement back-end components for authentication in mobile banking or fintech apps. The tutorial introduces integration with Spring Boot.
 
 This tutorial has four parts:
 
@@ -56,7 +56,6 @@ Besides the Apache Tomcat 9.0 and PostgreSQL database installation and configura
 - Prepare the database schema, so that the required tables are in place.
 - Add the required libraries to the Tomcat `/lib` folder.
     - PostgreSQL JDBC Connector library (JAR)
-    - Bouncy Castle JCE Provider library (JAR)
 - Restart Tomcat, to apply the changes.
 
 ### Preparing the Database Schema
@@ -70,8 +69,6 @@ You can learn more about the database structure in our [detailed documentation](
 ### Adding Required Libraries
 
 To add the PostgreSQL JDBC library, copy the [PostgreSQL JDBC Driver JAR file](https://jdbc.postgresql.org/download.html) to `$CATALINA_HOME/lib` folder.
-
-You can add the Bouncy Castle JCE provider the same way. Copy the [Bouncy Castle Provider JAR](https://www.bouncycastle.org/latest_releases.html) (`bcprov-jdk15on-${VERSION}.jar`) to `$CATALINA_HOME/lib` folder.
 
 Restart the Apache Tomcat instance for these changes to take effect:
 
@@ -115,6 +112,7 @@ First, prepare the required configuration XML file called `powerauth-java-server
     <Parameter name="spring.datasource.url" value="jdbc:postgresql://localhost:5432/postgres"/>
     <Parameter name="spring.datasource.username" value="$YOUR_DB_USERNAME"/>
     <Parameter name="spring.datasource.password" value="$YOUR_DB_PASSWORD"/>
+    <Parameter name="spring.jpa.database-platform" value="org.hibernate.dialect.PostgreSQLDialect"/>
 
 </Context>
 ```
@@ -196,13 +194,18 @@ You can then create a bean with the configured client:
 
 ```java
 @Configuration
-@ComponentScan(basePackages = {"io.getlime.security.powerauth", ,"com.wultra.security.powerauth"})
-public class PowerAuthWebServiceConfiguration {
+@ComponentScan(basePackages = {"io.getlime.security.powerauth", "com.wultra.security.powerauth"})
+public class PowerAuthConfiguration {
 
     @Bean
     public PowerAuthClient powerAuthRestClient() {
         final String url = "http://localhost:8080/powerauth-java-server/rest";
-        return new PowerAuthRestClient(url);
+        try {
+            return new PowerAuthRestClient(url);
+        } catch (PowerAuthClientException ex) {
+            logger.error(ex.getMessage(), ex);
+            return null;
+        }
     }
 
 }
@@ -317,7 +320,7 @@ UnblockActivationResponse response = powerAuthServiceClient.unblockActivation(ac
 RemoveActivationResponse response = powerAuthServiceClient.removeActivation(activationId);
 ```
 
-When blocking the activation, you may specify a reason of why the activation is blocked. This can be `null` or any string you chose. We only have one reserved value of `"MAX_FAILED_ATTEMPTS"` for activations blocked because user authentication failed too many times.
+When blocking the activation, you may specify a reason of why the activation is blocked. This can be `null` or any string you chose. We only have reserved values of `"MAX_FAILED_ATTEMPTS"` for activations blocked because user authentication failed too many times and `NOT_SPECIFIED` for an unknown reason.
 
 ## Deploying the Enrollment Server
 
@@ -342,7 +345,7 @@ You can use the version from the `develop` branch but this might get tricky, sin
 
 ```sh
 # Replace the version number with the desired version.
-git checkout tags/0.24.0 -b tags/0.24.0
+git checkout tags/1.2.0 -b tags/1.2.0
 ```
 
 ### Building the Project
@@ -353,7 +356,7 @@ The project uses Maven for the dependency management and project builds. You can
 mvn clean package
 ```
 
-The resulting output artifact is `./target/enrollment-server-0.24.0.war`. You can rename the file to just `enrollment-server.war`.
+The resulting output artifact is `./target/enrollment-server-1.2.0.war`. You can rename the file to just `enrollment-server.war`.
 
 ### Deploying a Vanilla Enrollment Server
 
@@ -414,7 +417,7 @@ public class MyActivationProvider implements CustomActivationProvider {
     private final MyIdentityService myIdentityService;
 
     @Override
-    public String lookupUserIdForAttributes(Map<String, String> identityAttributes) throws PowerAuthActivationException {
+    public String lookupUserIdForAttributes(Map<String, String> identityAttributes, Map<String, Object> context) throws PowerAuthActivationException {
         // Fetch the user's credentials.
         String username = identityAttributes.get("username");
         String password = identityAttributes.get("password");
@@ -433,7 +436,7 @@ public class MyActivationProvider implements CustomActivationProvider {
     }
 
     @Override
-    public boolean shouldAutoCommitActivation(Map<String, String> identityAttributes, Map<String, Object> customAttributes, String activationId, String userId, ActivationType activationType) throws PowerAuthActivationException {
+    public boolean shouldAutoCommitActivation(Map<String, String> identityAttributes, Map<String, Object> customAttributes, String activationId, String userId, ActivationType activationType, Map<String, Object> context) throws PowerAuthActivationException {
         // Automatically commit activation for a CUSTOM activation type.
         // You can use more request attributes, either in identityAttributes or
         // customAttributes, for a more fine-grained control.
@@ -478,8 +481,8 @@ First, we need to open the `pom.xml` file and add the following dependency:
 ```xml
 <dependency>
     <groupId>io.getlime.security</groupId>
-    <artifactId>powerauth-restful-security-spring-annotation</artifactId>
-    <version>0.24.0</version>
+    <artifactId>powerauth-restful-security-spring</artifactId>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -489,23 +492,18 @@ Next, you can create the `PowerAuthConfig` configuration file for the PowerAuth 
 
 ```java
 @Configuration
-@ComponentScan(basePackages = {"io.getlime.security.powerauth"})
+@ComponentScan(basePackages = {"io.getlime.security.powerauth", "com.wultra.security.powerauth"})
 public class PowerAuthConfig {
 
     @Bean
-    public Jaxb2Marshaller marshaller() {
-        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-        marshaller.setContextPath("io.getlime.powerauth.soap.v3");
-        return marshaller;
-    }
-
-    @Bean
-    public PowerAuthServiceClient powerAuthClient(Jaxb2Marshaller marshaller) {
-        PowerAuthServiceClient client = new PowerAuthServiceClient();
-        client.setDefaultUri("http://localhost:8080/powerauth-java-server/soap");
-        client.setMarshaller(marshaller);
-        client.setUnmarshaller(marshaller);
-        return client;
+    public PowerAuthClient powerAuthClient() {
+        final String url = "http://localhost:8080/powerauth-java-server/rest";
+        try {
+            return new PowerAuthRestClient(url);
+        } catch (PowerAuthClientException ex) {
+            logger.error(ex.getMessage(), ex);
+            return null;
+        }
     }
 
 }
@@ -541,15 +539,16 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     }
 
     @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(powerAuthInterceptor());
+    }
+
+    @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(powerAuthWebArgumentResolver());
         argumentResolvers.add(powerAuthEncryptionArgumentResolver());
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(powerAuthInterceptor());
-    }
 
 }
 ```
