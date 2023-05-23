@@ -4,18 +4,18 @@
 <!-- SIDEBAR _Sidebar.md sticky -->
 <!-- TEMPLATE tutorial -->
 
-<!-- begin box warning -->
-**Personalized Configuration Required.**<br/>
-In order to follow this tutorial, you need to purchase the App Shielding technology by Wultra and have a tooling as well as custom configuration prepared by Wultra engineers. Both tooling and configuration is specifically designed for your application. Contact your sales representative or technical consultant in order to obtain the required components.
-<!-- end -->
-
 In this tutorial, we will show you how to implement App Shielding by Wultra into your mobile apps on iOS and Android. This tutorial has three parts:
 
 - **Mobile App Shielding Overview**
 - [App Shielding for iOS](./iOS-Tutorial.md)
 - [App Shielding for Android](./Android-Tutorial.md)
 
-## Introduction
+<!-- begin box warning -->
+**Personalized Configuration Required.**<br/>
+In order to follow this tutorial, you need to purchase the App Shielding technology by Wultra and have a tooling as well as custom configuration prepared by Wultra engineers. Both tooling and configuration is specifically designed for your application. Contact your sales representative or technical consultant in order to obtain the required components.
+<!-- end -->
+
+## About App Shielding
 
 Mobile Application Shielding (or App Shielding, for short) protects your mobile app against a broad range of attacks caused by various OS vulnerabilities.
 

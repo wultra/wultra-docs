@@ -1,7 +1,7 @@
 # Introducing the Activation Spawn
 <!-- AUTHOR joshis_tweets 2021-09-17T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
-<!-- TEMPLATE post -->
+<!-- TEMPLATE tutorial -->
 <!-- COVER_IMAGE activation-spawn-cover.jpg -->
 
 It is common for organizations to have more than one mobile apps. Usually, though, one mobile app is considered the "main application," while the other apps are "secondary." For example, a bank can have a mobile banking app, mobile brokerage app, mortgage management app, etc. With multiple apps in place, many of the use-cases organizations must solve become complicated. For example, if a user loses the smartphone, they need to recover multiple apps.

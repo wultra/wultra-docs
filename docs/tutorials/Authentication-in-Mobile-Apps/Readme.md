@@ -3,6 +3,7 @@
 <!-- AUTHOR joshis_tweets 2020-05-04T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
 <!-- TEMPLATE tutorial -->
+<!-- COVER_IMAGE cover.jpg -->
 
 In this tutorial, we will show you how to implement authentication into your mobile banking or fintech apps.
 
