@@ -1,7 +1,7 @@
 # Configuring Private Cocoapods Repository
 <!-- AUTHOR joshis_tweets 2021-09-17T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
-<!-- TEMPLATE post -->
+<!-- TEMPLATE tutorial -->
 
 Activation Spawn iOS SDK is distributed through the Wultra Artifactory which provides a private Cocoapods repository. To be able to use this repository, you need to configure your Podfile to be able to retrieve the SDK.
 

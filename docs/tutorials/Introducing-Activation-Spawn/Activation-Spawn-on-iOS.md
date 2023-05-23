@@ -1,7 +1,7 @@
 # Activation Spawn on iOS SDK
 <!-- AUTHOR joshis_tweets 2021-09-17T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
-<!-- TEMPLATE post -->
+<!-- TEMPLATE tutorial -->
 
 This tutorial contains information on how to implement both parts of activation spawn (main and secondary, read [the activation spawn overview](./Readme.md) for more information) on iOS.
 
