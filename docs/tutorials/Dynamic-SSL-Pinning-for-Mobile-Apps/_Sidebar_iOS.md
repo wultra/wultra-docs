@@ -1,13 +1,13 @@
 **Table of Contents**
 
-[Installation](#installation)
+[Installation](iOS-Tutorial.md#installation)
 
-[Configuration](#configuration)
+[Configuration](iOS-Tutorial.md#configuration)
 
-[Update Fingerprints](#update-fingerprints)
+[Update Fingerprints](iOS-Tutorial.md#update-fingerprints)
 
-[Fingerprint Validation](#fingerprint-validation)
+[Fingerprint Validation](iOS-Tutorial.md#fingerprint-validation)
 
-[Resources](Readme.md#resources)
+[Resources](iOS-Tutorial.md#resources)
 
-[Continue Reading](Readme.md#continue-reading)
+[Continue Reading](iOS-Tutorial.md#continue-reading)

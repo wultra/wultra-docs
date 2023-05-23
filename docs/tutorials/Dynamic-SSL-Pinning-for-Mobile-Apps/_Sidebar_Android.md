@@ -1,13 +1,13 @@
 **Table of Contents**
 
-[Installation](#installation)
+[Installation](Android-Tutorial.md#installation)
 
-[Configuration](#configuration)
+[Configuration](Android-Tutorial.md#configuration)
 
-[Update Fingerprints](#update-fingerprints)
+[Update Fingerprints](Android-Tutorial.md#update-fingerprints)
 
-[Fingerprint Validation](#fingerprint-validation)
+[Fingerprint Validation](Android-Tutorial.md#fingerprint-validation)
 
-[Resources](Readme.md#resources)
+[Resources](Android-Tutorial.md#resources)
 
-[Continue Reading](Readme.md#continue-reading)
+[Continue Reading](Android-Tutorial.md#continue-reading)

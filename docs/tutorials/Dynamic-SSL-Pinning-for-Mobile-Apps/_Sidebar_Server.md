@@ -1,11 +1,11 @@
 **Table of Contents**
 
-[Home](Readme.md#)
+[Create Database Structure](Server-Side-Tutorial.md#create-database-structure)
 
-[Solution Components](Readme.md#solution-components)
+[Run Docker Image](Server-Side-Tutorial.md#run-docker-image)
 
-[Security Principle](Readme.md#security-principle)
+[ConfigurationAnchor](Server-Side-Tutorial.md#configuration)
 
-[Resources](Readme.md#resources)
+[Resources](Server-Side-Tutorial.md#resources)
 
-[Continue Reading](Readme.md#continue-reading)
+[Continue Reading](Server-Side-Tutorial.md#continue-reading)
