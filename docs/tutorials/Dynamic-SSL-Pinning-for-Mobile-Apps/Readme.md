@@ -3,6 +3,7 @@
 <!-- AUTHOR joshis_tweets 2023-05-23T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
 <!-- TEMPLATE tutorial -->
+<!-- COVER_IMAGE cover.jpg -->
 
 To ensure secure communication between the mobile app and the web server, authentication of the server is a crucial part. Otherwise, an attacker could execute a man-in-the-middle attack (MITM) and pose as a legitimate server.
 
@@ -42,4 +43,4 @@ Proceed with one of the following chapters:
 - [Dynamic SSL Pinning Overview](./Readme.md)
 - [Dynamic SSL Pinning on iOS](./iOS-Tutorial.md)
 - [Dynamic SSL Pinning on Android](./Android-Tutorial.md)
-- [Dynemic SSL Pinning Server](./Server-Side-Tutorial.md)
+- [Dynamic SSL Pinning Server](./Server-Side-Tutorial.md)

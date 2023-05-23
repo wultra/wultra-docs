@@ -114,4 +114,4 @@ Proceed with one of the following chapters:
 
 - [Dynamic SSL Pinning Overview](./Readme.md)
 - [Dynamic SSL Pinning on iOS](./iOS-Tutorial.md)
-- [Dynemic SSL Pinning Server](./Server-Side-Tutorial.md)
+- [Dynamic SSL Pinning Server](./Server-Side-Tutorial.md)

@@ -4,6 +4,10 @@
 
 [Configuration](#configuration)
 
-[Update fingerprints](#update-fingerprints)
+[Update Fingerprints](#update-fingerprints)
 
-[Fingerprint validation](#fingerprint-validation)
+[Fingerprint Validation](#fingerprint-validation)
+
+[Resources](Readme.md#resources)
+
+[Continue Reading](Readme.md#continue-reading)
