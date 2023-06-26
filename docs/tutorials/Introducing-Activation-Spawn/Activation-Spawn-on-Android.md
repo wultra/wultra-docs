@@ -77,7 +77,7 @@ val application = SpawnableApplication(
 At any point in time, you can check if the secondary app is installed and if not, request the installation:
 
 ```kotlin
-// manager is instance of ApplicationSpawnManager
+// manager is instance of ActivationSpawnManager
 
 try {
     if (manager.isInstalled(application)) {
@@ -127,7 +127,7 @@ val auth = PowerAuthAuthentication()
 // ..
 // ..
 
-// manager is instance of ApplicationSpawnManager
+// manager is instance of ActivationSpawnManager
 manager.retrieveActivationData(app, auth, object : IRetrieveActivationDataListener {
     override fun onSuccess(data: ActivationSpawnData) {
         // activation data retrieved
