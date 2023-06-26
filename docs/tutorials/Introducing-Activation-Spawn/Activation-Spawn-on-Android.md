@@ -74,6 +74,30 @@ val application = SpawnableApplication(
 )
 ```
 
+### Obtaining `ActivationSpawnManager`
+
+You can create `ActivationSpawnManager` instance in the following manner:
+
+```kotlin
+import com.wultra.android.devicefingerprint.DeviceFingerprintGenerator
+import com.wultra.android.activationspawn.createSpawnManager
+
+// Additional data for generator (must be the same for both Source and Target App).
+val additionalData: ByteArray? = null
+
+// Note that the generator configuration must be the same
+// for both Target and Source App. Please consult with Wultra
+// what configuration suits your needs.
+private val generator = DeviceFingerprintGenerator.getSemiStable(appContext, false, 10, additionalData)
+
+// manager that handles the activation
+// powerAuth is configured PowerAuthSDK instance
+// appContext is application `Context` instance
+private val manager = powerAuth.createSpawnManager(appContext, SSLValidationStrategy.default(), generator, "https://your-domain.com/your-app")
+```
+
+### Checking for Application Installation
+
 At any point in time, you can check if the secondary app is installed and if not, request the installation:
 
 ```kotlin
@@ -94,27 +118,9 @@ try {
 
 ### Obtaining Activation Data
 
-Create `ActivationSpawnManager` instance.
+In case you are using your own authentication scheme, you can fetch the data using your authenticated service.
 
-```kotlin
-import com.wultra.android.devicefingerprint.DeviceFingerprintGenerator
-import com.wultra.android.activationspawn.createSpawnManager
-
-// Additional data for generator (must be the same for both Source and Target App).
-val additionalData: ByteArray? = null
-
-// Note that the generator configuration must be the same
-// for both Target and Source App. Please consult with Wultra
-// what configuration suits your needs.
-private val generator = DeviceFingerprintGenerator.getSemiStable(appContext, false, 10, additionalData)
-
-// manager that handles the activation
-// powerAuth is configured PowerAuthSDK instance
-// appContext is application `Context` instance
-private val manager = powerAuth.createSpawnManager(appContext, SSLValidationStrategy.default(), generator, "https://your-domain.com/your-app")
-```
-
-Retrieve activation data for the user:
+When using PowerAuth for authentication, you can retrieve activation data for the user in the following manner:
 
 ```kotlin
 import io.getlime.security.powerauth.sdk.PowerAuthAuthentication

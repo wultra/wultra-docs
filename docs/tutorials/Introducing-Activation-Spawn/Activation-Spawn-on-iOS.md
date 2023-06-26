@@ -1,5 +1,5 @@
 # Activation Spawn on iOS SDK
-<!-- AUTHOR joshis_tweets 2021-09-17T00:00:00Z -->
+<!-- AUTHOR joshis_tweets 2023-06-26T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
 <!-- TEMPLATE tutorial -->
 
@@ -8,7 +8,61 @@ This tutorial contains information on how to implement both parts of activation 
 ## Installation
 
 <!-- begin box info -->
-Note that `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks are not publicly available. [Follow this guide](Configuring-Private-Cocoapods-Repository.md) to configure your project to receive private Wultra libraries.
+Note that `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks are not publicly available.
+<!-- end -->
+
+### Dependencies
+
+- [PowerAuth SDK for Mobile Apps](https://github.com/wultra/powerauth-mobile-sdk)
+- [PowerAuth Networking for Apple platforms](https://github.com/wultra/networking-apple)
+- Wultra Device Fingerprint for Apple (closed source, available via Wultra repository)
+
+### Swift Package Manager
+
+1. Create (or append to if already exists) `~/.netrc` file in your home directory with the following credentials you were provided alongside this document:
+
+    ```
+    machine wultra.jfrog.io
+      login [name@yourcompany.com]
+      password [password]
+    ```
+
+2. Add the following repository as a dependency into your project:
+
+    ```
+    https://github.com/wultra/activation-spawn-apple-release
+    ```
+
+    You can use Xcode's dedicated user interface to do this or add the dependency manually, for example:
+
+    ```swift
+    // swift-tools-version:5.7
+
+    import PackageDescription
+
+    let package = Package(
+        name: "YourLibrary",
+        products: [
+            .library(
+                name: "YourLibrary",
+                targets: ["YourLibrary"]),
+        ],
+        dependencies: [
+            .package(name: "WultraActivationSpawn", url: "https://github.com/wultra/activation-spawn-apple-release.git", .upToNextMajor(from: "1.2.0"))
+        ],
+        targets: [
+            .target(
+                name: "YourLibrary",
+                dependencies: ["WultraActivationSpawn"]
+            )
+        ]
+    )
+    ```
+
+### CocoaPods
+
+<!-- begin box info -->
+[Follow this guide](Configuring-Private-Cocoapods-Repository.md) to configure your project to receive private Wultra libraries.
 <!-- end -->
 
 You need to add `WultraDeviceFingerprint`, `WultraActivationSpawn`, and `PowerAuth2` dependency to your project via Cocoapods.
@@ -36,6 +90,37 @@ let app = WASApplication(
 )
 ```
 
+### Defining Deep Link Scheme
+
+The app needs to declare which secondary apps it can activate in `Info.plist`:
+
+```xml
+<key>LSApplicationQueriesSchemes</key>
+<array>
+    <string>apptoactivate</string>
+</array>
+```
+
+### Obtaining `WASActivator`
+
+You can create `WASActivator` instance in the following manner:
+
+```swift
+import WultraActivationSpawn
+import PowerAuth2
+
+do {
+    // powerauth is a PowerAuth SDK instance
+    // app is WASApplication instance
+    let activator = try WASActivator(powerAuth: powerauth, config: .init(sslValidation: .default))
+
+} catch {
+    // activator failed to be created
+}
+```
+
+### Checking for Application Installation
+
 At any point in time, you can check if the secondary app is installed and if not, request the installation:
 
 ```swift
@@ -58,39 +143,20 @@ do {
 }
 ```
 
-### Defining Deep Link Scheme
-
-The app needs to declare which secondary apps it can activate in `Info.plist`:
-
-```xml
-<key>LSApplicationQueriesSchemes</key>
-<array>
-    <string>apptoactivate</string>
-</array>
-```
-
 ### Obtaining Activation Data
 
-At any point, you can retrieve activation data for the authenticated user:
+In case you are using your own authentication scheme, you can fetch the data using your authenticated service.
+
+When using PowerAuth for authentication, you can retrieve activation data for the user in the following manner:
 
 ```swift
-import WultraActivationSpawn
-import PowerAuth2
-
 let auth = PowerAuthAuthentication()
 // prepare authentication object for 2FA
 // ..
 // ..
 
-do {
-    // powerauth is configured and activated PowerAuth SDK instance
-    // app is WASApplication instance
-    let activator = try WASActivator(powerAuth: powerauth, config: .init(sslValidation: .default))
-    activator.retrieveActivationData(for: app, with: auth) { result in
-        // process the data or error
-    }
-} catch {
-    // activator failed to be created
+activator.retrieveActivationData(for: app, with: auth) { result in
+    // process the data or error
 }
 ```
 
