@@ -90,6 +90,30 @@ let app = WASApplication(
 )
 ```
 
+### Checking for Application Installation
+
+At any point in time, you can check if the secondary app is installed and if not, request the installation:
+
+```swift
+import WultraActivationSpawn
+
+// app is WASApplication instance
+do {
+    if try app.isInstalled() {
+        // app is installed
+    } else {
+        // when app is not installed, open it's store page sheet
+        // self is a view controller, when using SwiftUI, you can replace
+        // it with UIApplication.shared.windows.first?.rootViewController?
+        self.openAppStoreProductPage(application: app) {
+            print("Done!")
+        }
+    }
+} catch {
+    // handle isInstalled error
+}
+```
+
 ### Defining Deep Link Scheme
 
 The app needs to declare which secondary apps it can activate in `Info.plist`:
@@ -116,30 +140,6 @@ do {
 
 } catch {
     // activator failed to be created
-}
-```
-
-### Checking for Application Installation
-
-At any point in time, you can check if the secondary app is installed and if not, request the installation:
-
-```swift
-import WultraActivationSpawn
-
-// app is WASApplication instance
-do {
-    if try app.isInstalled() {
-        // app is installed
-    } else {
-        // when app is not installed, open it's store page sheet
-        // self is a view controller, when using SwiftUI, you can replace
-        // it with UIApplication.shared.windows.first?.rootViewController?
-        self.openAppStoreProductPage(application: app) {
-            print("Done!")
-        }
-    }
-} catch {
-    // handle isInstalled error
 }
 ```
 
