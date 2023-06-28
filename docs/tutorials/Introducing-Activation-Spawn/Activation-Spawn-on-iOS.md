@@ -19,45 +19,46 @@ Note that `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks are n
 
 ### Swift Package Manager
 
-1. Create (or append to if already exists) `~/.netrc` file in your home directory with the following credentials you were provided alongside this document:
+1. Create (or append to if already exists) `~/.netrc` file in your home directory with the following credentials you were provided alongside this document: 
+   ```
+   machine wultra.jfrog.io
+         login [name@yourcompany.com]
+         password [password]
+   ```
 
-    ```
-    machine wultra.jfrog.io
-      login [name@yourcompany.com]
-      password [password]
-    ```
+2. Add the following repositories as a dependency into your project:
+   ```
+   https://github.com/wultra/networking-apple
+   https://github.com/wultra/activation-spawn-apple-release
+   https://github.com/wultra/device-fingerprint-apple-release
+   ```
+   You can use Xcode's dedicated user interface to do this or add the dependency manually, for example:
+   
+   ```swift
+   // swift-tools-version:5.7
 
-2. Add the following repository as a dependency into your project:
+   import PackageDescription
 
-    ```
-    https://github.com/wultra/activation-spawn-apple-release
-    ```
-
-    You can use Xcode's dedicated user interface to do this or add the dependency manually, for example:
-
-    ```swift
-    // swift-tools-version:5.7
-
-    import PackageDescription
-
-    let package = Package(
-        name: "YourLibrary",
-        products: [
-            .library(
-                name: "YourLibrary",
-                targets: ["YourLibrary"]),
-        ],
-        dependencies: [
-            .package(name: "WultraActivationSpawn", url: "https://github.com/wultra/activation-spawn-apple-release.git", .upToNextMajor(from: "1.2.0"))
-        ],
-        targets: [
-            .target(
-                name: "YourLibrary",
-                dependencies: ["WultraActivationSpawn"]
+   let package = Package(
+       name: "YourLibrary",
+       products: [
+           .library(
+               name: "YourLibrary",
+               targets: ["YourLibrary"]),
+       ],
+       dependencies: [
+           .package(name: "WultraPowerAuthNetworking", url: "https://github.com/wultra/networking-apple.git", .upToNextMajor(from: "1.1.0")),
+           .package(name: "WultraActivationSpawn", url: "https://github.com/wultra/activation-spawn-apple-release.git", .upToNextMajor(from: "1.3.0")),
+           .package(name: "WultraDeviceFingerprint", url: "https://github.com/wultra/device-fingerprint-apple-release.git", .upToNextMajor(from: "1.3.0"))
+       ],
+       targets: [
+           .target(
+               name: "YourLibrary",
+               dependencies: ["WultraActivationSpawn", "WultraPowerAuthNetworking", "WultraDeviceFingerprint" ]
             )
-        ]
-    )
-    ```
+       ]
+   )
+   ```
 
 ### CocoaPods
 
