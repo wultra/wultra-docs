@@ -62,18 +62,21 @@ Note that `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks are n
 
 ### CocoaPods
 
-<!-- begin box info -->
-[Follow this guide](Configuring-Private-Cocoapods-Repository.md) to configure your project to receive private Wultra libraries.
-<!-- end -->
+The library is distributed through a public git repository, which contains a podspec and scripts to download the framework from a private artifactory. If you're not using cocoapods in your project, visit [usage guide](https://guides.cocoapods.org/using/using-cocoapods.html).
 
-You need to add `WultraDeviceFingerprint`, `WultraActivationSpawn`, and `PowerAuth2` dependency to your project via Cocoapods.
+1. Add pod to your `Podfile`:
+   ```rb
+   target 'MyProject' do
+       use_frameworks!
+       pod 'WultraActivationSpawn', :git => 'https://github.com/wultra/activation-spawn-apple-release.git', :tag => '1.3.0'
+       pod 'WultraDeviceFingerprint', :git => 'https://github.com/wultra/device-fingerprint-apple-release.git', :tag => '1.3.2'
+   end
+   ```
+   You can check the latest versions of libraries above at release pages:
+   - [WultraActivationSpawn releases page](https://github.com/wultra/device-fingerprint-apple-release/releases)
+   - [WultraDeviceFingerprint releases page](https://github.com/wultra/activation-spawn-apple-release/releases)
 
-```rb
-use_frameworks!
-pod 'WultraDeviceFingerprint'
-pod 'PowerAuth2'
-pod 'WultraActivationSpawn'
-```
+2. Run `pod install` in your project dictionary to make the `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks available in your project.
 
 ## Main Application
 
