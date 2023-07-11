@@ -28,9 +28,9 @@ Note that `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks are n
 
 2. Add the following repositories as a dependency into your project:
    ```
-   https://github.com/wultra/networking-apple
-   https://github.com/wultra/activation-spawn-apple-release
-   https://github.com/wultra/device-fingerprint-apple-release
+   https://github.com/wultra/networking-apple.git
+   https://github.com/wultra/activation-spawn-apple-release.git
+   https://github.com/wultra/device-fingerprint-apple-release.git
    ```
    You can use Xcode's dedicated user interface to do this or add the dependency manually, for example:
    
@@ -47,14 +47,20 @@ Note that `WultraActivationSpawn` and `WultraDeviceFingerprint` frameworks are n
                targets: ["YourLibrary"]),
        ],
        dependencies: [
-           .package(name: "WultraPowerAuthNetworking", url: "https://github.com/wultra/networking-apple.git", .upToNextMajor(from: "1.1.0")),
-           .package(name: "WultraActivationSpawn", url: "https://github.com/wultra/activation-spawn-apple-release.git", .upToNextMajor(from: "1.3.0")),
-           .package(name: "WultraDeviceFingerprint", url: "https://github.com/wultra/device-fingerprint-apple-release.git", .upToNextMajor(from: "1.3.0"))
+           .package(url: "https://github.com/wultra/activation-spawn-apple-release.git", .upToNextMajor(from: "1.3.0")),
+           .package(url: "https://github.com/wultra/device-fingerprint-apple-release.git", .upToNextMajor(from: "1.3.0")),
+           .package(url: "https://github.com/wultra/networking-apple.git", .upToNextMajor(from: "1.1.0")),
+           .package(url: "https://github.com/wultra/powerauth-mobile-sdk-spm.git", .upToNextMajor(from: "1.7.0"))
        ],
        targets: [
            .target(
                name: "YourLibrary",
-               dependencies: ["WultraActivationSpawn", "WultraPowerAuthNetworking", "WultraDeviceFingerprint" ]
+               dependencies: [
+                    .product(name: "WultraActivationSpawn", package: "activation-spawn-apple-release"),
+                    .product(name: "WultraDeviceFingerprint", package: "device-fingerprint-apple-release"),
+                    .product(name: "WultraPowerAuthNetworking", package: "networking-apple"),
+                    .product(name: "PowerAuth2", package: "powerauth-mobile-sdk-spm")
+                ]
             )
        ]
    )
