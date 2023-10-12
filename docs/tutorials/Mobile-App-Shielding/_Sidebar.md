@@ -2,7 +2,7 @@
 
 [Home](./Readme.md#)
 
-[Introduction](./Readme.md#introduction)
+[Introduction](./Readme.md#about-app-shielding)
 
 [Applying App Shielding](./Readme.md#applying-app-shielding)
 
