@@ -3,6 +3,7 @@
 <!-- AUTHOR joshis_tweets 2023-12-29T00:00:00Z -->
 <!-- SIDEBAR _auto -->
 <!-- TEMPLATE tutorial -->
+<!-- COVER_IMAGE cover.webp -->
 
 Mobile cyberthreats are a quickly growing phenomenon. More and more users are using insecure devices with modifications such as jailbreak/root or devices with outdated OS versions, and the banks worldwide are targeted by mobile malware such as Anubis, Cerberos, or Event Bot. Mobile-first authentication is only as secure as mobile devices themselves. Therefore, to protect the customers and comply with the regulatory requirements, the financial institutions should actively seek a remedy to these issues.
 
