@@ -18,6 +18,6 @@
 
 [Configure Push Notifications](#configuring-push-notifications)
 
-[Continue Reading](Server-Side-Tutorial.md#continue-reading)
+[Continue Reading](#continue-reading)
 
-[Resources](Server-Side-Tutorial.md#resources)
+[Resources](#resources)

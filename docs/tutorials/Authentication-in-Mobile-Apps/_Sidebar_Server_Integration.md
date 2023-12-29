@@ -16,6 +16,6 @@
 
 [Implement Out-of-Band Approvals (Push Approvals)](#implement-out-of-band-approvals)
 
-[Continue Reading](Server-Side-Tutorial.md#continue-reading)
+[Continue Reading](#continue-reading)
 
-[Resources](Server-Side-Tutorial.md#resources)
+[Resources](#resources)
