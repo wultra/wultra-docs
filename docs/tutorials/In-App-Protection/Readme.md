@@ -10,5 +10,5 @@ In-app protection by Wultra is an advanced mobile security solution. It consists
 
 ## Read Next
 
-- [Implementation on Android](./Implementation-on-Android.md)
-- [Implementation on Apple](./Implementation-on-Apple.md)
+- [In-app Protection on Android](./Implementation-on-Android.md)
+- [In-app Protection on iOS](./Implementation-on-Apple.md)

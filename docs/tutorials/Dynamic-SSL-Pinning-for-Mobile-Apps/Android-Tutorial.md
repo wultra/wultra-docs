@@ -1,4 +1,4 @@
-# Dynamic SSL pinning for iOS
+# Dynamic SSL pinning for Android
 
 <!-- AUTHOR joshis_tweets 2023-05-23T00:00:00Z -->
 <!-- SIDEBAR _Sidebar_Android.md sticky -->
@@ -11,7 +11,7 @@ The library provides the following core types:
 - `CertStore` - the main class which provides all tasks for dynamic pinning  
 - `CertStoreConfiguration` - the configuration structure for `CertStore` class
 
-This document will explain how to install and configure the library and use `CertStore` class for the SSL pinning purposes.
+This document will explain how to install and configure the library and use `CertStore` class for SSL pinning purposes.
 
 
 ## Installation
@@ -29,7 +29,7 @@ implementation 'com.wultra.android.sslpinning:wultra-ssl-pinning:1.x.y'
 ```
 
 <!-- begin box info -->
-Note that this documentation is using version `1.x.y` as an example. You can find the latest version at [Github's release](https://github.com/wultra/ssl-pinning-android/releases#docucheck-keep-link) page.
+Note that this documentation uses version `1.x.y` as an example. You can find the latest version at [Github's release](https://github.com/wultra/ssl-pinning-android/releases#docucheck-keep-link) page.
 <!-- end -->
 
 
@@ -52,7 +52,7 @@ We'll use `certStore` variable in the rest of the documentation as a reference t
 
 ## Update Fingerprints
 
-To update list of fingerprints from the remote server (ideally, during the app start), use the following code:
+To update the list of fingerprints from the remote server (ideally, during the app start), use the following code:
 
 ```kotlin
 certStore.update(UpdateMode.DEFAULT, object: DefaultUpdateObserver() {
@@ -70,7 +70,7 @@ certStore.update(UpdateMode.DEFAULT, object: DefaultUpdateObserver() {
 
 ## Fingerprint Validation
 
-While the `CertStore` provides several methods for direct certificate fingerprint validation, the easiest in case of Android is to use one of the pre-built integrations.
+While the `CertStore` provides several methods for direct certificate fingerprint validation, the easiest in the case of Android is to use one of the pre-built integrations.
 
 ### Integration With `OkHttp`
 
@@ -89,7 +89,7 @@ In the code above, use `SSLSocketFactory` provided by `SSLPinningIntegration.cre
 
 ### Integration With `HttpsUrlConnection`
 
-For integration with `HttpsUrlConnection` use `SSLSocketFactory` provided by `SSLPinningIntegration.createSSLPinningSocketFactory(...)` methods. The code should look like this:
+For integration with `HttpsUrlConnection`, use `SSLSocketFactory` provided by `SSLPinningIntegration.createSSLPinningSocketFactory(...)` methods. The code should look like this:
 
 ```kotlin
 val url = URL(...)
