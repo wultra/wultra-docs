@@ -1,7 +1,7 @@
 # Mobile-First Authentication&#58; Integrating with Your Back-End Applications
 
 <!-- AUTHOR joshis_tweets 2023-12-29T00:00:00Z -->
-<!-- SIDEBAR _Sidebar_Server.md sticky -->
+<!-- SIDEBAR _Sidebar_Server_Integration.md sticky -->
 <!-- TEMPLATE tutorial -->
 
 In this tutorial, we will show you how to integrate API published by our server components with your back-end applications.

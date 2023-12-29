@@ -1,7 +1,7 @@
 # Mobile-First Authentication&#58; Installing Server-Side Components
 
 <!-- AUTHOR joshis_tweets 2023-12-29T00:00:00Z -->
-<!-- SIDEBAR _Sidebar_Server.md sticky -->
+<!-- SIDEBAR _Sidebar_Server_Deployment.md sticky -->
 <!-- TEMPLATE tutorial -->
 
 In this tutorial, we will show you how to install back-end components for mobile-first authentication in banking or fintech apps.
