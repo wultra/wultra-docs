@@ -8,7 +8,7 @@ In this tutorial, we will show you how to install back-end components for mobile
 
 ## Prerequisites
 
-This tutorial assumes, that you have:
+This tutorial assumes that you have:
 
 - Read and understood the [Problem Overview](Readme.md) chapter
 - [Docker](https://www.docker.com/) installation (`amd64` or `arm64` architectures)

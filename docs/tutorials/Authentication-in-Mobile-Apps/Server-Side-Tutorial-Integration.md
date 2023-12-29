@@ -8,7 +8,7 @@ In this tutorial, we will show you how to integrate API published by our server 
 
 ## Prerequisites
 
-This tutorial assumes, that you have:
+This tutorial assumes that you have:
 
 - Read and understood the [Problem Overview](Readme.md) chapter
 - Followed [Installing Server-Side Components](Server-Side-Tutorial-Deployment.md) chapter
@@ -210,7 +210,7 @@ You can use the data to show the list of devices in any administrative user inte
 
 In case you want to block an active registration, unblock a blocked one, or remove the registration completely, you can do so by calling our APIs.
 
-To block or unblock the registration, you can call:
+To block the registration, you can call:
 
 ```sh
 curl -X 'PUT' \
@@ -220,7 +220,11 @@ curl -X 'PUT' \
   -d '{
     "change": "BLOCK"
 }'
+```
 
+To unblock the registration, you can call:
+
+```sh
 curl -X 'PUT' \
   'http://localhost:8080/powerauth-cloud/v2/registrations/c8a1faf6-2dcd-4a66-b309-43a57afa8ca6' \
   -u integration-user:${INTEGRATION_PASSWORD} \
@@ -355,7 +359,7 @@ public class SecureController {
 ```
 <!-- end -->
 
-## Implement Out-of-Band Approvals (Push Approvals)
+## Implement Out-of-Band Approvals
 
 When initiating login or payment outside the mobile app, for example, in the web Internet banking, you can use our operations API to simplify out-of-band approvals via push notifications.
 
