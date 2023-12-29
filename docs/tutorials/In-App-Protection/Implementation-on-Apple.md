@@ -1,27 +1,25 @@
-# Implementing Malwarelytics on iOS
+# In-App Protection&#58; Implementing on iOS
 
-<!-- AUTHOR joshis_tweets 2020-05-04T00:00:00Z -->
+<!-- AUTHOR joshis_tweets 2023-12-29T00:00:00Z -->
 <!-- SIDEBAR _auto -->
 <!-- TEMPLATE tutorial -->
 
-This tutorial explains how you can integrate Malwarelytics - an advanced mobile threat intelligence and in-app protection - into your iOS app.
+This tutorial summarizes how to integrate Wultra's in-app protection into your iOS app.
+
+<!-- begin box info -->
+In-app protection for Apple supports iOS 12+ and requires Xcode 14.3+.
+<!-- end -->
 
 <!-- begin box warning -->
 **Personalized Configuration Required.**<br/>
-In order to use Malwarelytics for Apple, you need a custom configuration and access credentials for both the service and artifact repository. Contact your sales representative or technical consultant in order to obtain the required prerequisites.
+In order to use in-app protection for Apple, you need a custom configuration and access credentials. Contact our sales representatives or technical consultant in order to obtain the required prerequisites.
 <!-- end -->
 
-## Get the Malwarelytics SDK
+## Get the In-App Protection SDK
 
-You can obtain the Malwarelytics SDK for Apple by clicking the **Get the SDK!** item in the left navigation. In the **Download the SDK** section, you will find your Artifactory credentials.
+You can obtain the in-app protection SDK for Apple from our Artifactory.
 
-To add our private Cocoapods repository, install `cocoapods-art` plugin:
-
-```sh
-gem install cocoapods-art
-```
-
-Then, create an `.netrc` file in your home directory (`~`) with your credentials to Wultra Artifactory (or append the snippet, if the file already exists):
+You need to create a credentials file to access our private repository (needed for both SPM and Cocoapods integration). Create an `.netrc` file in your home directory `(~`) with the credentials to our Artifactory.
 
 ```
 machine wultra.jfrog.io
@@ -29,96 +27,58 @@ machine wultra.jfrog.io
       password [password]
 ```
 
-Synchronize the remote repo locally:
+Then, you can add our SPM repository to your Xcode project:
 
-```sh
-pod repo-art add malwarelytics_apple https://wultra.jfrog.io/artifactory/api/pods/malwarelytics-apple
+```
+https://github.com/wultra/malwarelytics-apple-release
 ```
 
-Enable the `cocoapods-art` plugin in your project by adding the following code to the first lines of the `Podfile`:
+## Implement Configuration in Your App
 
-```rb
-plugin 'cocoapods-art', :sources => [
-    'malwarelytics_apple'
-]
-```
+The main class for in-app protection SDK for Apple is `AppProtectionService`. You are responsible for configuring the instance as soon as possible after the application launch. You should also implement the `AppProtectionRaspDelegate` to handle RASP callbacks. The easiest way to initialize the in-app protection SDK in your `AppDelegate`.
 
-Add the new pod to your `Podfile`:
-
-```rb
-pod 'AppProtection'
-```
-
-And finally, install the pod from your project directory to make the `AppProtection` framework available in your project:
-
-```sh
-pod install
-```
-
-## Obtain the API Credentials
-
-In the **Set Up Your API Keys** section in the Malwarelytics Console, select the application for which you need to obtain the configuration.
-
-![ Downloading the SDK ](./03.png)
-
-You will find the following values:
-
-- `API_USERNAME` - Username associated with your Android application ID.
-- `API_PASSWORD` - API password value.
-- `API_SIGNATURE_PUBLIC_KEY` - Public key that the SDK uses to verify authenticity of data received from the server.
-
-## Integrate the SDK
-
-The main class for Malwarelytics SDK for Apple is `AppProtectionService` singleton. You are responsible for configuring the instance as soon as possible after the application launch. You should also implement the `AppProtectionRaspDelegate` to handle RASP callbacks.
-
-The easiest way to initialize the Malwarelytics SDK in your `AppDelegate`:
+The following `AppSecurity` Swift class is a sample wrapper implementation over the `AppProtectionService`.
 
 ```swift
-import UIKit
+import Foundation
 import AppProtection
 
-@main
-class AppDelegate: UIResponder, UIApplicationDelegate, AppProtectionRaspDelegate {
+class AppSecurity: AppProtectionRaspDelegate {
+    
+    private let appProtection: AppProtectionService
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-
-        // Prepare a builder to connect to the service
-        let builder = AppProtectionConfig.Builder()
-            .username(API_USERNAME)
-            .password(API_PASSWORD)
-            .signaturePublicKey(API_SIGNATURE_PUBLIC_KEY)
-
+    /// Creates AppSecurity instance
+    init() {
+    
         // Prepare the RASP feature configuration
-        let raspConfig = AppProtectionRaspConfig.Builder()
-            .jailbreak(.exit)
-            .debugger(.block)
-            .reverseEngineeringTools(.notify)
-            .httpProxy(.notify)
-            .repackage(.exit([AppProtectionTrustedCert(withBase64EncodedString: "$BASE_64_ENCODED_CERT")!]))
-            .screencapture(.notify)
-            .build()
+        let raspConfig = AppProtectionRaspConfig(
+            jailbreak: .exit("https://myurl.com/jalibreak-explained"),
+            debugger: .block,
+            reverseEngineeringTools: .notify,
+            httpProxy: .notify,
+            repackage:.exit([AppProtectionTrustedCert(withBase64EncodedString: "BASE_64_ENCODED_CERT")!], "https://myurl.com/repackage-explained"),
+            screenCapture: .hide(),
+            vpnDetection: .notify,
+            callDetection: .notify,
+            appPresence: .notify([.KnownApps.anyDesk])
+        )
+        
+        // Prepare a configuration for service
+        let config = AppProtectionConfig(
+            raspConfig: raspConfig
+        )
 
-        builder.raspConfig(raspConfig)
+        // Create the Service
+        self.appProtection = AppProtectionService(config: config)
 
-        // Prepare the configuration for events
-        let eventsConfig = AppProtectionEventConfig.Builder()
-            .enableAppLifecycleCollection(true)
-            .enableScreenshotTakenCollection(true)
-            .build()
-
-        builder.eventsConfig(eventsConfig)
-
-        do {
-            // Configure the Service
-            try AppProtectionService.configureShared(builder.build())
-        } catch {
-            fatalError("AppProtectionService singleton was already configured!")
-        }
-
-        // Set the delegate to obtain RASP callbacks
-        AppProtectionService.shared.rasp.addDelegate(self)
-
-        return true
+        // Register self as delegate
+        appProtection.rasp.addDelegate(self)
+    }
+    
+    deinit {
+        // When our AppSecurity class is being "destroyed", we want
+        // to stop all features of the AppProtectionService.
+        self.appProtection.release()
     }
 
     // MARK: - AppProtectionRaspDelegate
@@ -154,32 +114,174 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppProtectionRaspDelegate
     func systemBiometryConfigurationChanged(enabled: Bool) {
         // react to biometry configuration changed
     }
-
+    
+    func screenCapturedChanged(isCaptured: Bool) {
+        // react to screen capturing (casting to different device)
+    }
+    
+    func vpnChanged(active: Bool) {
+		// react to VPN state changes
+	}
+	
+	func onCallChanged(isOnCall: Bool) {
+	   // on call status has changed
+	}
+	
+	func installedAppsChanged(installedApps: [DetectableApp]) {
+		// installed apps list has changed
+	}
 }
 ```
 
-Since the `AppProtectionService` is a singleton, you can easily access it from anywhere in the app. For example, you can set your internal user ID when it is available like this:
+### Configuring Repackaging Detection
+
+Repackaging detection is a security feature that detects if the application was modified and resigned with a different signing certificate.
+
+To properly configure the repackage detection, you need to get the Base64 encoded string of your signing certificate:
+
+- Open the "Keychain Access" application.
+- Find a certificate that will be used to sign your application, for example, “Apple Development: Jan Tester (c)”.
+- Right-click on the item and click “Export…”.
+- Export the certificate in the .cer format.
+- Open up the terminal and cd into the folder with your exported certificate.
+- Encode the certificate in Base64 with `cat your_exported.cer | base64`.
+- Copy the output of the command and use it as a parameter for the repackage detection configuration.
 
 ```swift
-AppProtectionService.shared.clientAppUserId = clientId
+// Prepare the RASP feature configuration
+let raspConfig = AppProtectionRaspConfig(
+    // ...
+    repackage:.exit([AppProtectionTrustedCert(withBase64EncodedString: "BASE_64_ENCODED_CERT")!], "https://myurl.com/repackage-explained")
+    // ...
+)
 ```
 
-<!-- begin box info -->
-Do not forget to set your internal user ID. Otherwise, it will be difficult to identify which users devices are insecure, i.e., jailbroken. In the ideal situation, you can use an opaque random device identifier as the `INTERNAL_USER_ID`. However, any identifier that you can use to look up the infected device or the user will do the trick.
-<!-- end -->
+### Obtaining the Detection Results
 
-You can also access any RASP detections just-in-time, like so:
+You can observe for the detection results by registering the `AppProtectionRaspDelegate` class, as illustrated in the example above.
+
+Besides responding to callbacks in the delegate, you can also access any RASP detections just-in-time, like so:
 
 ```swift
-let isJailbroken = AppProtectionService.shared.rasp.isJailbroken
+// root detection
+let isJailbroken = appProtection.rasp.isJailbroken
+
+// debugger
+let isDebuggerConnected = appProtection.rasp.isDebuggerConnected
+
+// repackaging
+let isRepackaged = appProtection.rasp.isRepackaged
+
+// screen sharing
+let isScreenCaptured = appProtection.rasp.isScreenCaptured
+
+// system passcode
+let isSystemPasscodeEnabled = appProtection.rasp.isSystemPasscodeEnabled
+
+// system biometry
+let isSystemBiometryEnabled = appProtection.rasp.isSystemBiometryEnabled
+
+// simulator build
+let isEmulator = appProtection.rasp.isEmulator
+
+// reverse engineering
+let isReverseEngineeringToolsPresent = appProtection.rasp.isReverseEngineeringToolsPresent
+
+// http proxy present
+let isHttpProxyEnabled = appProtection.rasp.isHttpProxyEnabled
+
+// VPN active
+let isVpnActive = appProtection.rasp.isVpnActive
+
+// on call
+let isOnCall = appProtection.rasp.isOnCall
+
+// detected apps
+let detectedApps = appProtection.rasp.installedApps
 ```
 
-After you compile and launch the iOS application, Malwarelytics scan automatically starts and it sends the first impulse from your active device to the Malwarelytics service.
+## Connect to Our Threat Intelligence Cloud
+
+_(optional)_ In case you have access to our online console, you can configure credentials in our SDK so that the mobile app sends signals whenever a security policy violation is detected.
+
+The credential consist of the following values:
+
+- `API_USERNAME` - Username associated with your Android application ID.
+- `API_PASSWORD` - API password value.
+- `API_SIGNATURE_PUBLIC_KEY` - Public key that the SDK uses to verify authenticity of data received from the server.
+
+You need to adjust your configuration in code the following way:
+
+```swift
+// Prepare the configuration for events
+let eventConfig = AppProtectionEventConfig(
+    enableEventCollection: true,
+    enableScreenshotTakenCollection: true
+)
+
+// Prepare user identification
+let idConfig = AppProtectionIdentificationConfig(
+    userId: userId,
+    deviceId: deviceId
+)
+
+// Prepare the Online configuration (optional)
+let onlineConfig = .inAppProtectionOnlineConfig(
+    username: "$USERNAME",
+    password: "$PASSWORD",
+    signaturePublicKey: "$PUBKEY",
+    clientIdentification: idConfig,
+    eventsConfig: eventConfig,
+    customerGroupingConfig: nil,
+    environment: .production
+)
+
+// Prepare a configuration for service
+let config = AppProtectionConfig(
+    raspConfig: raspConfig,
+    onlineConfig: onlineConfig
+)
+```
+
+After you compile and launch the iOS application with the online console access configured, the `AppProtection` class will scan the device and automatically send the impulse from an active device to the online service.
+
+## App Hardening With App Shielding
+
+_(optional)_ As an additional code obfuscation and app hardening step, you can include the additional compile step to your project. This process is referred to as "app shielding". The integration with Xcode is based on the command-line script - to add the step in your project, you need to:
+
+1. Copy the provided tooling into your Xcode project folder (the `$PROJECT_DIR` variable in Xcode).
+1. Set `FRAMEWORK_SEARCH_PATHS=$(inherited) $(PROJECT_DIR)/shielder/`
+1. Prepare environment variables to be able to control the process properly.
+1. Add a **New Run Script Phase** to your target build phases, with the following script as a content:
+
+```sh
+#set -x
+
+if [[ "${APP_SHIELDING}" == "YES" ]]; then
+
+    if [[ "${APP_SHIELDING_TRUST_THIS_BUILD}" == "YES" ]]; then
+        /bin/bash "${SHIELD_SCRIPT}" "-config" "${SHIELD_CONFIG}" "-shielder" "${SHIELD_UTILITY}" "-framework" "${SHIELD_FRAMEWORK}" "--trustsigner"
+    else
+        /bin/bash "${SHIELD_SCRIPT}" "-config" "${SHIELD_CONFIG}" "-shielder" "${SHIELD_UTILITY}" "-framework" "${SHIELD_FRAMEWORK}"
+    fi
+    RESULT=$?
+    if [[ $RESULT != 0 ]]; then
+        if [[ "${GCC_PREPROCESSOR_DEFINITIONS}" == *"DEBUG=1"* ]]; then
+            echo "warning: App shielding failed!"
+        else
+            echo "error: App shielding failed!"
+            exit $RESULT
+        fi
+    fi
+else
+    echo "App shielding is turned off"
+fi
+```
 
 ## Summary
 
-We just integrated the Malwarelytics SDK into your iOS app and sent the first data sample to the Malwarelytics service. After you launch your app to the public, your Malwarelytics console will start to fill up with useful data about active insecure devices.
+We just integrated the in-app protection into your iOS app and - if you configured the online access - sent the first data sample to the online service. After you launch your app to the public, the console will start to fill up with useful data about active insecure devices.
 
-## Read Next
+## Reference
 
-- [Malwarelytics for Apple Documentation](https://github.com/wultra/malwarelytics-apple)
+- [In-app protection for Apple](/components/malwarelytics-apple/)
