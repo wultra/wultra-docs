@@ -1,668 +1,198 @@
-# Implementing the Server-Side for Authentication in Mobile Banking Apps (SCA)
+# Mobile-First Authentication: Installing Server-Side Components
 
-<!-- AUTHOR joshis_tweets 2020-05-04T00:00:00Z -->
+<!-- AUTHOR joshis_tweets 2023-12-29T00:00:00Z -->
 <!-- SIDEBAR _Sidebar_Server.md sticky -->
 <!-- TEMPLATE tutorial -->
 
-In this tutorial, we will show you how to deploy and implement back-end components for authentication in mobile banking or fintech apps. The tutorial introduces integration with Spring Boot.
-
-This tutorial has four parts:
-
-- [Mobile Authentication Overview](Readme.md)
-- **Tutorial for Server Side Developers**
-- [Tutorial for iOS Developers](iOS-Tutorial.md)
-- [Tutorial for Android Developers](Android-Tutorial.md)
+In this tutorial, we will show you how to install back-end components for mobile-first authentication in banking or fintech apps.
 
 ## Prerequisites
 
 This tutorial assumes, that you have:
 
-- Read and understood the [Mobile Authentication Overview](Readme.md)
-- [Java 11](https://jdk.java.net/) installation, or newer.
-- [Apache Tomcat 9.0](https://tomcat.apache.org/download-90.cgi) installation.
-- [PostgreSQL 12 database](https://www.postgresql.org/) installation.
-- Java IDE for developing Spring Boot applications (we will use [IntelliJ Idea](https://www.jetbrains.com/idea/)).
+- Read and understood the [Problem Overview](Readme.md) chapter
+- [Docker](https://www.docker.com/) installation (`amd64` or `arm64` architectures)
+- [PostgreSQL 12](https://www.postgresql.org/) installation
 
-<!-- begin box info -->
-PowerAuth Server supports various application servers and JPA 2.x compatible database engines. For the sake of simplicity, we decided to go with setup on Tomcat and PostgreSQL.
-<!-- end -->
+## Task Overview
 
-## Introduction
+When installing the authentication back-end, you need to perform several tasks:
 
-When implementing a server-side support for the Mobile Security Suite, you need to perform several tasks:
+- Pull the Docker image
+- Configure the environment
+- Run the Docker image
+- Setup the first system users
+- Create application and assign the permissions
+- Configuring push notifications
 
-- Prepare the server infrastructure and database schema.
-- Deploy and explore the server-side components.
-- Implement mobile app management in the Internet banking.
-- Customize the enrollment server to allow custom activations.
-- Prepare an API resource server with protected resources.
-
-This is the component view on the infrastructure we are building in this tutorial:
-
-![ Mobile Security Suite - Back-End Systems Overview ](./13.png)
-
-While the picture might look daunting, have no fear - everything is in fact straight-forward. Have a coffee, print the picture, and pay attention to the numbered blue boxes:
-
-1. **PowerAuth Server** - This is the component that keeps track of registered devices and helps with the critical processes, such as activation or transaction signing. It should be deployed in the secure infrastructure, not accessible from the outside.
-2. **PowerAuth Admin** - A GUI administration console for PowerAuth Server. While you could do the same thing using the PowerAuth Server API, this makes everything a bit more convenient.
-3. **Extension for Internet banking** (or a back-office system) - Here, we will show you how to list and manage active devices and how to generate the activation code for the purposes of a new device activation.
-4. **Enrollment Server** - A component that publishes an API for the mobile app in order to allow the device enrollment. We will show you how to deploy the vanilla version of the server (that supports activation using activation code) and how to extend the server with a custom activation method.
-5. **API Resource Server** - A component that publishes protected API endpoints, such as login and payment approval. We will show you how to secure a resource in your Spring Boot application.
-
-## Preparing the Infrastructure
-
-Besides the Apache Tomcat 9.0 and PostgreSQL database installation and configuration, you need to perform several generic configuration tasks:
-
-- Prepare the database schema, so that the required tables are in place.
-- Add the required libraries to the Tomcat `/lib` folder.
-    - PostgreSQL JDBC Connector library (JAR)
-- Restart Tomcat, to apply the changes.
-
-### Preparing the Database Schema
-
-Execute the following scripts in your PostgreSQL database to create the required tables:
-
-- [PostgreSQL - Create Schema Script](https://github.com/wultra/powerauth-server/blob/develop/docs/sql/postgresql/create_schema.sql)
-
-You can learn more about the database structure in our [detailed documentation](https://github.com/wultra/powerauth-server/blob/develop/docs/Database-Structure.md).
-
-### Adding Required Libraries
-
-To add the PostgreSQL JDBC library, copy the [PostgreSQL JDBC Driver JAR file](https://jdbc.postgresql.org/download.html) to `$CATALINA_HOME/lib` folder.
-
-Restart the Apache Tomcat instance for these changes to take effect:
-
-<!-- begin tabs -->
-<!-- tab macOS -->
-```sh
-$CATALINA_HOME/bin/catalina stop
-$CATALINA_HOME/bin/catalina start
-```
-<!-- tab Linux -->
-```sh
-$CATALINA_HOME/bin/catalina.sh stop
-$CATALINA_HOME/bin/catalina.sh start
-```
-<!-- tab Windows -->
-```sh
-$CATALINA_HOME/bin/catalina.bat stop
-$CATALINA_HOME/bin/catalina.bat start
-```
-<!-- end -->
-
-## Deploy the Server-Side Components
-
-For this tutorial, we will deploy just two components:
-
-- [PowerAuth Server](https://github.com/wultra/powerauth-server) - The server responsible for mobile device management.
-- [PowerAuth Admin](https://github.com/wultra/powerauth-admin) - The administration console for the PowerAuth Server.
-
-### Deploy the PowerAuth Server
-
-First, prepare the required configuration XML file called `powerauth-java-server.xml` ([here](./powerauth-java-server.xml) is a template for download). In a minimal configuration, the only thing you need to configure is the JDBC database connectivity properties:
-
-<!-- begin tabs -->
-<!-- tab powerauth-java-server.xml -->
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<Context>
-
-    <!-- Database Configuration - JDBC -->
-    <Parameter name="spring.datasource.driver-class-name" value="org.postgresql.Driver"/>
-    <Parameter name="spring.datasource.url" value="jdbc:postgresql://localhost:5432/postgres"/>
-    <Parameter name="spring.datasource.username" value="$YOUR_DB_USERNAME"/>
-    <Parameter name="spring.datasource.password" value="$YOUR_DB_PASSWORD"/>
-    <Parameter name="spring.jpa.database-platform" value="org.hibernate.dialect.PostgreSQLDialect"/>
-
-</Context>
-```
-<!-- end -->
-
-<!-- begin box info -->
-All our applications are a common Spring Boot applications and therefore, you can configure any other well-known Spring Boot properties.
-<!-- end -->
-
-Next, copy the `powerauth-java-server.xml` configuration file to `$CATALINA_HOME/conf/Catalina/localhost/` folder. Tomcat automatically picks up the file and will use the configuration for the `/powerauth-java-server` context.
-
-[Download the latest PowerAuth Server](https://github.com/wultra/powerauth-server/releases) (`powerauth-java-server.war` file) and copy the WAR file to `$CATALINA_HOME/webapps` folder.
-
-You can now open [PowerAuth Server Welcome Page](http://localhost:8080/powerauth-java-server/) at [http://localhost:8080/powerauth-java-server/](http://localhost:8080/powerauth-java-server/) address.
-
-![ PowerAuth Server Welcome Page ](./08.png)
-
-The welcome page shows the version info, important configuration properties, and links to important resources.
-
-### Deploy the PowerAuth Admin
-
-Deploying PowerAuth Admin, a GUI console for PowerAuth Server, follows a similar pattern as deploying the PowerAuth Server.
-
-First, prepare an XML configuration file `powerauth-admin.xml` ([here](./powerauth-admin.xml) is a template for download). This time, the file only contains a single property: a REST interface address of the PowerAuth Server instance running on `localhost:8080` address.
-
-<!-- begin tabs -->
-<!-- tab powerauth-admin.xml -->
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<Context>
-    <Parameter name="powerauth.service.url" value="http://localhost:8080/powerauth-java-server/rest"/>
-</Context>
-```
-<!-- end -->
-
-Next, copy the `powerauth-admin.xml` configuration file to `$CATALINA_HOME/conf/Catalina/localhost/` folder. Tomcat automatically picks up the file and will use the configuration for the `/powerauth-admin` context.
-
-[Download the latest PowerAuth Admin](https://github.com/wultra/powerauth-admin/releases) (`powerauth-admin.war` file) and copy the WAR file to `$CATALINA_HOME/webapps` folder.
-
-You can now open [PowerAuth Admin](http://localhost:8080/powerauth-admin/) console at [http://localhost:8080/powerauth-admin/](http://localhost:8080/powerauth-admin/) address.
-
-#### Preparing the Mobile App Credentials
-
-You can use the PowerAuth Admin to generate the mobile app credentials. Mobile app developers will need those credentials in order to configure the mobile SDK. With the empty system, you can create your application simply by providing an "application name". Use some technical format for the application name, rather than a fancy visual name.
-
-We will use `demo-application` as an app name:
-
-![ PowerAuth Admin - New Application ](./09.png)
-
-After submitting the new application, you will see the values of application key, application secret, and master server public key. Provide your mobile developers with those values, so that they can configure their mobile apps.
-
-![ PowerAuth Admin - Application Credentials ](./10.png)
-
-## Manage Devices in the Internet Banking
-
-The end user should have an overview of the devices that are activated with his/her account. This is usually done by implementing a specific "self-service" section in the Internet banking. The goal of such section should be to allow typical administrative tasks, such as:
-
-- Creating a new activation via an activation code.
-- Listing the current active devices.
-- Blocking or removing an active device.
-
-The same functionality is usually implemented in the banking back-office application, so that the bank operators can manage mobile devices for their clients.
-
-### Using the PowerAuth REST Service Client
-
-Of course, you can directly call the PowerAuth Server RESTful APIs - the Swagger with documentation is available from the PowerAuth Server Welcome Page. However, the easiest way to call the PowerAuth Server services is to use our client library.
-
-To add the library in your Maven project, use the following snippet:
-
-```xml
-<dependency>
-    <groupId>io.getlime.security</groupId>
-    <artifactId>powerauth-rest-client-spring</artifactId>
-    <version>${powerauth.version}</version>
-</dependency>
-```
-
-You can then create a bean with the configured client:
-
-```java
-@Configuration
-@ComponentScan(basePackages = {"io.getlime.security.powerauth", "com.wultra.security.powerauth"})
-public class PowerAuthConfiguration {
-
-    @Bean
-    public PowerAuthClient powerAuthRestClient() {
-        final String url = "http://localhost:8080/powerauth-java-server/rest";
-        try {
-            return new PowerAuthRestClient(url);
-        } catch (PowerAuthClientException ex) {
-            logger.error(ex.getMessage(), ex);
-            return null;
-        }
-    }
-
-}
-```
-
-After that, you can simply `@Autowire` the object wherever needed:
-
-```java
-@Autowired
-private PowerAuthClient powerAuthServiceClient;
-```
-
-### Activation Using Activation Code
-
-The easiest way to activate a mobile client app is using an activation code. You can generate a new activation code for a particular user (this is how the user identity is connected with the mobile app) by calling the services published by the PowerAuth Server.
-
-Your internet banking first needs to generate the activation code for the logged in user, and after the user performs the key exchange on the mobile device, you need to commit the activation.
-
-Generally, the process looks like this:
-
-![ Internet Banking - New Activation ](./14.png)
-
-To generate the activation code, you can call:
-
-```java
-// Your actual user and application identifier
-String userId = "1234";
-Long applicationId = 1;
-
-// Call the REST service
-InitActivationResponse response = powerAuthServiceClient.initActivation(userId, applicationId);
-
-// Get the activation code and activation code signature
-String activationId = response.getActivationId(); // unique ID
-String activationCode = response.getActivationCode();
-String activationSignature = response.getActivationSignature();
-
-// Prepare the QR code payload with the signed activation code.
-// We use # to separate the two values in the QR code.
-String qrCodeString = activationCode + "#" + activationSignature;
-```
-
-Now, generating the activation code is only one part of the issue. At the end of the process, you also need to commit the activation to make it usable. You should allow committing the activation as soon as the activation moves to the `PENDING_COMMIT` status. Activation moves to the state from the `CREATED` state as soon as the user completes the key exchange on the mobile device.
-
-You can obtain the activation status at any time (either via periodic polling, or on a button click initiated by the user) by calling the `getActivationStatus` method:
-
-```java
-// Call the REST service with activation ID obtained earlier.
-GetActivationStatusResponse response = powerAuthServiceClient.getActivationStatus(activationId);
-
-// Get generic activation attributes
-String activationId = activation.getActivationId(); // unique ID
-String userId = response.getUserId();
-Long appId = response.getApplicationId();
-String activationName = response.getActivationName(); // may be empt
-ActivationStatus status = response.getActivationStatus();
-
-// For unfinished activations, you can also obtain the activation code again
-String activationCode = activation.getActivationCode();
-String activationSignature = activation.getActivationSignature();
-String activationFingerprint = activation.getDevicePublicKeyFingerprint();
-```
-
-Of course, you can also receive the `REMOVED` status in a response. In such case, you should terminate the user flow and let the user start over.
-
-In case the activation is in `PENDING_COMMIT` state, it is time to commit it. You can combine this step with some additional verification on your side, for example, checking a value of an SMS OTP code. You should also display the "activation fingerprint" - see the call to `getDevicePublicKeyFingerprint` method in the example above. This value is also displayed on the mobile device, user should check it to confirm that the key exchange during the activation was completed correctly.
-
-```java
-// Call the REST service with activation ID obtained earlier.
-CommitActivationResponse response = powerAuthServiceClient.commitActivation(activationId);
-```
-
-### Listing Active Devices
-
-To list all active devices for given user, use the `getActivationListForUser` method:
-
-```java
-// Your actual user and application identifier
-String userId = "1234";
-
-// Call the REST service.
-List<Activations> response = powerAuthServiceClient.getActivationListForUser(userId);
-
-for (Activations activation : response) {
-    String activationId = activation.getActivationId(); // unique ID
-    String userId = response.getUserId();
-    Long appId = response.getApplicationId();
-    String activationName = response.getActivationName(); // may be empty
-    ActivationStatus status = response.getActivationStatus();
-}
-
-```
-
-Note that this call returns activations in all states (including removed or not completed) for all applications. You can filter out only the activations you need to be displayed in your list, or select a more specific method on the client instance.
-
-The resulting list visualization is up to you, here is a generic mockup capturing most of the possible states:
-
-![ Internet Banking - Activation List ](./15.png)
-
-### Block, Unblock and Remove Devices
-
-In case you want to block an active activation, unblock a blocked one, or remove the activation completely, there are a single line methods for that:
-
-```java
-// Short way to block the activation.
-BlockActivationResponse response = powerAuthServiceClient.blockActivation(activationId, blockedReason);
-
-// Short way to unblock the activation
-UnblockActivationResponse response = powerAuthServiceClient.unblockActivation(activationId);
-
-// Short way to remove the activation
-RemoveActivationResponse response = powerAuthServiceClient.removeActivation(activationId);
-```
-
-When blocking the activation, you may specify a reason of why the activation is blocked. This can be `null` or any string you chose. We only have reserved values of `"MAX_FAILED_ATTEMPTS"` for activations blocked because user authentication failed too many times and `NOT_SPECIFIED` for an unknown reason.
-
-## Deploying the Enrollment Server
-
-Enrollment Server is the component that the mobile app actually calls. No calls are performed from the mobile app to the PowerAuth Server - this component should be deployed in a secure infrastructure.
+## Pull the Docker Image
 
 <!-- begin box warning -->
-For the sake of simplicity, we will deploy all components into a single Tomcat instance. However, you should use two Tomcat instances for the production deployment.
+To access our Docker container repository, you need to have an access granted from our administrators. [Contact us](https://wultra.com/contact) to obtain the access.
 <!-- end -->
 
-This is the part where you might need to start with an actual programming, since the enrollment process can be customized. For example, you can use custom user credentials as an identity proof for the enrollment - we will show you that part.
-
-### Clone the Git Repository
-
-Start by cloning the Enrollment Server git repository and switching into the project folder:
+You can obtain the Docker images by simply pulling them from our Artifactory:
 
 ```sh
-git clone https://github.com/wultra/enrollment-server.git
-cd enrollment-server
+docker login wultra.jfrog.io
+docker pull wultra.jfrog.io/wultra-docker/powerauth-cloud:${VERSION}
 ```
 
-You can use the version from the `develop` branch but this might get tricky, since you would have to install our development dependencies. Therefore, we suggest using a version from some of the release branches or - ideally - tags, for example:
+Make sure to replace the `${VERSION}` placeholder with the last available version.
 
-```sh
-# Replace the version number with the desired version.
-git checkout tags/1.2.0 -b tags/1.2.0
-```
-
-### Building the Project
-
-The project uses Maven for the dependency management and project builds. You can build project simply by calling a `mvn package` command:
-
-```sh
-mvn clean package
-```
-
-The resulting output artifact is `./target/enrollment-server-1.2.0.war`. You can rename the file to just `enrollment-server.war`.
-
-### Deploying a Vanilla Enrollment Server
-
-Deploying Enrollment Server follows a similar pattern as deploying the PowerAuth Server and PowerAuth Admin.
-
-First, prepare an XML configuration file `enrollment-server.xml` ([here](./enrollment-server.xml) is a template for download). The file again only contains a single property: a REST interface address of the PowerAuth Server instance running on `localhost:8080` address.
-
-<!-- begin tabs -->
-<!-- tab enrollment-server.xml -->
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<Context>
-    <Parameter name="powerauth.service.url" value="http://localhost:8080/powerauth-java-server/rest"/>
-</Context>
-```
-<!-- end -->
-
-Next, copy the `enrollment-server.xml` configuration file to `$CATALINA_HOME/conf/Catalina/localhost/` folder. Tomcat automatically picks up the file and will use the configuration for the `/enrollment-server` context.
-
-Copy the `enrollment-server.war` file you just built to `$CATALINA_HOME/webapps` folder.
-
-You can now open [Enrollment Server Swagger UI](http://localhost:8080/enrollment-server/swagger-ui.html) console at [http://localhost:8080/enrollment-server/swagger-ui.html](http://localhost:8080/enrollment-server/swagger-ui.html) address to see the published resources.
-
-![ Enrollment Server Swagger UI Screen ](./11.png)
-
-You can then provide your mobile app development team with the Enrollment Server base URL, which they need for their mobile app configuration.
-
-### Custom Activation in Enrollment Server
-
-Until now, the Enrollment Server only uses the default (built-in) functionality and activation mechanisms. Specifically, only activation via activation code and activation via recovery code are present. In this part of the tutorial, we will show you how to implement activation using custom credentials.
-
-Specifically, we will implement a mechanism that will allow the user to activate the mobile app via:
-
-- **Username** - Any user identifier, such as e-mail or a client number.
-- **Password** - User's password, for example, for the Internet banking.
-- **OTP Code** - A one-time password that user obtained elsewhere, for example, from the HW token authenticator or via an SMS message.
-
-Since these credentials are specific for you and your systems, you need to have your own service (denoted as `MyService` in the example below) to verify those credentials and translate them to a user ID in case authentication was successful.
-
-To start with the customizations, open the IDE of your choice and import the project. Most Java IDEs support Maven out of the box, so this part should be easy. After importing the project, you should see the default project structure.
-
-![ Default Enrollment Server Project Structure ](./12.png)
-
-Start by adding a new `com.wultra.app.enrollmentserver.customization` package and create a new `MyActivationProvider` class that implements the `CustomActivationProvider` interface. In this tutorial, we will only implement two overriden methods:
-
-- `lookupUserIdForAttributes` - This is a method that translates provided credentials (user identity proof) to a particular user ID. This method may either return `null` in case credentials do not match, or throw a new `PowerAuthActivationException`.
-- `shouldAutoCommitActivation` - This method specifies if the activation should be automatically committed after the key exchange, or if a cooperation of some other system is required (for example, confirming the activation via the Internet banking). In our case, we will implement this method so that it auto-commits activation after custom activation is processed.
-
-<!-- begin tabs -->
-<!-- tab MyActivationProvider.java -->
-```java
-@Service
-public class MyActivationProvider implements CustomActivationProvider {
-
-    /**
-     * Your identity service that can be used to verify the user credentials.
-     */
-    private final MyIdentityService myIdentityService;
-
-    @Override
-    public String lookupUserIdForAttributes(Map<String, String> identityAttributes, Map<String, Object> context) throws PowerAuthActivationException {
-        // Fetch the user's credentials.
-        String username = identityAttributes.get("username");
-        String password = identityAttributes.get("password");
-        String otp      = identityAttributes.get("otp");
-
-        // Verify the credentials using your identity service.
-        String userId = myIdentityService.verifyCredentials(username, password, otp);
-
-        // If the credentials verification failed, throw an exception.
-        if (userId == null) {
-            throw new PowerAuthActivationException("Authentication failed");
-        }
-
-        // ... otherwise, return the user ID of an authenticated user.
-        return userId;
-    }
-
-    @Override
-    public boolean shouldAutoCommitActivation(Map<String, String> identityAttributes, Map<String, Object> customAttributes, String activationId, String userId, ActivationType activationType, Map<String, Object> context) throws PowerAuthActivationException {
-        // Automatically commit activation for a CUSTOM activation type.
-        // You can use more request attributes, either in identityAttributes or
-        // customAttributes, for a more fine-grained control.
-        return ActivationType.CUSTOM.equals(activationType);
-    }
-}
-```
-<!-- end -->
-
-And that's it! Your enrollment server will now process the custom activation credentials sent from the mobile clients, allowing an activation via the custom credentials. You can now build the project again and deploy the Enrollment Server just as you did earlier.
-
-## Preparing Protected API Resources
-
-Finally, the last implementation part you need to take care of is publishing the protected API resources consumed by the mobile app. Usually, this is done by publishing new endpoints in an existing Spring application. For the simplicity, we will start with creating a new Spring Boot project.
-
-### Create New Spring Boot Project
-
-Let's create a new Spring Boot project first.
-
-![ IntelliJ Idea - New Spring Boot Project ](./16.png)
-
-Make sure to select "WAR" packaging.
-
-![ IntelliJ Idea - Project Properties ](./17.png)
-
-Select at least the "Spring Web" and "Spring Security" dependencies.
-
-![ IntelliJ Idea - Project Dependencies ](./18.png)
-
-And finally, name the project and select an appropriate location.
-
-![ IntelliJ Idea - Project Location ](./19.png)
-
-You will end up with a clean, simple project.
-
-![ IntelliJ Idea - Inside New Project ](./20.png)
-
-### Configuring the Components
-
-First, we need to open the `pom.xml` file and add the following dependency:
-
-```xml
-<dependency>
-    <groupId>io.getlime.security</groupId>
-    <artifactId>powerauth-restful-security-spring</artifactId>
-    <version>1.2.0</version>
-</dependency>
-```
-
-This dependency brings support for the PowerAuth-Spring magic that will make the integration work seamlessly.
-
-Next, you can create the `PowerAuthConfig` configuration file for the PowerAuth service client, so that the application is able to communicate with the PowerAuth Server. The integration components will automatically pick the bean up and use it.
-
-```java
-@Configuration
-@ComponentScan(basePackages = {"io.getlime.security.powerauth", "com.wultra.security.powerauth"})
-public class PowerAuthConfig {
-
-    @Bean
-    public PowerAuthClient powerAuthClient() {
-        final String url = "http://localhost:8080/powerauth-java-server/rest";
-        try {
-            return new PowerAuthRestClient(url);
-        } catch (PowerAuthClientException ex) {
-            logger.error(ex.getMessage(), ex);
-            return null;
-        }
-    }
-
-}
-```
-
-To register all the required PowerAuth components, create a new `WebApplicationConfig` Java class that implements the `WebMvcConfigurer` interface:
-
-```java
-@Configuration
-public class WebApplicationConfig implements WebMvcConfigurer {
-
-    @Bean
-    public PowerAuthWebArgumentResolver powerAuthWebArgumentResolver() {
-        return new PowerAuthWebArgumentResolver();
-    }
-
-    @Bean
-    public PowerAuthEncryptionArgumentResolver powerAuthEncryptionArgumentResolver() {
-        return new PowerAuthEncryptionArgumentResolver();
-    }
-
-    @Bean
-    public PowerAuthAnnotationInterceptor powerAuthInterceptor() {
-        return new PowerAuthAnnotationInterceptor();
-    }
-
-    @Bean
-    public FilterRegistrationBean<PowerAuthRequestFilter> powerAuthFilterRegistration() {
-        FilterRegistrationBean<PowerAuthRequestFilter> registrationBean = new FilterRegistrationBean<>();
-        registrationBean.setFilter(new PowerAuthRequestFilter());
-        registrationBean.setMatchAfter(true);
-        return registrationBean;
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(powerAuthInterceptor());
-    }
-
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(powerAuthWebArgumentResolver());
-        argumentResolvers.add(powerAuthEncryptionArgumentResolver());
-    }
-
-
-}
-```
-
-### Configuring Spring Security
-
-To restrict access to some resources, we will configure Spring Security by implementing the `WebSecurityConfigurerAdapter` interface. The configuration disables the default HTTP Basic authentication and CSRF (we do not need it for the mobile API). It also enforce an authentication for all resources on a `/secure/**` path:
-
-```java
-@Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-            .httpBasic().disable().csrf().disable()
-            .authorizeRequests().antMatchers("/secure/**").fullyAuthenticated();
-    }
-}
-```
-
-### Building the Login Endpoint
-
-To create the authenticated session, we will publish a simple `/login` endpoint that uses the `POST` HTTP method and is protected by the PowerAuth signature. Note that we used the `@PowerAuth` annotation with a `resourceId` value equal to `/login`. You need to pass the `resourceId` value to your mobile app developer in order to configure the request signing on the mobile app end.
+### Configure the Environment
 
 <!-- begin box warning -->
-While the `resourceId` value is the same as the endpoint name in the example, you may actually choose any arbitrary String value for the `resourceId`. Using the same value as the endpoint name is convenient. However, it is also a big source of confusion among the developers since they sometimes mix up the values.
+Our Docker images automatically manage the database schema. As a result, the database user must have permissions to manage the schema in the database. For information about our database schema, please refer to [our documentation](/components/powerauth-cloud/develop/documentation/Database-Structure).
 <!-- end -->
 
-Upon the successful user authentication, the instance of `PowerAuthApiAuthentication` will be automatically populated in the method parameter. This object extends `AbstractAuthenticationToken` from Spring Security, and so it can be used directly as an authentication object in the `SecurityContextHolder`.
+<!-- begin box warning -->
+<strong>Set The Right Database URL</strong><br/>The datasource URL for our Docker container follows the structure of the JDBC connectivity. Make sure to provide a valid JDBC URL to the configuration (starting with `jdbc:` prefix). Be especially careful when working on localhost! From the Docker container perspective, `localhost` is in the internal network. To connect to your host’s localhost, use `host.docker.internal` host name.
+<!-- end -->
 
-Here is the full login controller code:
+In order to be able to run the Docker image, you need to set it environment variables that define the database scheme connectivity. You can do so, for example, by creating the `env.list` file with the following content:
 
-```java
-@RestController
-public class AuthenticationController {
+```
+POWERAUTH_SERVER_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/powerauth
+POWERAUTH_SERVER_DATASOURCE_USERNAME=powerauth
+POWERAUTH_SERVER_DATASOURCE_PASSWORD=$PASSWORD$
 
-    @PostMapping(value = "/login")
-    @PowerAuth(resourceId = "/login")
-    public String login(PowerAuthApiAuthentication auth) throws PowerAuthAuthenticationException {
-        if (auth != null) {
-            // Create an authenticated session
-            SecurityContextHolder.getContext().setAuthentication((Authentication) auth);
-            return "OK";
-        } else {
-            // Handle authentication failure using some exception
-            throw new AuthenticationException();
-        }
-    }
+PUSH_SERVER_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/powerauth
+PUSH_SERVER_DATASOURCE_USERNAME=powerauth
+PUSH_SERVER_DATASOURCE_PASSWORD=$PASSWORD$
 
-}
+POWERAUTH_CLOUD_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/powerauth
+POWERAUTH_CLOUD_DATASOURCE_USERNAME=powerauth
+POWERAUTH_CLOUD_DATASOURCE_PASSWORD=$PASSWORD$
+
+ENROLLMENT_SERVER_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/powerauth
+ENROLLMENT_SERVER_DATASOURCE_USERNAME=powerauth
+ENROLLMENT_SERVER_DATASOURCE_PASSWORD=$PASSWORD$
 ```
 
-### Building the Payment Approval Endpoint
+### Run the Docker Image
 
-We will now publish a `/secure/payment` endpoint that uses the `POST` HTTP method and that is protected by both the authenticated session and the PowerAuth signature. We are making an optional assumption in this tutorial that the users need to be authenticated before they can submit a payment. Again, we used the `@PowerAuth` annotation with a `resourceId` value. This time, however, we used the `/secure/payment` value to denote that this operation is a different operation from the `/login` operation we built earlier.
+You can now run the Docker image using any techniques typically used for this task. For example, you can run it in Kubernetes or via Docker compose. As a simple quick start, you can just use `docker run` command, like so:
 
-The payment approval endpoint also contains a payment object as the `@RequestBody` instance. Bytes (byte-by-byte) of the request body are used during the signature verification. Upon the successful signature verification, the instance of `PowerAuthApiAuthentication` will be automatically populated in the method parameter. This time, use the object to obtain the user who authorized the particular payment, to see if the user can actually approve the payment. If everything checks out, you can then send the payment for the processing using your proprietary payment processing method.
-
-Here is the full payment approval controller code:
-
-```java
-@RestController("/secure")
-public class SecureController {
-
-
-    @PostMapping("/payment")
-    @PowerAuth(resourceId = "/secure/payment")
-    public String approvePayment(@RequestBody Payment payment, PowerAuthApiAuthentication auth) throws PowerAuthAuthenticationException {
-        if (auth != null) {
-
-            // Obtain the user ID
-            String userId = auth.getUserId();
-
-            // Check if the user can perform the given payment
-            if (userCanPerformPayment(userId, payment)) {
-
-                // Submit the payment for the processing
-                sendPayment(userId, payment);
-            } else {
-                // Handle authorization failure
-                throw new AuthorizationException();
-            }
-            return "OK";
-        } else {
-            // Handle authentication failure
-            throw new AuthenticationException();
-        }
-    }
-
-    private void sendPayment(String userId, Payment payment) {
-        // Your logic to process the payment approved by user with given ID
-    }
-
-    private boolean userCanPerformPayment(String userId, Payment payment) {
-        // Your logic to evaluate user access rights to the payment
-        return true;
-    }
-}
+```sh
+docker run --env-file env.list -d -it -p 8080:8000 \
+    --name=powerauth-cloud wultra.jfrog.io/wultra-docker/powerauth-cloud:${VERSION}
 ```
 
-## Resources
+### Setup the First System Users
 
-You can find more details about the server-side components in our reference documentation:
+**System users** represent systems, such as back-end applications, that are calling the protected API resources in our back-end components. **Admin system users** can call resources intended for the system administration (available on `/admin/**` context), while **integration system users** can only call resources intended for integration.
 
-- [PowerAuth Server](https://github.com/wultra/powerauth-server)
-- [PowerAuth Admin](https://github.com/wultra/powerauth-admin)
-- [Enrollment Server](https://github.com/wultra/enrollment-server)
-- [PowerAuth RESTful Integration](https://github.com/wultra/powerauth-restful-integration)
+The first admin system user has to be created directly in the database. You need to create a `bcrypt` hash of a password to insert the right record using the following SQL commands:
+
+```sql
+INSERT INTO pa_cloud_user (id, username, password, enabled)
+VALUES (nextval('pa_cloud_user_seq'), 'system-admin', '${BCRYPT_PASSWORD_HASH}', true);
+
+INSERT INTO pa_cloud_user_authority (id, user_id, authority)
+VALUES (nextval('pa_cloud_user_seq'), (SELECT id FROM pa_cloud_user WHERE username = 'system-admin'), 'ROLE_ADMIN');
+```
+
+Creating an integration system user is easier, you just need to call the API endpoint using the admin system user credentials:
+
+```sh
+curl -X 'POST' \
+  'http://localhost:8080/powerauth-cloud/admin/users' \
+  -u system-admin:${PASSWORD} \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "username": "integration-user"
+}'
+```
+
+<!-- begin box success -->
+The API automatically generates a strong password for the integration user.
+<!-- end -->
+
+### Create an Application and Assign Permissions
+
+**Application** in the back-end system represents a particular mobile application. You should create a new application for any mobile app, but **not** a separate one for each platform (iOS/Android). Application can represent, for example, your retail mobile banking, corporate mobile banking, mobile token, investment app, etc.
+
+To create an application, call our API using the admin system user credentials:
+
+```sh
+curl -X 'POST' \
+  'http://localhost:8080/powerauth-cloud/admin/applications' \
+  -u system-admin:${PASSWORD} \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "id": "my-application"
+}'
+```
+
+<!-- begin box info -->
+Pass the response of the call above to your mobile application developers - the values from the response must be embedded in the mobile app configuration.
+<!-- end -->
+
+In order for an integration system user to be able to access resources related to the newly created application, you must assign the integration system user permissions to the application by calling the following API endpoint:
+
+```sh
+curl -X 'POST' \
+  'http://localhost:8080/powerauth-cloud/admin/users/integration-user/applications/my-application' \
+  -u system-admin:${PASSWORD} \
+  -d ''
+```
+
+### Configuring Push Notifications
+
+Our system bundles a basic push server. You can use it to deliver push notifications to Apple or Android devices. We also use it under the hood for various use-cases, such as out-of-band operation approval, or lifecycle management (silent push whenever the device is blocked or removed).
+
+To configure push notification delivery for the application created above, you need to post credentials specific for APNS and FCM services (using your admin system user). You can obtain those credentials at the [Apple Developer Portal](https://developer.apple.com/) or in [Firebase Console](https://firebase.google.com/). Then, you can post them to the application using the following commands specific for each platform.
+
+#### Apple Push Notification Service (APNS)
+
+<!-- begin box info -->
+Note that Apple provides development or production environment. You should use a specific one based on how you sign your applications. Apps published on App Store and Testflight use production environment, those signed during development and published via services such as Microsoft's App Center typically use development environment.
+<!-- end -->
+
+```sh
+curl -X 'POST' \
+  'http://localhost:8080/powerauth-cloud/admin/applications/my-application/push/apns' \
+  -u system-admin:${PASSWORD} \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "topic": "${IOS_TOPIC}",
+    "keyId": "${IOS_KEY_ID}",
+    "teamId": "${IOS_TEAM_ID}",
+    "environment": "development|production",
+    "privateKeyBase64": "${IOS_PRIVATE_KEY_BASE64}"
+}'
+```
+
+#### Firebase Cloud Messaging (FCM)
+
+```sh
+curl -X 'POST' \
+  'http://localhost:8080/powerauth-cloud/admin/applications/my-application/push/fcm' \
+  -u system-admin:${PASSWORD} \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "projectId": "${ANDROID_PROCECT_ID}",
+    "privateKeyBase64": "ANDROID_PRIVATE_KEY_BASE64"
+}'
+```
 
 ## Continue Reading
 
-Proceed with one of the following chapters:
+You can proceed with one of the following chapters:
 
-- [Mobile Authentication Overview](Readme.md)
-- [Tutorial for iOS Developers](iOS-Tutorial.md)
-- [Tutorial for Android Developers](Android-Tutorial.md)
+- [Problem Overview](Readme.md)
+- [Installing Server-Side Components](Server-Side-Tutorial-Deployment.md)
+- [Integrating with Your Back-End Applications](Server-Side-Tutorial-Integration.md)
+- [Implementing Mobile-First Authentication on iOS](iOS-Tutorial.md)
+- [Implementing Mobile-First Authentication on Android](Android-Tutorial.md)
+
+## Resources
+
+You can find more details our reference documentation:
+
+- [Cryptography Specification](/components/powerauth-crypto)
+- [PowerAuth Cloud](/components/powerauth-cloud)
+- [Mobile Authentication SDK for iOS and Android](/components/powerauth-mobile-sdk)
+- [Mobile Token SDK for iOS](/components/mtoken-sdk-ios)
+- [Mobile Token SDK for Android](/components/mtoken-sdk-android)

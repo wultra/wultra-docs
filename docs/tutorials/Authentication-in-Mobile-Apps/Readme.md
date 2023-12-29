@@ -96,8 +96,9 @@ Please refer to the detailed documentation for more information about those.
 
 ## Continue Reading
 
-Proceed with one of the following chapters:
+You can proceed with one of the following chapters:
 
+- [Problem Overview](Readme.md)
 - [Installing Server-Side Components](Server-Side-Tutorial-Deployment.md)
 - [Integrating with Your Back-End Applications](Server-Side-Tutorial-Integration.md)
 - [Implementing Mobile-First Authentication on iOS](iOS-Tutorial.md)
@@ -107,7 +108,8 @@ Proceed with one of the following chapters:
 
 You can find more details in our reference documentation:
 
-- [Cryptography Specification](https://github.com/wultra/powerauth-crypto)
-- [PowerAuth Server Documentation](https://github.com/wultra/powerauth-server)
-- [Server-Side Integration Libraries Documentation](https://github.com/wultra/powerauth-restful-integration)
-- [Mobile SDK for iOS and Android Documentation](https://github.com/wultra/powerauth-mobile-sdk)
+- [Cryptography Specification](/components/powerauth-crypto)
+- [PowerAuth Cloud](/components/powerauth-cloud)
+- [Mobile Authentication SDK for iOS and Android](/components/powerauth-mobile-sdk)
+- [Mobile Token SDK for iOS](/components/mtoken-sdk-ios)
+- [Mobile Token SDK for Android](/components/mtoken-sdk-android)
