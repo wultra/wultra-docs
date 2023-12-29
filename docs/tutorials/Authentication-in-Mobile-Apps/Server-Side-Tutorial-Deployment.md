@@ -1,4 +1,4 @@
-# Mobile-First Authentication: Installing Server-Side Components
+# Mobile-First Authentication&#58; Installing Server-Side Components
 
 <!-- AUTHOR joshis_tweets 2023-12-29T00:00:00Z -->
 <!-- SIDEBAR _Sidebar_Server.md sticky -->
