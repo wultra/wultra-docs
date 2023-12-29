@@ -1,4 +1,4 @@
-# In-App Protection&#58; Implementing on iOS
+# In-App Protection for iOS
 
 <!-- AUTHOR joshis_tweets 2023-12-29T00:00:00Z -->
 <!-- SIDEBAR _auto -->
