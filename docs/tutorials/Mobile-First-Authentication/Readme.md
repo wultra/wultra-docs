@@ -28,7 +28,7 @@ Last but not least, correctly designed cryptographic protocol for authentication
 [Mobile-First Authentication](https://www.wultra.com/products/mobile-first-authentication) is a solution (plugin or a white-label app) for iOS and Android that - together with its server counterparts - covers the authentication and transaction signing functionality, allowing the end-users to login or approve payments using PIN code or biometry. It also covers all related use-cases, such as authentication element lifecycle (active, blocked, removed), PIN code change, biometry settings, etc. It uses [an open-source cryptographic PowerAuth protocol](/components/powerauth-crypto) that is trusted by leading banks and financial institutions to back the authentication-related processes with strong cryptography.
 
 
-## Registration
+## Device Registration
 
 When a user downloads a mobile app for iOS or Android, this app is always a blank, non-personalized app. Basically, it is the same app for all users who download it. In order to connect the app with the user account, the user needs to "activate" the application first. This requires an interplay between the mobile app and server components, as well as a user providing credentials as an identity proof that could be used to identify the user reliably. We call this initial process **Registration**. Sometimes, it is also referred to as activation, enrollment, or personalization, and these terms can be used interchangeably with confidence.
 

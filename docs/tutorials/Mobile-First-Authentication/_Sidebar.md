@@ -4,7 +4,7 @@
 
 [Problem Overview](Readme.md#problem-overview)
 
-[Activation](Readme.md#registration)
+[Device Registration](Readme.md#registration)
 
 [Transaction Signing](Readme.md#transaction-signing)
 
