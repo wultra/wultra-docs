@@ -40,7 +40,7 @@ docker pull wultra.jfrog.io/wultra-docker/powerauth-cloud:${VERSION}
 
 Make sure to replace the `${VERSION}` placeholder with the last available version.
 
-### Configure the Environment
+## Configure the Environment
 
 <!-- begin box warning -->
 Our Docker images automatically manage the database schema. As a result, the database user must have permissions to manage the schema in the database. For information about our database schema, please refer to [our documentation](/components/powerauth-cloud/develop/documentation/Database-Structure).
@@ -70,7 +70,7 @@ ENROLLMENT_SERVER_DATASOURCE_USERNAME=powerauth
 ENROLLMENT_SERVER_DATASOURCE_PASSWORD=$PASSWORD$
 ```
 
-### Run the Docker Image
+## Run the Docker Image
 
 You can now run the Docker image using any techniques typically used for this task. For example, you can run it in Kubernetes or via Docker compose. As a simple quick start, you can just use `docker run` command, like so:
 
@@ -79,7 +79,7 @@ docker run --env-file env.list -d -it -p 8080:8000 \
     --name=powerauth-cloud wultra.jfrog.io/wultra-docker/powerauth-cloud:${VERSION}
 ```
 
-### Setup the First System Users
+## Setup the First System Users
 
 **System users** represent systems, such as back-end applications, that are calling the protected API resources in our back-end components. **Admin system users** can call resources intended for the system administration (available on `/admin/**` context), while **integration system users** can only call resources intended for integration.
 
@@ -109,7 +109,7 @@ curl -X 'POST' \
 The API automatically generates a strong password for the integration user.
 <!-- end -->
 
-### Create an Application and Assign Permissions
+## Create an Application and Assign Permissions
 
 **Application** in the back-end system represents a particular mobile application. You should create a new application for any mobile app, but **not** a separate one for each platform (iOS/Android). Application can represent, for example, your retail mobile banking, corporate mobile banking, mobile token, investment app, etc.
 
@@ -138,13 +138,13 @@ curl -X 'POST' \
   -d ''
 ```
 
-### Configuring Push Notifications
+## Configuring Push Notifications
 
 Our system bundles a basic push server. You can use it to deliver push notifications to Apple or Android devices. We also use it under the hood for various use-cases, such as out-of-band operation approval, or lifecycle management (silent push whenever the device is blocked or removed).
 
 To configure push notification delivery for the application created above, you need to post credentials specific for APNS and FCM services (using your admin system user). You can obtain those credentials at the [Apple Developer Portal](https://developer.apple.com/) or in [Firebase Console](https://firebase.google.com/). Then, you can post them to the application using the following commands specific for each platform.
 
-#### Apple Push Notification Service (APNS)
+### Apple Push Notification Service (APNS)
 
 <!-- begin box info -->
 Note that Apple provides development or production environment. You should use a specific one based on how you sign your applications. Apps published on App Store and Testflight use production environment, those signed during development and published via services such as Microsoft's App Center typically use development environment.
@@ -164,7 +164,7 @@ curl -X 'POST' \
 }'
 ```
 
-#### Firebase Cloud Messaging (FCM)
+### Firebase Cloud Messaging (FCM)
 
 ```sh
 curl -X 'POST' \
