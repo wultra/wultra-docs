@@ -459,19 +459,23 @@ All statuses and response structures are well documented in the [RESTful API ref
 Besides polling, the system also supports [operation callbacks](/components/powerauth-cloud/develop/documentation/Callback-API) to provide an instant response. You can register your webhooks that will be called whenever operation status changes. We still recommend having polling mechanism in place as a backup, as webhooks may not be reliable.
 <!-- end -->
 
-## Resources
-
-You can find more details about the server-side components in our reference documentation:
-
-- [PowerAuth Server](https://github.com/wultra/powerauth-server)
-- [PowerAuth Admin](https://github.com/wultra/powerauth-admin)
-- [Enrollment Server](https://github.com/wultra/enrollment-server)
-- [PowerAuth RESTful Integration](https://github.com/wultra/powerauth-restful-integration)
-
 ## Continue Reading
 
-Proceed with one of the following chapters:
+You can proceed with one of the following chapters:
 
-- [Mobile Authentication Overview](Readme.md)
-- [Tutorial for iOS Developers](iOS-Tutorial.md)
-- [Tutorial for Android Developers](Android-Tutorial.md)
+- [Problem Overview](Readme.md)
+- [Installing Server-Side Components](Server-Side-Tutorial-Deployment.md)
+- [Integrating with Your Back-End Applications](Server-Side-Tutorial-Integration.md)
+- [Implementing Mobile-First Authentication on iOS](iOS-Tutorial.md)
+- [Implementing Mobile-First Authentication on Android](Android-Tutorial.md)
+
+## Resources
+
+You can find more details our reference documentation:
+
+- [Cryptography Specification](/components/powerauth-crypto)
+- [PowerAuth Cloud](/components/powerauth-cloud)
+- [Mobile Authentication SDK for iOS and Android](/components/powerauth-mobile-sdk)
+- [Mobile Token SDK for iOS](/components/mtoken-sdk-ios)
+- [Mobile Token SDK for Android](/components/mtoken-sdk-android)
+
