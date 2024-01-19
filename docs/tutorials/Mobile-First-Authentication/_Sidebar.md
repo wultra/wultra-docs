@@ -2,14 +2,14 @@
 
 [Home](Readme.md#)
 
-[Mobile Authentication Overview](Readme.md#mobile-authentication-overview)
+[Problem Overview](Readme.md#problem-overview)
 
-[Activation](Readme.md#activation)
+[Device Registration](Readme.md#device-registration)
 
 [Transaction Signing](Readme.md#transaction-signing)
 
 [Other Use-Cases](Readme.md#other-use-cases)
 
-[Resources](Readme.md#resources)
-
 [Continue Reading](Readme.md#continue-reading)
+
+[Resources](Readme.md#resources)

@@ -1,10 +1,10 @@
-# In-App Protection&#58; Implementing on Android
+# In-App Protection for Android
 
 <!-- AUTHOR joshis_tweets 2023-12-29T00:00:00Z -->
 <!-- SIDEBAR _auto -->
 <!-- TEMPLATE tutorial -->
 
-This tutorial summarizes how to integrate Wultra's in-app protection into your iOS app.
+This tutorial summarizes how to integrate Wultra's in-app protection into your Android app.
 
 <!-- begin box info -->
 In-app protection for Android supports Android 5.1 (SDK version 22) and above.
