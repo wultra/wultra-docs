@@ -71,7 +71,7 @@ val raspConfig = RaspConfig.Builder()
     .build()
 
 
-val raspObserver = object : RaspObserver {
+val raspObserver = object: RaspObserver {
     override fun onScreenSharingDetected(screenSharingDetected: Boolean) {
         // handle screen sharing detection, hide the screen content and disable content interaction
     }
@@ -193,7 +193,7 @@ val raspConfig = RaspConfig.Builder()
 
 val appPresenceDetection = raspManager.getAppPresenceDetection()
 
-val raspObserver = object : RaspObserver {
+val raspObserver = object: RaspObserver {
     override fun onAppPresenceChanged(appPresenceDetection: AppPresenceDetection) {
         // handle app presence detection
     }
