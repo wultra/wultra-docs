@@ -4,7 +4,11 @@
 <!-- SIDEBAR _Sidebar.md sticky -->
 <!-- TEMPLATE tutorial -->
 
-In this tutorial, we will show you how to verify PowerAuth signatures manually on the server-side. While the task is relatively simple, it is very sensitive to any minor inconsistencies. Do not get frustrated if the signature verification does not work for you the first time. If you get stuck, do not hesitate to contact our engineers for help.
+<!-- begin box warning -->
+This tutorial uses an old method for signature verification that directly leverages the PowerAuth Server's internal API. For simple signature verification, use the API provided by the PowerAuth Cloud proxy component.
+<!-- end -->
+
+In this tutorial, we will show you how to verify PowerAuth signatures manually on the server side. While the task is relatively simple, it is very sensitive to any minor inconsistencies. Do not get frustrated if the signature verification does not work for you the first time. If you get stuck, do not hesitate to contact our engineers for help.
 
 ## Introduction
 
@@ -13,29 +17,29 @@ When implementing [mobile banking authentication and authorization](../Authentic
 - [Activation](../Authentication-in-Mobile-Apps/Readme.md#activation) - mobile device enrollment
 - [Transaction signing](../Authentication-in-Mobile-Apps/Readme.md#transaction-signing) - for example, login or payment approval
 
-The **activation** process can be entirely externalized into a standalone [Enrollment Server](../Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#deploying-the-enrollment-server) application. Enrollment server can take over the activation process and it can be deployed fully independently from your existing systems.
+The **activation** process can be entirely externalized into a standalone [Enrollment Server](../Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#deploying-the-enrollment-server) application. The enrollment server can take over the activation process, and it can be deployed fully independently from your existing systems.
 
 The **transaction signing** process is much more tightly coupled with your protected API resources. As a result, you usually need to integrate the PowerAuth signature verification logic into your existing systems that publish those protected resources. This is a trivial task if you use Spring framework thanks to our magical `@PowerAuth` annotation, as we illustrate in our [tutorial on mobile authentication and transaction signing](../Authentication-in-Mobile-Apps/Server-Side-Tutorial.md#preparing-protected-api-resources).
 
-However, not all systems use Spring, or even Java. What if you use .NET, Java, Ruby, Python, or any other server-side technology? Do not worry - adding the support for manual ad-hoc signature verification is not difficult.
+However, not all systems use Spring or even Java. What if you use .NET, Java, Ruby, Python, or any other server-side technology? Do not worry - adding support for manual ad-hoc signature verification is not difficult.
 
 
 ## Mobile App Perspective
 
-To understand the server-side signature verification better, it is helpful to understand how the signatures are computed on the mobile device, using our iOS or Android SDK.
+To understand the server-side signature verification better, it is helpful to understand how the signatures are computed on the mobile device using our iOS or Android SDK.
 
 When computing a signature, the mobile SDK requires the following input values:
 
 - **HTTP method**, usually `POST`.
     - For signed requests, we always recommend using the `POST` method.
-- **Resource ID**, this a constant that client and server needs to agree on beforehand.
-    - The value of this constant can be anything, but it is usually (by convention) set to the relevant part of the URI that gets called. For example, if the URI is `https://api.example.com/app-context/1.0/login`, the resource ID would be set to `/login` value.
+- **Resource ID** is a constant that the client and server need to agree on beforehand.
+    - The value of this constant can be anything, but it is usually (by convention) set to the relevant part of the URI that gets called. For example, if the URI is `https://api.example.com/app-context/1.0/login`, the resource ID would be set to the `/login` value.
     - _Note: We use URI ID instead of the full URL since it could be difficult to deduce the correct path on the server side. Systems may run in different clusters and in different URI contexts (for example, the server could see `https://internal-machine/domain1/app-context/1.0-rel202005/login` instead of the above-mentioned address)._
 - **HTTP request data**
-    - for `POST`, `PUT` and `DELETE` requests, this is just the HTTP request body
-    - for `GET` requests, we use a canonicalized request query parameters
+    - for `POST`, `PUT`, and `DELETE` requests, this is just the HTTP request body
+    - for `GET` requests, we use canonicalized request query parameters
 
-Based on these input values, the mobile app produces an HTTP header with the PowerAuth signature, that looks like this one:
+Based on these input values, the mobile app produces an HTTP header with the PowerAuth signature that looks like this one:
 
 ```
 X-PowerAuth-Authorization: PowerAuth pa_version="3.1",
@@ -52,7 +56,7 @@ As you can see, the header contains the:
 - **Activation ID** - An identifier of the cryptographic element.
 - **Application key** - An identifier of the application version.
 - **Nonce** - A random value used when computing the cryptographic signature.
-- **Signature type** - A type of the signature, represents the authentication factors that were used when computing the signature.
+- **Signature type** - A type of signature that represents the authentication factors that were used when computing the signature.
 - **Signature** - An actual value of the signature.
 
 The goal of the server is to:
@@ -61,7 +65,7 @@ The goal of the server is to:
 2. Extract all important elements from the HTTP request.
 3. Transform these elements precisely (bit-by-bit) to an appropriate format.
 4. Call the PowerAuth Server method that verifies the signature and returns additional results of the verification, mainly the user ID.
-5. Use the signature verification result to follow-up with your own business logic.
+5. Use the signature verification result to follow up with your own business logic.
 
 ## Parsing the Signature Header
 
@@ -69,7 +73,7 @@ The first task that needs to be carried out is parsing the HTTP header with the 
 
 This is the first thing that you should check: If you expect the signature header on a given resource and it is not there, you should stop the processing and return `HTTP 401`.
 
-The PowerAuth signature header has a fixed prefix `PowerAuth `, followed by the comma separated key-value pairs: `key1="value1", key2="value2"`. Note that the values are always in quotes.
+The PowerAuth signature header has a fixed prefix `PowerAuth `, followed by the comma-separated key-value pairs: `key1="value1", key2="value2"`. Note that the values are always in quotes.
 
 In our Java code, we use the `PowerAuthHttpHeader` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthHttpHeader.java#docucheck-keep-link)) to do this work. The important part of the Java code that we use for the header parsing looks like this:
 
@@ -117,7 +121,7 @@ Note that every signature header must contain the following values:
 - `pa_signature_type` - The signature type.
 - `pa_version` - Algorithm version.
 
-You should validate them, just to make sure they contain structurally correct values. We use a `PowerAuthSignatureHttpHeaderValidator` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/validator/PowerAuthSignatureHttpHeaderValidator.java#docucheck-keep-link)) for that. The validation logic is longer (not suitable for copy pasting here) but very straight-forward.
+You should validate them just to make sure they contain structurally correct values. We use a `PowerAuthSignatureHttpHeaderValidator` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/validator/PowerAuthSignatureHttpHeaderValidator.java#docucheck-keep-link)) for that. The validation logic is longer (not suitable for copy pasting here) but very straightforward.
 
 Again, if parsing of the HTTP header fails, or the header does not contain some of the required values, or the header value validation fails, you should stop the processing and return `HTTP 401`.
 
@@ -125,7 +129,7 @@ Again, if parsing of the HTTP header fails, or the header does not contain some 
 
 In the case the HTTP request uses any other HTTP method than `GET`, this task is easy: Just take the HTTP request body, byte-by-byte (make sure to use UTF-8 encoding for any conversions that you might need).
 
-For `GET` requests, this gets a bit more tricky, since `GET` requests usually do not have any body. While this may not be a problem in some cases, we include query parameters into the request data in case they are present. To achieve precisely the same value of request data on the server and client, we apply a canonization algorithm on the query attributes:
+For `GET` requests, this gets a bit more tricky, since `GET` requests usually do not have any request body. While this may not be a problem in some cases, we include query parameters in the request data in case they are present. To achieve precisely the same value of request data on the server and client, we apply a canonization algorithm to the query attributes:
 
 1. Sort the query attribute by attribute name.
 2. If there are multiple query attributes with the same name, sort the query attributes also by the value as a secondary criterion.
@@ -133,11 +137,11 @@ For `GET` requests, this gets a bit more tricky, since `GET` requests usually do
 
 For example, we change `key_b=value_b&key_b=value_a&key_a=value_a` to `key_a=value_a&key_b=value_a&key_b=value_b`.
 
-We have a special `PowerAuthRequestCanonizationUtils` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthRequestCanonizationUtils.java#docucheck-keep-link)) for this task. The code is a bit too long and boring for a copy-paste to this tutorial. If you need to handle signed `GET` requests, have a look into our implementation.
+We have a special `PowerAuthRequestCanonizationUtils` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthRequestCanonizationUtils.java#docucheck-keep-link)) for this task. The code is a bit too long and boring for a copy-paste to this tutorial. If you need to handle signed `GET` requests, have a look at our implementation.
 
 ## Building the Signature Base String
 
-Now, when we have the request data and parsed HTTP header, we may proceed to building the signature base string. This is the string value that was actually signed on the mobile device.
+Now, when we have the request data and parsed HTTP header, we may proceed to build the signature base string. This is the string value that was actually signed on the mobile device.
 
 Building the signature base string is simple once we have all the data we talked about earlier in place. We use our own `PowerAuthHttpBody` class ([link](https://github.com/wultra/powerauth-crypto/blob/develop/powerauth-java-http/src/main/java/io/getlime/security/powerauth/http/PowerAuthHttpBody.java#docucheck-keep-link)) to do the most of the logic.
 
@@ -172,10 +176,10 @@ public static String getSignatureBaseString(String httpMethod, String requestUri
 To call the method, you need to know:
 
 - HTTP request method - Comes with the HTTP request.
-- The "request URI" value - The request URI ID, a constant that we talked about earlier and that client and server need to share beforehand.
+- The "request URI" value - The request URI ID, a constant that we talked about earlier and that the client and server need to share beforehand.
     - **Note: This is not the absolute HTTP URI path, only a constant that usually resembles it, such as `/login`.**
 - The "nonce" - Comes in the HTTP header.
-    - **Note: The nonce value should be Base64 encoded only once. In our code, we receive nonce in the HTTP header as a Base64 encoded string, we decode it to the bytes, and when building a signature base string, we encode it to Base64 again. While this looks like extra work, at least we can validate the correct format of the value as well as sufficient length of the underlying `byte[]`.**
+    - **Note: The nonce value should be Base64 encoded only once. In our code, we receive nonce in the HTTP header as a Base64 encoded string, we decode it to the bytes, and when building a signature base string, we encode it to Base64 again. While this looks like extra work, at least we can validate the correct format of the value as well as the sufficient length of the underlying `byte[]`.**
 - The request data - We obtained those in the section above.
 
 The result should look something like this:
@@ -243,7 +247,7 @@ You will receive the following response:
 | Parameter | Description |
 |---|---|
 | `status` | Status of the request processing, `OK` if the HTTP request executes correctly, `ERROR` if an error occurs. |
-| `responseObject.signatureValid` | Boolean indicating if signature was verified correctly or if the signature was invalid. |
+| `responseObject.signatureValid` | Boolean indicating if the signature was verified correctly or if the signature was invalid. |
 | `responseObject.activationId` | Activation ID of the activation used to verify the signature. |
 | `responseObject.activationStatus` | Status of the activation during the verification attempt (`ACTIVE`, `BLOCKED`, `REMOVED`, unless you made an implementation error, you should not obtain `CREATED` or `PENDING_COMMIT` values.) |
 | `responseObject.userId` | User ID of the user who is associated with this activation. |
@@ -260,10 +264,10 @@ If the signature verification was successful, you can now work with the remainin
 
 For example, you can:
 
-- Obtain the user ID to create authenticated session or issue an access token in case of a login endpoint, or submit a payment while checking the user is allowed to do so in the case of payment endpoint.
+- Obtain the user ID to create an authenticated session or issue an access token in case of a login endpoint, or submit a payment while checking the user is allowed to do so in the case of a payment endpoint.
 - Check if the used signature type can be used for the given operation (for example, to disable biometry for payments above some value).
 - Check that the application is allowed to perform the operation (for example, your mobile banking app may be able to call all endpoints, while a mobile brokerage app could be restricted just to some endpoints).
 
 ## Summary
 
-We successfully guided you through the signature validation process, step by step. You should now be able to implement signature validation in any system you currently have. While the process is not not as straight-forward in the case of Spring framework, it is still manageable, and of course, we are always here to help.
+We successfully guided you through the signature validation process, step by step. You should now be able to implement signature validation in any system you currently have. While the process is not as straightforward in the case of the Spring framework, it is still manageable, and of course, we are always here to help.
