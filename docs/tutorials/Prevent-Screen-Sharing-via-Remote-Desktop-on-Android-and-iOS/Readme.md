@@ -5,7 +5,9 @@
 <!-- TEMPLATE tutorial -->
 <!-- COVER_IMAGE cover.webp -->
 
-Remote desktop apps are useful tools when one needs to provide convenient customer support. However, they are often misused by fraudsters to steal money from banking accounts. In this tutorial, we want to provide the problem overview and help you design and implement appropriate remedies in your mobile apps, such as detecting screen-sharing apps on Android or blocking screen-sharing on iOS.
+Remote desktop apps are useful tools when one needs to provide convenient customer support. However, they are often misused by fraudsters to steal money from banking accounts.
+
+In this tutorial, we want to provide the problem overview and help you design and implement appropriate remedies in your mobile apps, such as detecting screen-sharing apps on Android or blocking screen-sharing on iOS.
 
 ## Understanding the Fraud Scenario
 
