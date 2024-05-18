@@ -21,10 +21,12 @@ The three most important aspects that people underestimate are:
 - **Security** - Money is an attractive target for cybercriminals and as soon as you reach 50k monthly active users, you will notice the first fraud. Unless you are ready for it, the damage can be astronomical.
 - **Compliance and Legal** - Unlike other apps, with financial apps, politicians will tell you how you can register new customers, authenticate them, or secure your mobile app. Failing to comply may result in loss of license or even criminal charges.
 
-The good news is that there are some ready-made building blocks you can rely on. The following are the most common:
+The good news is that there are some ready-made and easy-to-implement building blocks you can rely on.
+
+The following are the most common:
 
 - Digital Onboarding (KYC/AML)
-- String Customer Authentication
+- Strong Customer Authentication
 - Server-Side Biometrics
 - In-App Protection / RASP
 - Secure Networking
