@@ -1,0 +1,214 @@
+# Biometric Liveness Verification
+
+<!-- AUTHOR romanstrobl 2024-09-26T00:00:00Z -->
+<!-- SIDEBAR _Sidebar.md sticky -->
+<!-- TEMPLATE tutorial -->
+
+This tutorial explains how Wultra's Biometric Liveness Verification components can be deployed, configured and integrated into your application. This solution enables to verify users using advanced biometric verification techniques against their static photos, such as passport photos.
+
+## Introduction
+
+Wultra's Biometric Liveness Verification solution consists of two components which require to be deployed. The components are available as Docker images in Wultra JFrog Artifactory.
+
+### User Data Store
+
+The component can be used as a generic secure storage for any document type. When used within the Biometric Liveness Verification solution, User Data Store is used to store securely user photos. You will not need to integrate with this component, it's used within the Liveness Check Proxy component as a secure storage.
+
+### Liveness Check Proxy
+
+The component orchestrates the biometric liveness check and provides a simple REST API for integration with your application. The Liveness Check Proxy uses the User Data Store to retrieve user photos when performing the biometric verification. Furthermore, the component provides an audit trail of performed liveness checks.
+
+## Deploying Backend Components
+
+Both components can be easily deployed using Docker. Use the following commands to download the Docker images:
+
+User Data Store:
+```shell
+docker pull wultra.jfrog.io/wultra-docker/user-data-store:1.3.0-a2871e2f8d033dd4d00bf1a39456fc503be79194
+```
+
+```shell
+docker pull wultra.jfrog.io/wultra-docker/liveness-check-proxy:0.1.0-SNAPSHOT-2024.06.26-0f5031f9d5ca260aa40c28305ddb2e93a7f4e74e
+```
+
+TODO: use the release version of Docker image
+
+You can use one of the supported databases:
+- PostgreSQL 9.5.4 or newer
+- Oracle Database 11g, 12c, 19c, or 21c
+- MSSQL 2019 or newer
+
+Both components manage the database schemas automatically using Liquibase. So you only need to create a database and set up username and password with privileges to create tables, sequences and indexes within this database.
+
+Detailed documentation for each of the components is available at:
+
+https://developers.wultra.com/components/user-data-store/1.3.x/documentation/
+https://developers.wultra.com/components/liveness-check-proxy/1.0.x/documentation/
+
+## Configuring Backend Components
+
+Let's configure each of the components.
+
+### User Data Store Configuration
+
+#### Creating the Database
+
+At first, you will need to set up the database for User Data Store. You can use this example for PostgreSQL, for other databases, see their documentation.
+
+Run as database superuser:
+```sql
+CREATE DATABASE uds;
+CREATE USER uds WITH PASSWORD 'uds';
+GRANT ALL PRIVILEGES ON DATABASE uds TO uds;
+```
+
+Connect to the created `uds` database:
+```shell
+\c uds
+```
+
+Grant privileges on the `public` schema within this database:
+```sql
+GRANT USAGE ON SCHEMA public TO uds;
+GRANT CREATE ON SCHEMA public TO uds;
+```
+
+#### Docker Configuration
+
+Following environmental variables need to be configured for User Data Store:
+- `USER_DATA_STORE_DATASOURCE_URL` — database JDBC URL, such as `jdbc:postgresql://host.docker.internal:5432/uds`
+- `USER_DATA_STORE_DATASOURCE_USERNAME`  – database username you specified before
+- `USER_DATA_STORE_DATASOURCE_PASSWORD` – database password you specified before
+- `USER_DATA_STORE_MASTER_ENCRYPTION_KEY` – optional AES-256 key in Base-64 format, specify the key if photos stored in the database should be encrypted
+
+In order to generate the master encryption key, you can use the following command:
+```shell
+openssl rand -base64 32
+```
+
+To specify the environmental variables for Docker, you can use an `.env-uds` file with the following content:
+```bash
+USER_DATA_STORE_DATASOURCE_URL=your-db-url
+USER_DATA_STORE_DATASOURCE_USERNAME=your-db-username
+USER_DATA_STORE_DATASOURCE_PASSWORD=your-db-password
+USER_DATA_STORE_MASTER_ENCRYPTION_KEY=your-encryption-key
+```
+
+To start the Docker container, use:
+
+```shell
+docker run --env-file .env-uds -p 8081:8080 wultra.jfrog.io/wultra-docker/user-data-store:1.3.0-a2871e2f8d033dd4d00bf1a39456fc503be79194
+```
+
+You can specify a different port mapping in case the port 8081 on localhost is already used.
+
+You can also use the alternative Docker configuration approaches, such as using the environmental variables directly as parameters or using Docker Compose, however be careful about not exposing the database credentials which are sensitive.
+
+#### Securing the REST API
+
+Now it's time to set up credentials for accessing the REST API.
+
+At first, hash a password using following command (change the password in the command):
+
+```shell
+echo -n "password" | openssl dgst -sha256 -r
+```
+
+```sql
+INSERT INTO uds_users (username, password, enabled) VALUES ('admin', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', true);
+INSERT INTO public.uds_authorities (username, authority) VALUES ('admin', 'ROLE_READ');
+INSERT INTO public.uds_authorities (username, authority) VALUES ('admin', 'ROLE_WRITE');
+```
+
+#### Verification
+
+You can verify that the user data store application is running by accessing http://localhost:8081/user-data-store/ and signing in with the `admin` username and generated password.
+
+For accessing the User Data Store REST API documentation, use the following URL: http://localhost:8081/user-data-store/swagger-ui/index.html
+
+### Liveness Check Proxy Configuration
+
+Two providers of biometric liveness verification are supported:
+- [iProov](https://www.iproov.com/)
+- [Innovatrics](https://www.innovatrics.com/)
+
+You will need to choose one of the providers and obtain respective API keys and configure them. Please contact Wultra support for obtaining the API keys.
+
+#### Creating the Database
+
+The steps for creating the database for Liveness Check Proxy are very similar to the User Data Store. In fact, you could use the same database, however we recommend to use two databases due to different sensitivity of stored records.
+
+Run as database superuser:
+```sql
+CREATE DATABASE lcp;
+CREATE USER lcp WITH PASSWORD 'lcp';
+GRANT ALL PRIVILEGES ON DATABASE lcp TO lcp;
+```
+
+Connect to the created `lcp` database:
+```shell
+\c lcp
+```
+
+Grant privileges on the `public` schema within this database:
+```sql
+GRANT USAGE ON SCHEMA public TO lcp;
+GRANT CREATE ON SCHEMA public TO lcp;
+```
+
+#### Docker Configuration
+
+Following environmental variables need to be configured for Liveness Check Proxy:
+- `LCP_DATASOURCE_URL` — database JDBC URL, such as `jdbc:postgresql://host.docker.internal:5432/lcp`
+- `LCP_DATASOURCE_USERNAME` – database username you specified before
+- `LCP_DATASOURCE_PASSWORD` – database password you specified before
+- `LCP_UDS_BASE_URL` – address to UDS component, e.g. `http://localhost:8081/user-data-store/`
+- `LCP_USER_DETAILS_PROVIDER` - definition of photo storage, use value `user-data-store`
+- `LCP_VERIFICATION_PROVIDER` - definition of biometry verification provider, you can use value `mock` for testing or `iproov` / `innovatrics` once access to the liveness verification provider is granted by Wultra
+
+To specify the environmental variables for Docker, you can use an `.env-uds` file with the following content:
+```bash
+LCP_DATASOURCE_URL=your-db-url
+LCP_DATASOURCE_USERNAME=your-db-username
+LCP_DATASOURCE_PASSWORD=your-db-password
+LCP_UDS_BASE_URL=http://localhost:8081/user-data-store/
+LCP_USER_DETAILS_PROVIDER=user-data-store
+LCP_VERIFICATION_PROVIDER=mock
+```
+
+To start the Docker container, use:
+
+```shell
+docker run --env-file .env-lcp -p 8082:8080 wultra.jfrog.io/wultra-docker/liveness-check-proxy:0.1.0-SNAPSHOT-2024.06.26-0f5031f9d5ca260aa40c28305ddb2e93a7f4e74e
+```
+TODO: use the final image
+
+You can specify a different port mapping in case the port 8082 on localhost is already used.
+
+You can also use the alternative Docker configuration approaches, such as using the environmental variables directly as parameters or using Docker Compose, however be careful about not exposing the database credentials which are sensitive.
+
+#### Configuration of iProov
+
+TODO
+
+#### Configuration of Innovatrics
+
+TODO
+
+#### Verification
+
+You can verify that the user data store application is running by accessing http://localhost:8082/
+
+TODO: use context path
+
+For accessing the User Data Store REST API documentation, use the following URL: http://localhost:8082/swagger-ui/index.html
+
+TODO: use context path
+
+## REST API Usage
+
+TODO
+
+## Summary
+
+TODO
