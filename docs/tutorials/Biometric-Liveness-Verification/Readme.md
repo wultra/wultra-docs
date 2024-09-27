@@ -162,18 +162,24 @@ Following environmental variables need to be configured for Liveness Check Proxy
 - `LCP_DATASOURCE_URL` — database JDBC URL, such as `jdbc:postgresql://host.docker.internal:5432/lcp`
 - `LCP_DATASOURCE_USERNAME` – database username you specified before
 - `LCP_DATASOURCE_PASSWORD` – database password you specified before
-- `LCP_UDS_BASE_URL` – address to UDS component, e.g. `http://localhost:8081/user-data-store/`
 - `LCP_USER_DETAILS_PROVIDER` - definition of photo storage, use value `user-data-store`
 - `LCP_VERIFICATION_PROVIDER` - definition of biometry verification provider, you can use value `mock` for testing or `iproov` / `innovatrics` once access to the liveness verification provider is granted by Wultra
+- `LCP_UDS_BASE_URL` – address to UDS component, e.g. `http://localhost:8081/user-data-store/`
+- `LCP_UDS_REST_BASIC_ENABLED` – use true for enabled REST API authentication
+- `LCP_UDS_REST_BASIC_USERNAME` – configured REST API username
+- `LCP_UDS_REST_BASIC_PASSWORD` – configured REST API password
 
 To specify the environmental variables for Docker, you can use an `.env-uds` file with the following content:
-```bash
+```shell
 LCP_DATASOURCE_URL=your-db-url
 LCP_DATASOURCE_USERNAME=your-db-username
 LCP_DATASOURCE_PASSWORD=your-db-password
-LCP_UDS_BASE_URL=http://localhost:8081/user-data-store/
 LCP_USER_DETAILS_PROVIDER=user-data-store
 LCP_VERIFICATION_PROVIDER=mock
+LCP_UDS_BASE_URL=http://localhost:8081/user-data-store/
+LCP_UDS_REST_BASIC_ENABLED=true
+LCP_UDS_REST_BASIC_USERNAME=configured-username-rest-auth
+LCP_UDS_REST_BASIC_PASSWORD=configured-password-rest-auth
 ```
 
 To start the Docker container, use:
@@ -187,13 +193,25 @@ You can specify a different port mapping in case the port 8082 on localhost is a
 
 You can also use the alternative Docker configuration approaches, such as using the environmental variables directly as parameters or using Docker Compose, however be careful about not exposing the database credentials which are sensitive.
 
-#### Configuration of iProov
+#### Configuration of Innovatrics Provider
 
-TODO
+In case the biometric verification provider is Innovatrics, configure following environmental variables:
+```shell
+LCP_INNOVATRICS_BASE_URL=innovatrics-base-url
+LCP_INNOVATRICS_TOKEN=api-token
+```
 
-#### Configuration of Innovatrics
+#### Configuration of iProov Provider
 
-TODO
+In case the biometric verification provider is iProov, configure following environmental variables:
+```shell
+LCP_IPROOV_BASE_URL=iproov-base-url
+LCP_IPROOV_API_KEY=iproov-api-key
+LCP_IPROOV_API_SECRET=iproov-api-secret
+LCP_IPROOV_ASSURANCE_TYPE=liveness
+LCP_IPROOV_OAUTH_CLIENT_USERNAME=iproov-oauth-client-username
+LCP_IPROOV_OAUTH_CLIENT_PASSWORD=iproov-oauth-client-password
+```
 
 #### Verification
 
