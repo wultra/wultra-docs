@@ -12,7 +12,7 @@ Wultra's Biometric Liveness Verification solution consists of two components whi
 
 ### User Data Store
 
-The component can be used as a generic secure storage for any document type. When used within the Biometric Liveness Verification solution, User Data Store is used to store securely user photos. You will not need to integrate with this component, it's used within the Liveness Check Proxy component as a secure storage.
+The component can be used as a generic secure storage for any document type. When used within the Biometric Liveness Verification solution, User Data Store is used to store securely user photos. You will not need to integrate with this component, it's used within the Liveness Check Proxy component as a secure storage. However, the component will be used to upload or import user profile photos which serve a basis for the liveness verification. 
 
 ### Liveness Check Proxy
 
