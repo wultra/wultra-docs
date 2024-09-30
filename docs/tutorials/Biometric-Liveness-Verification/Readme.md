@@ -120,6 +120,8 @@ INSERT INTO public.uds_authorities (username, authority) VALUES ('admin', 'ROLE_
 INSERT INTO public.uds_authorities (username, authority) VALUES ('admin', 'ROLE_WRITE');
 ```
 
+For REST API authentication using OAuth2 / OIDC, see chapter [OAuth2.x / OpenID Connect (OIDC)](https://developers.wultra.com/components/user-data-store/1.3.x/documentation/Configuration-Properties#oauth2x--openid-connect-oidc).
+
 #### Verification
 
 You can verify that the user data store application is running by accessing http://localhost:8081/user-data-store/ and signing in with the `admin` username and generated password.
@@ -212,6 +214,23 @@ LCP_IPROOV_ASSURANCE_TYPE=liveness
 LCP_IPROOV_OAUTH_CLIENT_USERNAME=iproov-oauth-client-username
 LCP_IPROOV_OAUTH_CLIENT_PASSWORD=iproov-oauth-client-password
 ```
+
+#### Securing the REST API
+
+Now it's time to set up credentials for accessing the REST API.
+
+At first, hash a password using following command (change the password in the command):
+
+```shell
+echo -n "password" | openssl dgst -sha256 -r
+```
+
+```sql
+INSERT INTO lcp_user (username, password, enabled) VALUES ('admin', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', true);
+INSERT INTO lcp_authority (username, authority) VALUES ('admin', 'ROLE_ADMIN');
+```
+
+For more details, see the [REST Service Authentication Configuration](https://developers.wultra.com/components/liveness-check-proxy/1.0.x/documentation/Configuration-Properties#rest-service-authentication-configuration).
 
 #### Verification
 
