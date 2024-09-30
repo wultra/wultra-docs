@@ -242,6 +242,10 @@ For accessing the User Data Store REST API documentation, use the following URL:
 
 In this chapter we will go through the main REST API endpoints which are required to perform a successful user biometric verification.
 
+Before the biometric liveness verification can be initiated, static profile photos of users must be stored in the User Data Store component. They will serve as a basis for the liveness verification.
+
+The actual biometric liveness verification has three distinct phases. At first, the liveness check must be initialized on the backend. Second, the mobile application must call the chosen verification provider SDK (iProov or Innovatrics). The third phase is again on the backend when the result of the check is acquired and evaluated.
+
 ### Uploading User Photos to User Data Store
 
 Before using the biometric verification, you will need to import portrait photos into User Data Store, so that they can be used by Liveness Check Proxy as the basis for biometric verification. The Liveness Check Proxy calls the biometric liveness verification provider which compares the live check with the stored user picture to validate the user.
