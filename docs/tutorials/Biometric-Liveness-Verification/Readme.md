@@ -313,6 +313,16 @@ For Innovatrics, no token is generated and the response is following:
 
 For more details, see REST API documentation for endpoint [POST /liveness/init](https://developers.wultra.com/components/liveness-check-proxy/1.0.x/documentation/Liveness-Check-Proxy-REST-API#post-livenessinit). 
 
+### Calling the Verification Provider SDK
+
+See the verification provider documentation for calling the respetive SDK.
+
+For iProov, use the generated token (`reference` value) in the previous step.
+https://github.com/iProov/ios/?tab=readme-ov-file#launch-the-sdk
+
+For Innovatrics, the documentation is available here:
+https://developers.innovatrics.com/digital-onboarding/technical/samples
+
 ### Verifying Biometric Liveness for a User
 
 Starting the user liveness verification differs per provider. In case of iProov, the request is following:
@@ -325,7 +335,7 @@ Starting the user liveness verification differs per provider. In case of iProov,
 }
 ```
 
-Use the `userId` value used in previous step and the `reference` value generated in the previous step.
+Use the `userId` value used in first step and the `reference` value generated in the first step.
 
 In case of Innovatrics, the request is following:
 ```json
@@ -337,7 +347,7 @@ In case of Innovatrics, the request is following:
 }
 ```
 
-The parameter `image` is the serialized face image captured by Innovatrics SDK during previous step.
+The parameter `image` is the serialized face image captured by Innovatrics SDK during first step.
 
 You can check whether the liveness check succeeded from the response, successful verification has value `ACCEPTED` for the `result` parameter:
 ```json
