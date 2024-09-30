@@ -225,7 +225,40 @@ TODO: use context path
 
 ## REST API Usage
 
-TODO
+In this chapter we will go through the main REST API endpoints which are required to perform a successful user biometric verification.
+
+### Uploading User Photos to User Data Store
+
+Before using the biometric verification, you will need to import portrait photos into User Data Store, so that they can be used by Liveness Check Proxy as the basis for biometric verification. The Liveness Check Proxy calls the biometric liveness verification provider which compares the live check with the stored user picture to validate the user.
+
+The User Data Store is designed to accommodate a variety of use cases across different projects, therefore is structured around generic structure called document. The Liveness Check Proxy specifically requires the presence of a document of type `photo` for each user to be verified, use the `photoType` with value `person` for the uploaded photo used for verification.
+
+You can upload the photos individually by calling the `POST /admin/documents` endpoint of User Data Store:
+
+```
+{
+  "requestObject": {
+    "userId": "<user id>",
+    "documentType": "photo",
+    "dataType": "image_base64",
+    "documentData": "{}",
+    "attributes": {},
+    "photos": [
+      {
+        "photoType": "person",
+        "photoData": "<base64 encoded image>"
+      }
+    ]
+  }
+}
+```
+
+The `userId` parameter contains the unique identifier of the user within your system. The parameter `photoData` should contain the user profile photo encoded in Base-64 encoding. After calling this endpoint, you will obtain identifiers of created documents and photos. For additional details, see the [UDS RESTful API documentation](https://developers.wultra.com/components/user-data-store/develop/documentation/User-Data-Store-API), particularly the Document API and Photo API documentation.
+
+In case you need to upload many user photos at once, you can use the photo import endpoints which can be used for uploading many photos at once with multiple options for the format of stored photos and accessing these photos:
+
+- Import Photos endpoint: [POST /admin/photos/import](https://developers.wultra.com/components/user-data-store/1.3.x/documentation/User-Data-Store-API#post-adminphotosimport)
+- Import Photos from CVS endpoint: [POST /admin/photos/import/csv](https://developers.wultra.com/components/user-data-store/1.3.x/documentation/User-Data-Store-API#post-adminphotosimportcsv)
 
 ## Summary
 
