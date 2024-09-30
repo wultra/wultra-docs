@@ -236,11 +236,7 @@ For more details, see the [REST Service Authentication Configuration](https://de
 
 You can verify that the user data store application is running by accessing http://localhost:8082/
 
-TODO: use context path
-
 For accessing the User Data Store REST API documentation, use the following URL: http://localhost:8082/swagger-ui/index.html
-
-TODO: use context path
 
 ## REST API Usage
 
@@ -272,13 +268,83 @@ You can upload the photos individually by calling the `POST /admin/documents` en
 }
 ```
 
-The `userId` parameter contains the unique identifier of the user within your system. The parameter `photoData` should contain the user profile photo encoded in Base-64 encoding. After calling this endpoint, you will obtain identifiers of created documents and photos. For additional details, see the [UDS RESTful API documentation](https://developers.wultra.com/components/user-data-store/develop/documentation/User-Data-Store-API), particularly the Document API and Photo API documentation.
+The `userId` parameter contains the unique identifier of the user within your system. The parameter `photoData` should contain the user profile photo encoded in Base-64 encoding. After calling this endpoint, you will obtain identifiers of created documents and photos.
+
+For additional details, see the [User Data Store REST API documentation](https://developers.wultra.com/components/user-data-store/develop/documentation/User-Data-Store-API), particularly the Document API and Photo API documentation.
 
 In case you need to upload many user photos at once, you can use the photo import endpoints which can be used for uploading many photos at once with multiple options for the format of stored photos and accessing these photos:
 
 - Import Photos endpoint: [POST /admin/photos/import](https://developers.wultra.com/components/user-data-store/1.3.x/documentation/User-Data-Store-API#post-adminphotosimport)
 - Import Photos from CVS endpoint: [POST /admin/photos/import/csv](https://developers.wultra.com/components/user-data-store/1.3.x/documentation/User-Data-Store-API#post-adminphotosimportcsv)
 
+### Initiating Biometric Liveness Verification
+
+You can initiate liveness verification for a user by calling the `POST /liveness/init` endpoint with following parameters:
+
+```json
+{
+  "userId": "<user id>"
+}
+```
+
+The `userId` parameter contains the unique identifier of the user within your system and should correspond to the value used when importing the user profile photo.
+
+From the response, you will need to obtain generate `TOKEN` value in case iProov is used as a provider.
+```json
+{
+  "initiationType": "TOKEN",
+  "reference": "46a0c1fba98b9a1cae88353ae8279503"
+}
+```
+
+You will need to use the `reference` value in the liveness verification step.
+
+For Innovatrics, no token is generated and the response is following:
+```json
+{
+  "initiationType": "NONE",
+  "reference": null
+}
+```
+
+For more details, see REST API documentation for endpoint [POST /liveness/init](https://developers.wultra.com/components/liveness-check-proxy/1.0.x/documentation/Liveness-Check-Proxy-REST-API#post-livenessinit). 
+
+### Verifying Biometric Liveness for a User
+
+Starting the user liveness verification differs per provider. In case of iProov, the request is following:
+```json
+{
+  "userId": "<user id>",
+  "livenessRecord": {
+    "reference": "46a0c1fba98b9a1cae88353ae8279503"
+  }
+}
+```
+
+Use the `userId` value used in previous step and the `reference` value generated in the previous step.
+
+In case of Innovatrics, the request is following:
+```json
+{
+  "userId": "<user id>",
+  "livenessRecord": {
+    "image": "c2VsZmllSW1hZ2U="
+  }
+}
+```
+
+The parameter `image` is the serialized face image captured by Innovatrics SDK during previous step.
+
+You can check whether the liveness check succeeded from the response, successful verification has value `ACCEPTED` for the `result` parameter:
+```json
+{
+  "result": "ACCEPTED",
+  "selfie": null
+}
+```
+
+For more details, see REST API documentation for endpoint [POST /liveness/verify](https://developers.wultra.com/components/liveness-check-proxy/1.0.x/documentation/Liveness-Check-Proxy-REST-API#post-livenessverify).
+
 ## Summary
 
-TODO
+In this tutorial we have shown how to use User Data Store and Liveness Check Proxy components. At first, user photos were uploaded or imported, then a liveness check was initiated, followed by a liveness verification step. Additional details including advanced configuration parameters can be found in documentation of both of the components.
