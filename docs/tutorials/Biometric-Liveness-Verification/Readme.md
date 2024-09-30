@@ -315,7 +315,7 @@ For more details, see REST API documentation for endpoint [POST /liveness/init](
 
 ### Calling the Verification Provider SDK
 
-See the verification provider documentation for calling the respetive SDK.
+See the verification provider documentation for calling the respective SDK.
 
 For iProov, use the generated token (`reference` value) in the previous step.
 https://github.com/iProov/ios/?tab=readme-ov-file#launch-the-sdk
