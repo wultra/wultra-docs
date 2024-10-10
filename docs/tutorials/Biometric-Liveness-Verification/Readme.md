@@ -44,7 +44,7 @@ docker pull wultra.jfrog.io/wultra-docker/user-data-store:1.3.0-a2871e2f8d033dd4
 ```
 
 ```shell
-docker pull wultra.jfrog.io/wultra-docker/liveness-check-proxy:0.1.0-SNAPSHOT-2024.06.26-0f5031f9d5ca260aa40c28305ddb2e93a7f4e74e
+docker pull wultra.jfrog.io/wultra-docker/liveness-check-proxy:1.0.0-989871f80dbdf7d5e74e1655990037085c6297d9
 ```
 
 TODO: use the release version of Docker image
@@ -203,7 +203,7 @@ LCP_UDS_REST_BASIC_PASSWORD=configured-password-rest-auth
 To start the Docker container, use:
 
 ```shell
-docker run --env-file .env-lcp -p 8082:8080 wultra.jfrog.io/wultra-docker/liveness-check-proxy:0.1.0-SNAPSHOT-2024.06.26-0f5031f9d5ca260aa40c28305ddb2e93a7f4e74e
+docker run --env-file .env-lcp -p 8082:8080 wultra.jfrog.io/wultra-docker/liveness-check-proxy:1.0.0-989871f80dbdf7d5e74e1655990037085c6297d9
 ```
 TODO: use the final image
 
