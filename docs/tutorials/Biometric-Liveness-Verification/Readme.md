@@ -8,7 +8,9 @@ This tutorial explains how Wultra's Biometric Liveness Verification components c
 
 ## Introduction
 
-Wultra's Biometric Liveness Verification solution consists of two components which require to be deployed. The components are available as Docker images in Wultra JFrog Artifactory.
+Wultra's Biometric Liveness Verification solution consists of two backend components which require to be deployed. The components are available as Docker images in Wultra JFrog Artifactory.
+
+On the client side, integration of a mobile SDK for biometric verification is required.
 
 ### User Data Store
 
