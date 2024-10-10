@@ -203,7 +203,6 @@ To start the Docker container, use:
 ```shell
 docker run --env-file .env-lcp -p 8082:8080 wultra.jfrog.io/wultra-docker/liveness-check-proxy:1.0.0-989871f80dbdf7d5e74e1655990037085c6297d9
 ```
-TODO: use the final image
 
 You can specify a different port mapping in case the port 8082 on localhost is already used.
 
