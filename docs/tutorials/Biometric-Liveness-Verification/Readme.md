@@ -34,8 +34,8 @@ docker pull wultra.jfrog.io/wultra-docker/liveness-check-proxy:0.1.0-SNAPSHOT-20
 TODO: use the release version of Docker image
 
 You can use one of the supported databases:
-- PostgreSQL 9.5.4 or newer
-- Oracle Database 11g, 12c, 19c, or 21c
+- PostgreSQL 13 or newer
+- Oracle Database 19c, or 21c
 - MSSQL 2019 or newer
 
 Both components manage the database schemas automatically using Liquibase. So you only need to create a database and set up username and password with privileges to create tables, sequences and indexes within this database.
