@@ -47,8 +47,6 @@ docker pull wultra.jfrog.io/wultra-docker/user-data-store:1.3.0-a2871e2f8d033dd4
 docker pull wultra.jfrog.io/wultra-docker/liveness-check-proxy:1.0.0-989871f80dbdf7d5e74e1655990037085c6297d9
 ```
 
-TODO: use the release version of Docker image
-
 You can use one of the supported databases:
 - PostgreSQL 13 or newer
 - Oracle Database 19c, or 21c
