@@ -8,9 +8,23 @@ This tutorial explains how Wultra's Biometric Liveness Verification components c
 
 ## Introduction
 
-Wultra's Biometric Liveness Verification solution consists of two backend components which require to be deployed. The components are available as Docker images in Wultra JFrog Artifactory.
+Wultra's Biometric Liveness Verification solution provides a reliable way to verify users by comparing live biometric data with static photos, such as those from passports or identity cards. This process ensures that the user is physically present during the verification, preventing identity fraud based on photo manipulation or impersonation.
 
-On the client side, integration of a mobile SDK for biometric verification is required.
+The solution consists of two backend components: User Data Store and Liveness Check Proxy, both of which are available as Docker images. 
+
+On the client side, a mobile SDK is used on the client side to capture live biometric data.
+
+### How the Verification Process Works
+
+The biometric liveness verification process involves three main phases:
+
+1. User Enrollment: First, user profile photos are securely uploaded and stored in the User Data Store. These photos serve as the reference point for future biometric checks.
+
+2. Liveness Check Initialization: When a user attempts to verify their identity, the system initiates a liveness check. This involves capturing a live biometric sample (a facial scan) via the mobile SDK integrated into the client application.
+
+3. Biometric Comparison and Verification: The live biometric data is then sent to the chosen verification provider (iProov or Innovatrics) via the Liveness Check Proxy. This component compares the live sample with the stored profile photo to determine if the user is indeed who they claim to be. The results of this comparison are then returned to the application, either confirming or rejecting the user's identity based on the biometric match.
+
+Throughout this process, the components ensure the secure handling of user data, provide an audit trail of liveness checks, and offer flexible configuration options for different project requirements. This setup provides robust protection against fraud by confirming that the person attempting to authenticate is genuinely present during the process.
 
 ### User Data Store
 
