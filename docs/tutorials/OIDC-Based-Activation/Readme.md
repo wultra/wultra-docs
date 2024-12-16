@@ -58,7 +58,45 @@ TODO marek
 
 ## Backend
 
-TODO Lubos
+
+### PowerAuth Server
+
+To enable OIDC activation, an entry with the key `oauth2_providers` must exist in the PowerAuth server table `pa_application_config`.
+The value of `config_values` column may look like this:
+
+```json
+[
+  {
+    "providerId": "example",
+    "scopes": "openid",
+    "clientSecret": "top secret",
+    "clientId": "client ID",
+    "issuerUri": "https://issuer.example.com/",
+    "redirectUri": "mtoken://oidc"
+  }
+]
+```
+
+Mind that this table supports encryption, so `clientSecret` could be kept in secret.
+This configuration is used by the mobile token, which retrieves a subset of the values via Enrollment server API, and by the activation logic, see below.
+
+For more details see [PowerAuth server documentation](https://developers.wultra.com/components/powerauth-server/develop/documentation/OIDC-Activation.html#section-documentation).
+
+
+### Enrollment Server
+
+The Enrollment server expose an endpoint `/api/config/oidc` providing subset of OIDC configuration required by the mobile token to process login.
+No action is required from Enrollment server point of view.
+
+
+### Activation Logic
+
+The login in mobile token retrieves the authorization code.
+The backend asks for JWT ID token using grant type `AUTHORIZATION_CODE`. 
+It retrieves the user id from the `subject` claim.
+In case of success, the activation is committed.
+
+Authorization Code Flow with Proof Key for Code Exchange (PKCE) is also supported.
 
 
 ## Summary
