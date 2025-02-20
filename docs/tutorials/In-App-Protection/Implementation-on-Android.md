@@ -17,7 +17,7 @@ In order to use in-app protection for Android, you need a custom configuration a
 
 ## Get the In-App Protection SDK
 
-You can obtain the in-app protection SDK for Apple from our Artifactory.
+You can obtain the in-app protection SDK for Android from our Artifactory.
 
 To add a Maven repository pointing to the Wultra Artifactory, include the following snippet in your project Gradle file:
 
