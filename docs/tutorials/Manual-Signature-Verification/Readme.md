@@ -3,6 +3,7 @@
 <!-- AUTHOR joshis_tweets 2020-06-04T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
 <!-- TEMPLATE tutorial -->
+<!-- COVER_IMAGE cover.jpg -->
 
 <!-- begin box warning -->
 This tutorial uses an old method for signature verification that directly leverages the PowerAuth Server's internal API. For simple signature verification, use the API provided by the PowerAuth Cloud proxy component.

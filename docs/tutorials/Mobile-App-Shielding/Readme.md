@@ -3,6 +3,7 @@
 <!-- AUTHOR joshis_tweets 2020-06-22T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
 <!-- TEMPLATE tutorial -->
+<!-- COVER_IMAGE cover.jpg -->
 
 In this tutorial, we will show you how to implement App Shielding by Wultra into your mobile apps on iOS and Android. This tutorial has three parts:
 

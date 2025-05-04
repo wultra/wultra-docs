@@ -3,6 +3,7 @@
 <!-- AUTHOR romanstrobl 2024-09-26T00:00:00Z -->
 <!-- SIDEBAR _Sidebar.md sticky -->
 <!-- TEMPLATE tutorial -->
+<!-- COVER_IMAGE cover.jpg -->
 
 This tutorial explains how Wultra's Biometric Liveness Verification components can be deployed, configured and integrated into your application. This solution enables to verify users using advanced biometric verification techniques against their static photos, such as passport photos.
 

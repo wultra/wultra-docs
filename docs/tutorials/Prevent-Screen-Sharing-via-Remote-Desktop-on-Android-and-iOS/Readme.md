@@ -3,7 +3,7 @@
 <!-- AUTHOR joshis_tweets 2024-01-22T00:00:00Z -->
 <!-- SIDEBAR _auto -->
 <!-- TEMPLATE tutorial -->
-<!-- COVER_IMAGE cover.webp -->
+<!-- COVER_IMAGE cover.jpg -->
 
 Remote desktop apps are useful tools when one needs to provide convenient customer support. However, they are often misused by fraudsters to steal money from banking accounts.
 
