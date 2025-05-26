@@ -51,10 +51,9 @@ platform :ios, '11.0'
 target '<Your Target App>' do
   pod 'PowerAuth2'
 end
+```
 {% endcodetab %}
 {% endcodetabs %}
-
-_Note: You need to disable bitcode for PowerAuth SDK to work._
 
 After you made the necessary changes in the Podfile, you can run the install command:
 
@@ -125,7 +124,7 @@ Luckily, we have a simple method to obtain a detailed activation status:
 // Check if there is some activation data on the device
 if powerAuth.hasValidActivation() {
     // If there is an activation on the device, check the status with the server
-    powerAuth.fetchActivationStatus { [weak self] status, error in
+    powerAuth.fetchActivationStatus { status, error in
         // If no error occurred, process the status
         if error == nil {
             // Show the UI relevant to the activation status.
@@ -324,7 +323,7 @@ For the `.active` status, you should check if the number of failed attempts is g
 // Check if there is some activation data on the device
 if powerAuth.hasValidActivation() {
     // If there is an activation on the device, check the status with the server
-    powerAuth.fetchActivationStatus() { status, error in
+    powerAuth.fetchActivationStatus { status, error in
         // If no error occurred, process the status
         if error == nil {
             if status.state == .active {

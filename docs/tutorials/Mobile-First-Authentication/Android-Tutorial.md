@@ -42,7 +42,7 @@ The easiest way to install the PowerAuth SDK into your project is from JCenter. 
 {% codetab Gradle %}
 ```groovy
 repositories {
-    mavenCentral() # if not defined elsewhere...
+    mavenCentral() // if not defined elsewhere...
 }
 
 dependencies {
