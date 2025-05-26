@@ -109,7 +109,7 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 {% endcodetabs %}
 
 <!-- begin box warning -->
-In case you use a development infrastructure with self-signed certificates, make sure to set `PA2ClientSslNoValidationStrategy` to the shared SDK instance and check the transport security configuration in your `Info.plist` file.
+In case you use a development infrastructure with self-signed certificates, make sure to set `PA2ClientSslNoValidationStrategy` to the SDK instance and check the transport security configuration in your `Info.plist` file.
 <!-- end -->
 
 ## Checking the Activation Status
