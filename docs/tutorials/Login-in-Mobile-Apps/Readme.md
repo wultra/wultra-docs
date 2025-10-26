@@ -159,7 +159,7 @@ You must obtain request body data exactly as it was constructed on the mobile, b
 Then, you can easily verify the signature:
 
 - Method: `POST`
-- Endpoint URL: `/v2/signature/verify`
+- Endpoint URL: `/v2/authentication/verify` (formerly `/v2/signature/verify`)
 
 ```json
 {
