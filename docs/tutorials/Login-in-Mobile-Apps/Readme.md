@@ -251,7 +251,22 @@ This check prevents stacking pre-authenticated operations on the server and conf
 
 ### Initiating the Login Flow
 
-In the first step, the mobile app must contact your server endpoint `POST /login/init` to obtain the operation associated with the current login process, passing it registration ID, like so:
+In the first step, the mobile app must contact your server endpoint `POST /login/init` to obtain the operation associated with the current login process, passing it registration ID.
+
+To obtain the registration ID, use the following SDK method:
+
+<!-- begin tabs -->
+<!-- tab Swift -->
+```swift
+let registrationId = powerAuthSDK.activationIdentifier
+```
+<!-- tab Kotlin -->
+```kotlin
+val registrationId = powerAuthSDK.getActivationIdentifier()
+```
+<!-- end -->
+
+Then, call the server with the activation ID value, like so:
 
 - Method: `POST`
 - Endpoint URL: `/login/init`
@@ -556,7 +571,7 @@ Then, you can use the following code to calculate MAC authentication header with
 <!-- begin tabs -->
 <!-- tab Swift -->
 ```swift
-let task = tokenStore.generateAuthorizationHeader(withName: "LoginToken") { header, error in
+let task = powerAuthSDK.tokenStore.generateAuthorizationHeader(withName: "LoginToken") { header, error in
     if let header = header {
         let httpHeader = [ header.key : header.value ]
         // now you can attach that httpHeader to your HTTP request
@@ -568,7 +583,7 @@ let task = tokenStore.generateAuthorizationHeader(withName: "LoginToken") { head
 ```
 <!-- tab Kotlin -->
 ```kotlin
-val task = tokenStore.generateAuthorizationHeader(context, "LoginToken", object : IGenerateTokenHeaderListener {
+val task = powerAuthSDK.tokenStore.generateAuthorizationHeader(context, "LoginToken", object : IGenerateTokenHeaderListener {
     override fun onGenerateTokenHeaderSucceeded(header: PowerAuthAuthorizationHttpHeader) {
         val httpHeaderKey = header.key
         val httpHeaderValue = header.value
